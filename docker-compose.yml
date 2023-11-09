@@ -1,0 +1,29 @@
+version: '3.3'
+services:
+  db:
+    image: ankane/pgvector:v0.5.0
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: talkdai
+      POSTGRES_PASSWORD: talkdai
+      POSTGRES_DB: talkdai
+    volumes:
+       - ./db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "talkdai", "-U", "talkdai"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+  web:
+    build: .
+    volumes:
+      - ./app:/app
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+    env_file:
+      - .env

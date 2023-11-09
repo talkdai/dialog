@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "api"
+version = "0.1.0"
+description = ""
+authors = ["Vinicius Mesel <4984147+vmesel@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.104.1"
+sqlalchemy = "^2.0.23"
+langchain = "^0.0.333"
+uvicorn = "^0.24.0.post1"
+psycopg2-binary = "^2.9.9"
+pgvector = "^0.2.3"
+python-decouple = "^3.8"
+openai = "^1.2.2"
+pydantic = "^2.4.2"
+
+[tool.poetry.group.dev.dependencies]
+ipdb = "^0.13.13"
+black = "^23.11.0"
+isort = "^5.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
