@@ -2,16 +2,24 @@ from .db import engine
 
 from pgvector.sqlalchemy import Vector
 
-from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy.orm import declarative_base
-
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship, mapped_column
 Base = declarative_base()
 
 
 class Chat(Base):
     __tablename__ = "chats"
 
-    id = Column(Integer, primary_key=True)
+    uuid = Column(String, primary_key=True)
+    messages = relationship("Message", back_populates="chat")
+
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    uuid = Column(String, primary_key=True)
+    chat_id = mapped_column(ForeignKey("chats.uuid"))
+    chat = relationship("Chat", back_populates="messages")
 
 
 class CompanyContent(Base):

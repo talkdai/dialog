@@ -1,8 +1,10 @@
+# *-* coding: utf-8 *-*
+import uuid
 from contextlib import asynccontextmanager
 
 from decouple import config
 from .models.db import session, engine
-from .models import Chat, CompanyContent
+from .models import Chat as ChatEntity, CompanyContent
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -47,6 +49,19 @@ class Chat(BaseModel):
     message: str
 
 
+# from langchain.memory import PostgresChatMessageHistory
+
+# history = PostgresChatMessageHistory(
+#     connection_string="postgresql://postgres:mypassword@localhost/chat_history",
+#     session_id="foo",
+# )
+
+# history.add_user_message("hi!")
+
+# history.add_ai_message("whats up?")
+
+
+
 @app.get("/health")
 async def health():
     with engine.connect() as con:
@@ -57,8 +72,19 @@ async def health():
             return {"message": "Failed to execute simple SQL"}
 
 
-@app.post("/chat")
-async def post_message(message: Chat):
+@app.post("/chat/{chat_id}")
+async def post_message(chat_id: str, message: Chat):
+    # Check if chat_id exists
+    chat_obj = session.query(ChatEntity).filter(
+        ChatEntity.uuid == chat_id
+    ).first()
+
+    if not chat_obj:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chat ID not found",
+        )
+
     # Save message to db
     # Process message with langchain and
     return {"message": llm.invoke(message.message)}
@@ -71,4 +97,8 @@ async def get_chat_content():
 
 @app.post("/session")
 async def create_session():
-    return {"message": "First FastAPI app"}
+    session_uuid = uuid.uuid4().hex
+    chat = ChatEntity(uuid=session_uuid)
+    session.add(chat)
+    session.commit()
+    return {"chat_id": session_uuid}
