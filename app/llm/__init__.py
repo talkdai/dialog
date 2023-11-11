@@ -4,7 +4,7 @@ from decouple import config
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.memory import PostgresChatMessageHistory
+from langchain.memory import PostgresChatMessageHistory, ConversationBufferMemory
 
 from sqlalchemy import select
 
@@ -98,18 +98,22 @@ def process_user_intent(
         ]
     )
 
-    memory = generate_memory_instance(session_id)
+
+    psql_memory = generate_memory_instance(session_id)
+    memory = ConversationBufferMemory(
+        memory_key="chat_history", chat_memory=psql_memory
+    )
     conversation = LLMChain(
         llm=CHAT_LLM,
         prompt=prompt,
-        verbose=True,
-        memory=memory
+        # memory=memory,
+        verbose=True
     )
-    # print(conversation)
+    ai_message = conversation({
+        "user_message": message,
+        "chat_history": psql_memory.messages
+    })
+    psql_memory.add_user_message(message)
+    psql_memory.add_ai_message(ai_message["text"])
 
-    # ai_message = conversation({"user_message": message})
-    # print(ai_message)
-    # memory.add_user_message(message)
-    # memory.add_ai_message(ai_message)
-
-    # return ai_message
+    return ai_message

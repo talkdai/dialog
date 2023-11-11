@@ -44,8 +44,6 @@ app.add_middleware(
 
 
 class Chat(BaseModel):
-    # email: Optional[str]
-    # name: Optional[str]
     message: str
 
 
@@ -71,11 +69,8 @@ async def post_message(chat_id: str, message: Chat):
             detail="Chat ID not found",
         )
 
-    # try:
     ai_message = process_user_intent(chat_id, message.message)
-    return {"message": ai_message}
-    # except Exception as e:
-    # return {"error": f"Failed to insert message, {e}"}
+    return {"message": ai_message["text"]}
 
 @app.get("/chat/{chat_id}")
 async def get_chat_content(chat_id):
