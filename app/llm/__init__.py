@@ -4,12 +4,16 @@ from decouple import config
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.memory import PostgresChatMessageHistory, ConversationBufferMemory
+from langchain.memory import PostgresChatMessageHistory
 
 from sqlalchemy import select
 
-from app.models.db import session, url
-from app.models import Chat, CompanyContent
+try:
+    from app.models.db import session, url
+    from app.models import Chat, CompanyContent
+except:
+    from models.db import session, url
+    from models import Chat, CompanyContent
 
 from langchain.prompts import (
     ChatPromptTemplate,
@@ -44,9 +48,10 @@ def generate_embedding(document: str):
 
 def get_most_relevant_contents_from_message(message, top=5):
     message_embedding = generate_embedding(message)
-    possible_contents = session.scalars(select(CompanyContent).order_by(
-        CompanyContent.embedding.l2_distance(message_embedding)
-    ).limit(top))
+    possible_contents = session.scalars(
+        select(CompanyContent).filter(
+            CompanyContent.embedding.l2_distance(message_embedding) < 5
+        ).limit(top)).all()
     return possible_contents
 
 def generate_memory_instance(session_id):
@@ -87,27 +92,33 @@ def process_user_intent(
     """
     relevant_contents = get_most_relevant_contents_from_message(message)
 
-    # TODO: Alter prompt to come from the database
-    prompt = ChatPromptTemplate(
-        messages=[
-            SystemMessagePromptTemplate.from_template(
-                "You are a nice chatbot having a conversation with a human."
-            ),
-            MessagesPlaceholder(variable_name="chat_history"),
-            HumanMessagePromptTemplate.from_template("{user_message}")
-        ]
-    )
+    suggested_content = "\n\n".join([f"{c.question}\n{c.content}" for c in relevant_contents])
 
+    prompt_templating = [
+        SystemMessagePromptTemplate.from_template(
+            "Você é um chatbot expert em atendimento humanizado."
+        ),
+        MessagesPlaceholder(variable_name="chat_history"),
+    ]
+
+    if len(relevant_contents) > 0:
+        prompt_templating.append(
+            SystemMessagePromptTemplate.from_template(
+                f"Aqui está um possível conteúdo que pode ajudar o usuário de uma melhor forma.\n\n{suggested_content}"
+            )
+        )
+
+    prompt_templating.append(HumanMessagePromptTemplate.from_template("{user_message}"))
+
+    prompt = ChatPromptTemplate(
+        messages=prompt_templating
+    )
 
     psql_memory = generate_memory_instance(session_id)
-    memory = ConversationBufferMemory(
-        memory_key="chat_history", chat_memory=psql_memory
-    )
     conversation = LLMChain(
         llm=CHAT_LLM,
         prompt=prompt,
-        # memory=memory,
-        verbose=True
+        verbose=config("VERBOSE_LLM", False)
     )
     ai_message = conversation({
         "user_message": message,

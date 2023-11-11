@@ -16,20 +16,12 @@ from typing import Union, Optional, List, Dict, Any
 from app.llm import *
 from langchain.schema import HumanMessage
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # initialize csv
-    yield
-    # exits app
-
-
 app = FastAPI(
     title="Dialogue API",
     description="Dialogue API for humanized AI",
     version="0.1.0",
     docs_url="/docs",
-    openapi_url="/openapi.json",
-    lifespan=lifespan,
+    openapi_url="/openapi.json"
 )
 
 origins = ["*"]

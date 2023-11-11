@@ -16,10 +16,9 @@ class Chat(Base):
 class CompanyContent(Base):
     __tablename__ = "contents"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     question = Column(String)
     content = Column(String)
-    chat_id = Column(Integer)
     embedding = Column(Vector(1536))
 
 
