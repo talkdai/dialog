@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
 
@@ -16,3 +16,4 @@ url = URL.create(
 engine = create_engine(url)
 Session = sessionmaker(bind=engine)
 session = Session()
+session.execute(text('CREATE EXTENSION IF NOT EXISTS vector'))

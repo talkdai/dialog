@@ -11,15 +11,6 @@ class Chat(Base):
     __tablename__ = "chats"
 
     uuid = Column(String, primary_key=True)
-    messages = relationship("Message", back_populates="chat")
-
-
-class Message(Base):
-    __tablename__ = "messages"
-
-    uuid = Column(String, primary_key=True)
-    chat_id = mapped_column(ForeignKey("chats.uuid"))
-    chat = relationship("Chat", back_populates="messages")
 
 
 class CompanyContent(Base):
@@ -29,6 +20,7 @@ class CompanyContent(Base):
     question = Column(String)
     content = Column(String)
     chat_id = Column(Integer)
+    embedding = Column(Vector(1536))
 
 
 # if __name__ == "__main__":

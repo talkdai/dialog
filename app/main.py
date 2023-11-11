@@ -13,7 +13,7 @@ from sqlalchemy import text
 from pydantic import BaseModel
 from typing import Union, Optional, List, Dict, Any
 
-from .llm import llm
+from app.llm import *
 from langchain.schema import HumanMessage
 
 @asynccontextmanager
@@ -44,22 +44,9 @@ app.add_middleware(
 
 
 class Chat(BaseModel):
-    email: Optional[str]
-    name: Optional[str]
+    # email: Optional[str]
+    # name: Optional[str]
     message: str
-
-
-# from langchain.memory import PostgresChatMessageHistory
-
-# history = PostgresChatMessageHistory(
-#     connection_string="postgresql://postgres:mypassword@localhost/chat_history",
-#     session_id="foo",
-# )
-
-# history.add_user_message("hi!")
-
-# history.add_ai_message("whats up?")
-
 
 
 @app.get("/health")
@@ -74,7 +61,6 @@ async def health():
 
 @app.post("/chat/{chat_id}")
 async def post_message(chat_id: str, message: Chat):
-    # Check if chat_id exists
     chat_obj = session.query(ChatEntity).filter(
         ChatEntity.uuid == chat_id
     ).first()
@@ -85,14 +71,26 @@ async def post_message(chat_id: str, message: Chat):
             detail="Chat ID not found",
         )
 
-    # Save message to db
-    # Process message with langchain and
-    return {"message": llm.invoke(message.message)}
+    # try:
+    ai_message = process_user_intent(chat_id, message.message)
+    return {"message": ai_message}
+    # except Exception as e:
+    # return {"error": f"Failed to insert message, {e}"}
 
+@app.get("/chat/{chat_id}")
+async def get_chat_content(chat_id):
+    chat_obj = session.query(ChatEntity).filter(
+        ChatEntity.uuid == chat_id
+    ).first()
 
-@app.get("/chat")
-async def get_chat_content():
-    return {"message": "First FastAPI app"}
+    if not chat_obj:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chat ID not found",
+        )
+
+    messages = get_messages(chat_id)
+    return {"message": messages}
 
 
 @app.post("/session")
