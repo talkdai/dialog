@@ -6,7 +6,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.memory import PostgresChatMessageHistory
 
-from sqlalchemy import select
+from sqlalchemy import select, asc
 
 try:
     from app.models.db import session, url
@@ -30,7 +30,11 @@ DB_URL = "postgresql://{username}:{password}@{host}:{port}/{database}".format(
     port=config("PSQL_PORT", default="5432")
 )
 
-CHAT_LLM = ChatOpenAI(openai_api_key=config("OPENAI_API_KEY"))
+CHAT_LLM = ChatOpenAI(
+    openai_api_key=config("OPENAI_API_KEY"),
+    model_name="gpt-3.5-turbo",
+    temperature=0.2,
+)
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=config("OPENAI_API_KEY"))
 
 
@@ -51,7 +55,13 @@ def get_most_relevant_contents_from_message(message, top=5):
     possible_contents = session.scalars(
         select(CompanyContent).filter(
             CompanyContent.embedding.l2_distance(message_embedding) < 5
-        ).limit(top)).all()
+        ).order_by(
+            asc(
+                CompanyContent.embedding.l2_distance(message_embedding)
+            )
+        ).limit(top)
+    ).all()
+    possible_contents = possible_contents
     return possible_contents
 
 def generate_memory_instance(session_id):
@@ -90,13 +100,13 @@ def process_user_intent(
     """
     Process user intent using memory and embeddings
     """
-    relevant_contents = get_most_relevant_contents_from_message(message)
+    relevant_contents = get_most_relevant_contents_from_message(message, top=1)
 
-    suggested_content = "\n\n".join([f"{c.question}\n{c.content}" for c in relevant_contents])
+    suggested_content = "\n\n".join([f"{c.question}\n{c.content}\n\n" for c in relevant_contents])
 
     prompt_templating = [
         SystemMessagePromptTemplate.from_template(
-            "Você é um chatbot expert em atendimento humanizado."
+            "Você é um operador de atendimento chamada Lidia, você é expert em atendimento qualificado para clientes de alto padrão. Seja breve em suas respostas limitando-se ao máximo a 2 frases."
         ),
         MessagesPlaceholder(variable_name="chat_history"),
     ]
