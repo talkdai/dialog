@@ -3,8 +3,12 @@ import uuid
 from contextlib import asynccontextmanager
 
 from decouple import config
-from .models.db import session, engine
-from .models import Chat as ChatEntity, CompanyContent
+try:
+    from .models.db import session, engine
+    from .models import Chat as ChatEntity, CompanyContent
+except:
+    from models.db import session, engine
+    from models import Chat as ChatEntity, CompanyContent
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,7 +17,10 @@ from sqlalchemy import text
 from pydantic import BaseModel
 from typing import Union, Optional, List, Dict, Any
 
-from app.llm import *
+try:
+    from llm import *
+except:
+    from .llm import *
 from langchain.schema import HumanMessage
 
 app = FastAPI(

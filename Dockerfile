@@ -19,7 +19,6 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
   PYTHONUNBUFFERED=1
 
 COPY --from=dependencies /dependencies/requirements.txt ./requirements.txt
-COPY /bundle/ /bundle/
 COPY ./app .
 
 RUN pip install --no-cache-dir -r requirements.txt
