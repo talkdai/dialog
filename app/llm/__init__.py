@@ -9,11 +9,13 @@ from langchain.memory import PostgresChatMessageHistory
 from sqlalchemy import select, asc
 
 try:
-    from app.models.db import session, url
+    from app.models.db import session
     from app.models import Chat, CompanyContent
+    from app.settings import DB_URL, OPENAI_API_KEY, VERBOSE_LLM
 except:
-    from models.db import session, url
+    from models.db import session
     from models import Chat, CompanyContent
+    from settings import DB_URL, OPENAI_API_KEY, VERBOSE_LLM
 
 from langchain.prompts import (
     ChatPromptTemplate,
@@ -22,20 +24,12 @@ from langchain.prompts import (
     HumanMessagePromptTemplate,
 )
 
-DB_URL = "postgresql://{username}:{password}@{host}:{port}/{database}".format(
-    username=config("PSQL_USER"),
-    password=config("PSQL_PASSWORD"),
-    host=config("PSQL_HOST", default="localhost"),
-    database=config("PSQL_DATABASE", default="talkdai"),
-    port=config("PSQL_PORT", default="5432")
-)
-
 CHAT_LLM = ChatOpenAI(
-    openai_api_key=config("OPENAI_API_KEY"),
+    openai_api_key=OPENAI_API_KEY,
     model_name="gpt-3.5-turbo",
     temperature=0.2,
 )
-EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=config("OPENAI_API_KEY"))
+EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
 
 def generate_embeddings(documents: List[str]):
@@ -128,7 +122,7 @@ def process_user_intent(
     conversation = LLMChain(
         llm=CHAT_LLM,
         prompt=prompt,
-        verbose=config("VERBOSE_LLM", False)
+        verbose=VERBOSE_LLM
     )
     ai_message = conversation({
         "user_message": message,
