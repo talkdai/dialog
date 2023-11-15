@@ -1,12 +1,12 @@
 import argparse
 
 import pandas as pd
+from sqlalchemy import text
 
 from llm import generate_embeddings
 from models import CompanyContent
 from models.db import session
 
-from sqlalchemy import text
 
 def load_csv_and_generate_embeddings(path):
     df = pd.read_csv(path)
@@ -37,7 +37,9 @@ def load_csv_and_generate_embeddings(path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path", type=str, required=False, default="/data/data.csv")
+    parser.add_argument("--path", type=str, required=False,
+                        default="/data/buser.csv")
     args = parser.parse_args()
 
+    load_csv_and_generate_embeddings(args.path)
     load_csv_and_generate_embeddings(args.path)

@@ -9,19 +9,18 @@ RUN pip install poetry && \
 
 FROM python:3.11-slim
 
-WORKDIR /app
+ENV PIP_DEFAULT_TIMEOUT=100
+ENV PIP_DISABLE_PIP_VERSION_CHECK=on
+ENV PIP_NO_CACHE_DIR=on
+ENV PYTHONFAULTHANDLER=1
+ENV PYTHONHASHSEED=random
+ENV PYTHONUNBUFFERED=1
 
-ENV PIP_DEFAULT_TIMEOUT=100 \
-  PIP_DISABLE_PIP_VERSION_CHECK=on \
-  PIP_NO_CACHE_DIR=on \
-  PYTHONFAULTHANDLER=1 \
-  PYTHONHASHSEED=random \
-  PYTHONUNBUFFERED=1
+COPY . /app
 
+WORKDIR /app/src
 COPY --from=dependencies /dependencies/requirements.txt ./requirements.txt
-COPY ./app .
-RUN chmod +x /app/run.sh
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT [ "/app/etc/run.sh" ]
