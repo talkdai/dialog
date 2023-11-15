@@ -2,7 +2,6 @@
 import uuid
 from contextlib import asynccontextmanager
 
-from decouple import config
 try:
     from .models.db import session, engine
     from .models import Chat as ChatEntity, CompanyContent
@@ -18,9 +17,9 @@ from pydantic import BaseModel
 from typing import Union, Optional, List, Dict, Any
 
 try:
-    from llm import *
+    from app.llm import *
 except:
-    from .llm import *
+    from llm import *
 from langchain.schema import HumanMessage
 
 app = FastAPI(
