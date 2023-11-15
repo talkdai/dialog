@@ -11,11 +11,11 @@ from sqlalchemy import select, asc
 try:
     from app.models.db import session
     from app.models import Chat, CompanyContent
-    from app.settings import DB_URL, OPENAI_API_KEY, VERBOSE_LLM
+    from app.settings import DATABASE_URL, OPENAI_API_KEY, VERBOSE_LLM
 except:
     from models.db import session
     from models import Chat, CompanyContent
-    from settings import DB_URL, OPENAI_API_KEY, VERBOSE_LLM
+    from settings import DATABASE_URL, OPENAI_API_KEY, VERBOSE_LLM
 
 from langchain.prompts import (
     ChatPromptTemplate,
@@ -63,7 +63,7 @@ def generate_memory_instance(session_id):
     Generate a memory instance for a given session_id
     """
     return PostgresChatMessageHistory(
-        connection_string=DB_URL,
+        connection_string=DATABASE_URL,
         session_id=session_id,
         table_name="chat_messages"
     )
