@@ -21,6 +21,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    entrypoint: sh /app/run.sh
     volumes:
       - ./app:/app
       - ./data:/data

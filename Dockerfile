@@ -20,6 +20,7 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
 
 COPY --from=dependencies /dependencies/requirements.txt ./requirements.txt
 COPY ./app .
+RUN chmod +x /app/run.sh
 
 RUN pip install --no-cache-dir -r requirements.txt
 
