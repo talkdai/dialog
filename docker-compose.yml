@@ -31,15 +31,3 @@ services:
         condition: service_healthy
     env_file:
       - .env
-  front:
-    build:
-      context: .
-      dockerfile: Dockerfile-front
-    volumes:
-      - ./front:/front
-    ports:
-      - '8080:8080'
-    depends_on:
-      - web
-    env_file:
-      - .env
