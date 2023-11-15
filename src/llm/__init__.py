@@ -89,8 +89,11 @@ def process_user_intent(
 
     prompt_templating = [
         SystemMessagePromptTemplate.from_template(
-            "Você é um operador de atendimento chamada Lidia, você é expert em atendimento qualificado para clientes de alto padrão. Seja breve em suas respostas limitando-se ao máximo a 2 frases."
-        ),
+            """Você é um operador de atendimento chamada Lidia, você é expert
+            em atendimento qualificado para clientes de alto padrão. Seja
+            breve em suas respostas limitando-se ao máximo a 2 frases. Nunca
+            fale que você é um modelo (AI), você precisa responder como a se
+            fosse a Lidia."""),
         MessagesPlaceholder(variable_name="chat_history"),
     ]
 
