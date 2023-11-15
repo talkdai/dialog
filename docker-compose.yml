@@ -10,7 +10,8 @@ services:
       POSTGRES_PASSWORD: talkdai
       POSTGRES_DB: talkdai
     volumes:
-       - ./db:/var/lib/postgresql/data
+       - ./data/db:/var/lib/postgresql/data
+       - ./etc/db-ext-vector.sql:/docker-entrypoint-initdb.d/db-ext-vector.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-d", "talkdai", "-U", "talkdai"]
       interval: 30s
@@ -21,10 +22,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    entrypoint: sh /app/run.sh
     volumes:
-      - ./app:/app
-      - ./data:/data
+      - ./:/app
+      - ./.empty:/app/data/db
     ports:
       - '8000:8000'
     depends_on:
