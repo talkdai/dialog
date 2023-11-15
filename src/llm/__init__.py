@@ -3,7 +3,7 @@ from typing import List
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.memory import PostgresChatMessageHistory
+from llm.memory import CustomPostgresChatMessageHistory
 from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
                                MessagesPlaceholder,
                                SystemMessagePromptTemplate)
@@ -51,7 +51,7 @@ def generate_memory_instance(session_id):
     """
     Generate a memory instance for a given session_id
     """
-    return PostgresChatMessageHistory(
+    return CustomPostgresChatMessageHistory(
         connection_string=DATABASE_URL,
         session_id=session_id,
         table_name="chat_messages"
