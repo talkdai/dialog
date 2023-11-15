@@ -1,26 +1,14 @@
 # *-* coding: utf-8 *-*
 import uuid
-from contextlib import asynccontextmanager
 
-try:
-    from .models.db import session, engine
-    from .models import Chat as ChatEntity, CompanyContent
-except:
-    from models.db import session, engine
-    from models import Chat as ChatEntity, CompanyContent
-from fastapi import FastAPI, HTTPException, Request, status
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-
-from sqlalchemy import text
 from pydantic import BaseModel
-from typing import Union, Optional, List, Dict, Any
+from sqlalchemy import text
 
-try:
-    from app.llm import *
-except:
-    from llm import *
-from langchain.schema import HumanMessage
+from llm import *
+from models import Chat as ChatEntity
+from models.db import engine, session
 
 app = FastAPI(
     title="Dialogue API",

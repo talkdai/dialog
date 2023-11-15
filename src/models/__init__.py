@@ -1,9 +1,9 @@
+from pgvector.sqlalchemy import Vector
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import declarative_base
+
 from .db import engine
 
-from pgvector.sqlalchemy import Vector
-
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-from sqlalchemy.orm import declarative_base, relationship, mapped_column
 Base = declarative_base()
 
 

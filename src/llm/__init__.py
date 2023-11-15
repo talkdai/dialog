@@ -1,28 +1,17 @@
 from typing import List
-from decouple import config
 
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.memory import PostgresChatMessageHistory
+from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
+                               MessagesPlaceholder,
+                               SystemMessagePromptTemplate)
+from sqlalchemy import asc, select
 
-from sqlalchemy import select, asc
-
-try:
-    from app.models.db import session
-    from app.models import Chat, CompanyContent
-    from app.settings import DATABASE_URL, OPENAI_API_KEY, VERBOSE_LLM
-except:
-    from models.db import session
-    from models import Chat, CompanyContent
-    from settings import DATABASE_URL, OPENAI_API_KEY, VERBOSE_LLM
-
-from langchain.prompts import (
-    ChatPromptTemplate,
-    MessagesPlaceholder,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
+from models import CompanyContent
+from models.db import session
+from settings import DATABASE_URL, OPENAI_API_KEY, VERBOSE_LLM
 
 CHAT_LLM = ChatOpenAI(
     openai_api_key=OPENAI_API_KEY,
