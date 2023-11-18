@@ -11,7 +11,7 @@ from sqlalchemy import asc, select
 
 from models import CompanyContent
 from models.db import session
-from settings import DATABASE_URL, OPENAI_API_KEY, VERBOSE_LLM
+from settings import DATABASE_URL, OPENAI_API_KEY, PROJECT_CONFIG, VERBOSE_LLM
 
 CHAT_LLM = ChatOpenAI(
     openai_api_key=OPENAI_API_KEY,
@@ -19,6 +19,7 @@ CHAT_LLM = ChatOpenAI(
     temperature=0.2,
 )
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+PROMPT = PROJECT_CONFIG.get("prompt")
 
 
 def generate_embeddings(documents: List[str]):
@@ -27,11 +28,13 @@ def generate_embeddings(documents: List[str]):
     """
     return EMBEDDINGS_LLM.embed_documents(documents)
 
+
 def generate_embedding(document: str):
     """
     Generate embeddings for a single instance of document
     """
     return EMBEDDINGS_LLM.embed_query(document)
+
 
 def get_most_relevant_contents_from_message(message, top=5):
     message_embedding = generate_embedding(message)
@@ -47,6 +50,7 @@ def get_most_relevant_contents_from_message(message, top=5):
     possible_contents = possible_contents
     return possible_contents
 
+
 def generate_memory_instance(session_id):
     """
     Generate a memory instance for a given session_id
@@ -56,6 +60,7 @@ def generate_memory_instance(session_id):
         session_id=session_id,
         table_name="chat_messages"
     )
+
 
 def add_user_message_to_message_history(
         session_id, message, memory=None
@@ -70,12 +75,14 @@ def add_user_message_to_message_history(
     memory.add_user_message(message)
     return memory
 
+
 def get_messages(session_id):
     """
     Get all messages for a given session_id
     """
     memory = generate_memory_instance(session_id)
     return memory.messages
+
 
 def process_user_intent(
         session_id, message
@@ -85,26 +92,23 @@ def process_user_intent(
     """
     relevant_contents = get_most_relevant_contents_from_message(message, top=1)
 
-    suggested_content = "\n\n".join([f"{c.question}\n{c.content}\n\n" for c in relevant_contents])
+    suggested_content = "\n\n".join([f"{c.question}\n{c.content}\n\n"
+                                     for c in relevant_contents])
 
     prompt_templating = [
-        SystemMessagePromptTemplate.from_template(
-            """Você é um operador de atendimento chamada Lidia, você é expert
-            em atendimento qualificado para clientes de alto padrão. Seja
-            breve em suas respostas limitando-se ao máximo a 2 frases. Nunca
-            fale que você é um modelo (AI), você precisa responder como a se
-            fosse a Lidia."""),
+        SystemMessagePromptTemplate.from_template(PROMPT.get("header")),
         MessagesPlaceholder(variable_name="chat_history"),
     ]
 
     if len(relevant_contents) > 0:
         prompt_templating.append(
             SystemMessagePromptTemplate.from_template(
-                f"Aqui está um possível conteúdo que pode ajudar o usuário de uma melhor forma.\n\n{suggested_content}"
+                f"{PROMPT.get('suggested')}\n\n{suggested_content}"
             )
         )
 
-    prompt_templating.append(HumanMessagePromptTemplate.from_template("{user_message}"))
+    prompt_templating.append(
+        HumanMessagePromptTemplate.from_template("{user_message}"))
 
     prompt = ChatPromptTemplate(
         messages=prompt_templating
