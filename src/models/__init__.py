@@ -17,10 +17,11 @@ class CompanyContent(Base):
     __tablename__ = "contents"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    category = Column(String)
+    subcategory = Column(String)
     question = Column(String)
     content = Column(String)
     embedding = Column(Vector(1536))
 
 
-# if __name__ == "__main__":
 Base.metadata.create_all(engine)

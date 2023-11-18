@@ -44,12 +44,9 @@ def get_most_relevant_contents_from_message(message, top=5):
         select(CompanyContent).filter(
             CompanyContent.embedding.l2_distance(message_embedding) < 5
         ).order_by(
-            asc(
-                CompanyContent.embedding.l2_distance(message_embedding)
-            )
+            asc(CompanyContent.embedding.l2_distance(message_embedding))
         ).limit(top)
     ).all()
-    possible_contents = possible_contents
     return possible_contents
 
 
@@ -64,9 +61,7 @@ def generate_memory_instance(session_id):
     )
 
 
-def add_user_message_to_message_history(
-        session_id, message, memory=None
-):
+def add_user_message_to_message_history(session_id, message, memory=None):
     """
     Add a user message to the message history and returns the updated
     memory instance
@@ -86,9 +81,7 @@ def get_messages(session_id):
     return memory.messages
 
 
-def process_user_intent(
-        session_id, message
-):
+def process_user_intent(session_id, message):
     """
     Process user intent using memory and embeddings
     """
@@ -103,12 +96,21 @@ def process_user_intent(
         MessagesPlaceholder(variable_name="chat_history"),
     ]
 
+    # append prompt content subcategory
+    if PROMPT.get("subcategory"):
+        subprompt_subcategory = PROMPT.get("subcategory")
+        for c in relevant_contents:
+            if subprompt_subcategory.get(c.subcategory):
+                subprompt = subprompt_subcategory.get(c.subcategory)
+                prompt_templating.append(
+                    SystemMessagePromptTemplate.from_template(
+                        f"{subprompt.get('header')}\n\n"))
+
+    # append prompt content suggestions
     if len(relevant_contents) > 0:
         prompt_templating.append(
             SystemMessagePromptTemplate.from_template(
-                f"{PROMPT.get('suggested')}\n\n{suggested_content}"
-            )
-        )
+                f"{PROMPT.get('suggested')}\n\n{suggested_content}"))
 
     prompt_templating.append(
         HumanMessagePromptTemplate.from_template("{user_message}"))
