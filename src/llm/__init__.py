@@ -1,3 +1,4 @@
+import asyncio
 from typing import List
 
 from langchain.chains import LLMChain
@@ -9,10 +10,11 @@ from langchain.prompts import (
     MessagesPlaceholder,
     SystemMessagePromptTemplate,
 )
-from llm.memory import CustomPostgresChatMessageHistory
+from learn.idf import categorize_conversation_history
+from llm.memory import generate_memory_instance
 from models import CompanyContent
 from models.db import session
-from settings import DATABASE_URL, OPENAI_API_KEY, PROJECT_CONFIG, VERBOSE_LLM
+from settings import OPENAI_API_KEY, PROJECT_CONFIG, VERBOSE_LLM
 from sqlalchemy import asc, select
 
 CHAT_LLM = ChatOpenAI(
@@ -48,37 +50,6 @@ def get_most_relevant_contents_from_message(message, top=5):
         ).limit(top)
     ).all()
     return possible_contents
-
-
-def generate_memory_instance(session_id):
-    """
-    Generate a memory instance for a given session_id
-    """
-    return CustomPostgresChatMessageHistory(
-        connection_string=DATABASE_URL,
-        session_id=session_id,
-        table_name="chat_messages"
-    )
-
-
-def add_user_message_to_message_history(session_id, message, memory=None):
-    """
-    Add a user message to the message history and returns the updated
-    memory instance
-    """
-    if not memory:
-        memory = generate_memory_instance(session_id)
-
-    memory.add_user_message(message)
-    return memory
-
-
-def get_messages(session_id):
-    """
-    Get all messages for a given session_id
-    """
-    memory = generate_memory_instance(session_id)
-    return memory.messages
 
 
 def process_user_intent(session_id, message):
@@ -131,5 +102,8 @@ def process_user_intent(session_id, message):
     })
     psql_memory.add_user_message(message)
     psql_memory.add_ai_message(ai_message["text"])
+
+    # categorize conversation history in background
+    asyncio.create_task(categorize_conversation_history(psql_memory))
 
     return ai_message
