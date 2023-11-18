@@ -9,7 +9,7 @@ from sqlalchemy import text
 
 def load_csv_and_generate_embeddings(path):
     df = pd.read_csv(path)
-    necessary_cols = ["question", "content"]
+    necessary_cols = ["category", "subcategory", "question", "content"]
     for col in necessary_cols:
         if col not in df.columns:
             raise Exception(f"Column {col} not found in {path}")
@@ -17,11 +17,13 @@ def load_csv_and_generate_embeddings(path):
     df = df[necessary_cols]
 
     df_in_db = pd.read_sql(
-        text(f"SELECT question, content FROM {CompanyContent.__tablename__}"),
+        text(f"SELECT category, subcategory, question, content FROM {CompanyContent.__tablename__}"),
         session.get_bind()
     )
 
     df = df[~df["question"].isin(df_in_db["question"])]
+    df["category"] = df["category"]
+    df["subcategory"] = df["subcategory"]
 
     print("Generating embeddings for new questions...")
     print("New questions:", len(df))
@@ -30,7 +32,7 @@ def load_csv_and_generate_embeddings(path):
     df.to_sql(
         CompanyContent.__tablename__,
         session.get_bind(),
-        if_exists="append",
+        if_exists="replace",
         index=False
     )
 
