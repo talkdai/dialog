@@ -1,4 +1,6 @@
 from langchain.memory import PostgresChatMessageHistory
+from models import Chat
+from models.db import session
 from settings import DATABASE_URL
 
 
@@ -22,11 +24,9 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
 
     def add_tags(self, tags: str) -> None:
         """Add tags for a given session_id/uuid on chats table"""
-        from psycopg import sql
-
-        query = sql.SQL("UPDATE chats SET tags=%s WHERE uuid=%s;")
-        self.cursor.execute(query, (self.session_id, tags))
-        self.connection.commit()
+        # session.execute(update(Chat, values={Chat.tags: tags}).where(Chat.uuid == self.session_id))
+        session.query(Chat).where(Chat.uuid == self.session_id).update({Chat.tags: tags})
+        session.commit()
 
 
 def generate_memory_instance(session_id):
