@@ -11,6 +11,7 @@ class Chat(Base):
     __tablename__ = "chats"
 
     uuid = Column(String, primary_key=True)
+    tags = Column(String, nullable=True)
 
 
 class CompanyContent(Base):
