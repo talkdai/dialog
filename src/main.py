@@ -3,7 +3,8 @@ import uuid
 
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from llm import get_messages, process_user_intent
+from llm import process_user_intent
+from llm.memory import get_messages
 from models import Chat as ChatEntity
 from models.db import engine, session
 from pydantic import BaseModel
