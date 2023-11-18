@@ -3,15 +3,17 @@ from typing import List
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
+from langchain.prompts import (
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    MessagesPlaceholder,
+    SystemMessagePromptTemplate,
+)
 from llm.memory import CustomPostgresChatMessageHistory
-from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
-                               MessagesPlaceholder,
-                               SystemMessagePromptTemplate)
-from sqlalchemy import asc, select
-
 from models import CompanyContent
 from models.db import session
 from settings import DATABASE_URL, OPENAI_API_KEY, PROJECT_CONFIG, VERBOSE_LLM
+from sqlalchemy import asc, select
 
 CHAT_LLM = ChatOpenAI(
     openai_api_key=OPENAI_API_KEY,
@@ -90,7 +92,8 @@ def process_user_intent(
     """
     Process user intent using memory and embeddings
     """
-    relevant_contents = get_most_relevant_contents_from_message(message, top=1)
+    # top 2 most relevant contents
+    relevant_contents = get_most_relevant_contents_from_message(message, top=2)
 
     suggested_content = "\n\n".join([f"{c.question}\n{c.content}\n\n"
                                      for c in relevant_contents])
