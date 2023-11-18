@@ -32,7 +32,7 @@ def load_csv_and_generate_embeddings(path):
     df.to_sql(
         CompanyContent.__tablename__,
         session.get_bind(),
-        if_exists="replace",
+        if_exists="append",
         index=False
     )
 
