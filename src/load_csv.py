@@ -1,11 +1,10 @@
 import argparse
 
 import pandas as pd
-from sqlalchemy import text
-
 from llm import generate_embeddings
 from models import CompanyContent
 from models.db import session
+from sqlalchemy import text
 
 
 def load_csv_and_generate_embeddings(path):
