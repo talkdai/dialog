@@ -1,9 +1,10 @@
 [tool.poetry]
-name = "api"
+name = "dialog"
 version = "0.1.0"
-description = ""
-authors = ["Vinicius Mesel <4984147+vmesel@users.noreply.github.com>"]
+description = "Humanized Conversation API (using LLM)"
+authors = ["Avelino <hey@avelino.run>", "Vinicius Mesel <4984147+vmesel@users.noreply.github.com>"]
 readme = "README.md"
+homepage = "https://github.com/talkdai/dialog"
 
 [tool.poetry.dependencies]
 python = "^3.9,<3.12"

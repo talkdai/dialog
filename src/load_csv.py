@@ -39,7 +39,7 @@ def load_csv_and_generate_embeddings(path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, required=False,
-                        default="/data/buser.csv")
+                        default="./know.csv")
     args = parser.parse_args()
 
     load_csv_and_generate_embeddings(args.path)

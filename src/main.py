@@ -11,8 +11,8 @@ from pydantic import BaseModel
 from sqlalchemy import text
 
 app = FastAPI(
-    title="Dialogue API",
-    description="Dialogue API for humanized AI",
+    title="Dialog API",
+    description="Humanized Conversation API (using LLM)",
     version="0.1.0",
     docs_url="/docs",
     openapi_url="/openapi.json"
