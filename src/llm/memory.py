@@ -39,7 +39,7 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
         returning the ChatMessages created for use in the parent logic
         """
         values = {"session_id": self.session_id, "message": _message_to_dict(message)}
-        if (parent_id):
+        if parent_id:
             values["parent"] = parent_id
         new_message = ChatMessages(**values)
         session.add(new_message)
