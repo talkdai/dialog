@@ -5,7 +5,7 @@ from llm import generate_embeddings
 from models import CompanyContent
 from models.db import session
 from sqlalchemy import text
-
+import hashlib
 
 def load_csv_and_generate_embeddings(path):
     df = pd.read_csv(path)
@@ -16,20 +16,33 @@ def load_csv_and_generate_embeddings(path):
 
     df = df[necessary_cols]
 
+    # Create primary key column using category, subcategory, and question
+    df["primary_key"] = df.apply(lambda row: hashlib.sha256(
+        (
+            row["category"] + row["subcategory"] + row["question"]
+        ).encode()).hexdigest(), axis=1)
+
     df_in_db = pd.read_sql(
         text(f"SELECT category, subcategory, question, content FROM {CompanyContent.__tablename__}"),
         session.get_bind()
     )
 
-    df = df[~df["question"].isin(df_in_db["question"])]
-    df["category"] = df["category"]
-    df["subcategory"] = df["subcategory"]
+    # Create primary key column using category, subcategory, and question for df_in_db
+    df_in_db["primary_key"] = df_in_db.apply(
+        lambda row: hashlib.sha256(
+            (
+                row["category"] + row["subcategory"] + row["question"]
+            ).encode()).hexdigest(), axis=1)
+
+    # Filter df for keys present in df and not present in df_in_db
+    df_filtered = df[~df["primary_key"].isin(df_in_db["primary_key"])]
 
     print("Generating embeddings for new questions...")
-    print("New questions:", len(df))
+    print("New questions:", len(df_filtered))
 
-    df["embedding"] = generate_embeddings(df["content"])
-    df.to_sql(
+    df_filtered.drop(columns=["primary_key"], inplace=True)
+    df_filtered["embedding"] = generate_embeddings(df_filtered["content"])
+    df_filtered.to_sql(
         CompanyContent.__tablename__,
         session.get_bind(),
         if_exists="append",
