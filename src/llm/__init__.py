@@ -100,8 +100,8 @@ def process_user_intent(session_id, message):
         "user_message": message,
         "chat_history": psql_memory.messages
     })
-    psql_memory.add_user_message(message)
-    psql_memory.add_ai_message(ai_message["text"])
+    user_message = psql_memory.add_user_message(message)
+    psql_memory.add_ai_message(ai_message["text"], user_message.id)
 
     # categorize conversation history in background
     asyncio.create_task(categorize_conversation_history(psql_memory))
