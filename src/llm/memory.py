@@ -1,5 +1,8 @@
 
+from typing import Any, Dict, List
+
 from langchain.memory import PostgresChatMessageHistory
+from langchain.schema.memory import BaseMemory
 from langchain.schema.messages import (
     AIMessage,
     BaseMessage,
@@ -10,6 +13,24 @@ from models import Chat, ChatMessages
 from models.db import session
 from settings import DATABASE_URL
 
+
+class SimpleMemory(BaseMemory):
+    memories: Dict[str, Any] = dict()
+
+    @property
+    def memory_variables(self) -> List[str]:
+        return list(self.memories.keys())
+
+    def load_memory_variables(self, messages: BaseMessage) -> Dict[str, str]:
+        # self.memories = {m.content.title(): m.content.title() for m in messages}
+        self.memories = {"abc": 123}
+        return self.memories
+
+    def save_context(self, inputs: Dict[str, Any], outputs: Dict[str, str]) -> None:
+        pass
+
+    def clear(self) -> None:
+        self.memories = {}
 
 class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
     """
@@ -65,6 +86,12 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
         if parent_id:
             values["parent_id"] = parent_id
         self.add_message(**values)
+
+    def base_memory(self) -> Dict[str, Any]:
+        """Return key-value pairs given the text input to the chain."""
+        simple = SimpleMemory()
+        simple.load_memory_variables(self.messages)
+        return simple
 
 
 def generate_memory_instance(session_id):

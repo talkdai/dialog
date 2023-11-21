@@ -94,7 +94,8 @@ def process_user_intent(session_id, message):
     conversation = LLMChain(
         llm=CHAT_LLM,
         prompt=prompt,
-        verbose=VERBOSE_LLM
+        verbose=VERBOSE_LLM,
+        memory=psql_memory.base_memory()
     )
     ai_message = conversation({
         "user_message": message,
