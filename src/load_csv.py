@@ -17,7 +17,7 @@ def load_csv_and_generate_embeddings(path):
     df = df[necessary_cols]
 
     # Create primary key column using category, subcategory, and question
-    df["primary_key"] = df.apply(lambda row: hashlib.sha256(
+    df["primary_key"] = df.apply(lambda row: hashlib.md5(
         (
             row["category"] + row["subcategory"] + row["question"]
         ).encode()).hexdigest(), axis=1)
@@ -29,7 +29,7 @@ def load_csv_and_generate_embeddings(path):
 
     # Create primary key column using category, subcategory, and question for df_in_db
     df_in_db["primary_key"] = df_in_db.apply(
-        lambda row: hashlib.sha256(
+        lambda row: hashlib.md5(
             (
                 row["category"] + row["subcategory"] + row["question"]
             ).encode()).hexdigest(), axis=1)
