@@ -36,7 +36,7 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
         session.query(Chat).where(Chat.uuid == self.session_id).update({Chat.tags: tags})
         session.commit()
 
-    def add_message(self, message: BaseMessage) -> ChatMessages:
+    def add_message(self, message: BaseMessage) -> None:
         """Append the message to the record in PostgreSQL"""
         message = ChatMessages(session_id=self.session_id, message=_message_to_dict(message))
         if self.parent_session_id:
