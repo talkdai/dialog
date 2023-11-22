@@ -10,6 +10,7 @@ from langchain.prompts import (
     MessagesPlaceholder,
     SystemMessagePromptTemplate,
 )
+from langchain.memory.buffer import ConversationBufferMemory
 from learn.idf import categorize_conversation_history
 from llm.memory import generate_memory_instance
 from models import CompanyContent
@@ -90,20 +91,23 @@ def process_user_intent(session_id, message):
         messages=prompt_templating
     )
 
-    psql_memory = generate_memory_instance(session_id)
+    chat_memory = generate_memory_instance(session_id)
+    memory = ConversationBufferMemory(
+        chat_memory=chat_memory,
+        memory_key="chat_history",
+        return_messages=True
+    )
     conversation = LLMChain(
         llm=CHAT_LLM,
         prompt=prompt,
-        verbose=VERBOSE_LLM
+        verbose=VERBOSE_LLM,
+        memory=memory
     )
     ai_message = conversation({
         "user_message": message,
-        "chat_history": psql_memory.messages
     })
-    user_message = psql_memory.add_user_message(message)
-    psql_memory.add_ai_message(ai_message["text"], user_message.id)
 
     # categorize conversation history in background
-    asyncio.create_task(categorize_conversation_history(psql_memory))
+    asyncio.create_task(categorize_conversation_history(chat_memory))
 
     return ai_message
