@@ -1,9 +1,7 @@
 
 from langchain.memory import PostgresChatMessageHistory
 from langchain.schema.messages import (
-    AIMessage,
     BaseMessage,
-    HumanMessage,
     _message_to_dict,
 )
 from models import Chat, ChatMessages
