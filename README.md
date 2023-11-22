@@ -1,12 +1,12 @@
-# dialog
+# Dialog
 
 Humanized Conversation API (using LLM)
 
-> proportional conversation in a human way without exposing that you are an LLM answering
+> conversations in a human way without exposing that it's a LLM answering
 
-## Configurantions
+## Settings
 
-To use the project, you need to have the `.csv` file with the knowledge base and the `.toml` file with the prompt configuration.
+To use this project, you need to have a `.csv` file with the knowledge base and a `.toml` file with your prompt configuration.
 
 ### `.csv` knowledge base
 
@@ -15,7 +15,7 @@ To use the project, you need to have the `.csv` file with the knowledge base and
 - category
 - subcategory: used to customize the prompt for specific questions
 - question
-- content: used to generate the embeding
+- content: used to generate the embedding
 
 **example:**
 
@@ -26,7 +26,10 @@ faq,promotions,loyalty-program,"The company XYZ has a loyalty program when you r
 
 ### `.toml` prompt configuration
 
-The `[prompt.header]` and `[prompt.suggested]` fields are mandatory fields used for processing the conversation and connecting to LLM.
+The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are mandatory fields used for processing the conversation and connecting to the LLM.
+
+The `[fallback.prompt]` field is used when the LLM does not find a compatible embedding on the database, without it, it would allucinate on possible answers for questions outside of the scope of the embeddings.
+
 It is also possible to add information to the prompt for subcategories, see below for an example of a complete configuration:
 
 ```toml
@@ -42,11 +45,14 @@ suggested = "Here is some possible content that could help the user in a better 
 
 header = """The client is interested in the loyalty program, and needs to be responded to in a
 salesy way; the loyalty program is our growth strategy."""
+
+[fallback]
+prompt = """I'm sorry, I didn't understand your question. Could you rephrase it?"""
 ```
 
-### environment variables
+### Environment Variables
 
-Look at the [`.env.example`](.env.example) file to see the environment variables needed to run the project.
+Look at the [`.env.sample`](.env.sample) file to see the environment variables needed to run the project.
 
 ## Run the project
 
@@ -61,4 +67,4 @@ After uploading the project, go to the documentation `http://localhost:8000/docs
 
 ### local development
 
-We've used python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) can help.
+We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) may help you.
