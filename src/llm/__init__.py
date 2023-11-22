@@ -25,6 +25,7 @@ CHAT_LLM = ChatOpenAI(
 )
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 PROMPT = PROJECT_CONFIG.get("prompt")
+FALLBACK_PROMPT = PROJECT_CONFIG.get("fallback").get("prompt")
 
 
 def generate_embeddings(documents: List[str]):
@@ -60,13 +61,20 @@ def process_user_intent(session_id, message):
     # top 2 most relevant contents
     relevant_contents = get_most_relevant_contents_from_message(message, top=2)
 
-    suggested_content = "\n\n".join([f"{c.question}\n{c.content}\n\n"
-                                     for c in relevant_contents])
+    if len(relevant_contents) == 0:
+        prompt_templating = [
+            SystemMessagePromptTemplate.from_template(FALLBACK_PROMPT),
+            HumanMessagePromptTemplate.from_template("{user_message}"),
+        ]
+        relevant_contents = []
+    else:
+        suggested_content = "\n\n".join([f"{c.question}\n{c.content}\n\n"
+                                        for c in relevant_contents])
 
-    prompt_templating = [
-        SystemMessagePromptTemplate.from_template(PROMPT.get("header")),
-        MessagesPlaceholder(variable_name="chat_history"),
-    ]
+        prompt_templating = [
+            SystemMessagePromptTemplate.from_template(PROMPT.get("header")),
+            MessagesPlaceholder(variable_name="chat_history"),
+        ]
 
     # append prompt content subcategory
     if PROMPT.get("subcategory"):
