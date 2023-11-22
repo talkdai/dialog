@@ -28,11 +28,15 @@ def load_csv_and_generate_embeddings(path):
     )
 
     # Create primary key column using category, subcategory, and question for df_in_db
-    df_in_db["primary_key"] = df_in_db.apply(
-        lambda row: hashlib.md5(
-            (
-                row["category"] + row["subcategory"] + row["question"]
-            ).encode()).hexdigest(), axis=1)
+    if not df_in_db.empty:
+        df_in_db["primary_key"] = df_in_db.apply(
+            lambda row: hashlib.md5(
+                (
+                    row["category"] + row["subcategory"] + row["question"]
+                ).encode()).hexdigest(), axis=1)
+
+    else:
+        df_in_db["primary_key"] = []
 
     # Filter df for keys present in df and not present in df_in_db
     df_filtered = df[~df["primary_key"].isin(df_in_db["primary_key"])]
