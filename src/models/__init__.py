@@ -1,9 +1,5 @@
-from datetime import datetime
-
-from pgvector.sqlalchemy import Vector
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.orm import declarative_base
+from sqlalchemy import Table
 
 from .db import engine
 
@@ -11,31 +7,30 @@ Base = declarative_base()
 
 
 class Chat(Base):
-    __tablename__ = "chats"
-
-    uuid = Column(String, primary_key=True)
-    tags = Column(String, nullable=True)
+    __table__ = Table(
+        "chats",
+        Base.metadata,
+        psql_autoload=True,
+        autoload_with=engine,
+        extend_existing=True
+    )
 
 
 class ChatMessages(Base):
-    __tablename__ = "chat_messages"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    parent = Column(Integer, nullable=True)
-    session_id = Column(String, nullable=False)
-    message = Column(JSONB, nullable=False)
-    timestamp = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+    __table__ = Table(
+        "chat_messages",
+        Base.metadata,
+        psql_autoload=True,
+        autoload_with=engine,
+        extend_existing=True
+    )
 
 
 class CompanyContent(Base):
-    __tablename__ = "contents"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    category = Column(String)
-    subcategory = Column(String)
-    question = Column(String)
-    content = Column(String)
-    embedding = Column(Vector(1536))
-
-
-Base.metadata.create_all(engine)
+    __table__ = Table(
+        "contents",
+        Base.metadata,
+        psql_autoload=True,
+        autoload_with=engine,
+        extend_existing=True
+    )

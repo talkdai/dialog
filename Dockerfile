@@ -17,5 +17,5 @@ RUN pip install poetry && \
 
 WORKDIR /app/src
 
-ENTRYPOINT [ "/app/etc/run.sh" ]
+CMD [ "/app/etc/run.sh" ]
 

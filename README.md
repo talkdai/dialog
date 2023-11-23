@@ -8,6 +8,8 @@ Humanized Conversation API (using LLM)
 
 To use this project, you need to have a `.csv` file with the knowledge base and a `.toml` file with your prompt configuration.
 
+We recommend that you create a folder inside this project called `data` and put CSVs and TOMLs files over there.
+
 ### `.csv` knowledge base
 
 **fields:**
@@ -28,7 +30,7 @@ faq,promotions,loyalty-program,"The company XYZ has a loyalty program when you r
 
 The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are mandatory fields used for processing the conversation and connecting to the LLM.
 
-The `[fallback.prompt]` field is used when the LLM does not find a compatible embedding on the database, without it, it would allucinate on possible answers for questions outside of the scope of the embeddings.
+The `[fallback.prompt]` field is used when the LLM does not find a compatible embedding on the database, without it, it would hallucinate on possible answers for questions outside of the scope of the embeddings.
 
 It is also possible to add information to the prompt for subcategories, see below for an example of a complete configuration:
 
@@ -74,3 +76,30 @@ The **dialog** docker image is distributed in [GitHub Container Registry](https:
 ### local development
 
 We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) may help you.
+
+#### Creating new/altering tables or columns
+
+If you need to create new tables or columns, you need to run the following command:
+
+```bash
+docker compose exec web alembic revision --autogenerate
+```
+
+Then, with the generated file already modified with the operations you would like to perform, run the following command:
+
+```bash
+docker compose exec web alembic upgrade head
+```
+
+In order to the newly created table become available in SQLAlchemy, you need to add the following lines to the file `src/models/__init__.py`:
+
+```python
+class TableNameInSingular(Base):
+    __table__ = Table(
+        "your_db_table_name",
+        Base.metadata,
+        psql_autoload=True,
+        autoload_with=engine,
+        extend_existing=True
+    )
+```

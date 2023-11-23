@@ -22,6 +22,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
     volumes:
       - ./:/app
       - ./.empty:/app/data/db
