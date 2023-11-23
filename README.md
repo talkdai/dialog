@@ -24,6 +24,8 @@ category,subcategory,question,content
 faq,promotions,loyalty-program,"The company XYZ has a loyalty program when you refer new customers you get a discount on your next purchase, ..."
 ```
 
+To load the knowledge base into the database, make sure the database is up and then, inside `src` folder, run `make load-data`.
+
 ### `.toml` prompt configuration
 
 The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are mandatory fields used for processing the conversation and connecting to the LLM.
@@ -73,4 +75,4 @@ The **dialog** docker image is distributed in [GitHub Container Registry](https:
 
 ### local development
 
-We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) may help you.
+We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, the [`Makefile`](Makefile) in root and the [Makefile](src/Makefile) in `src` folder may help you.
