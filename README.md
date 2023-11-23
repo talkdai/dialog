@@ -65,6 +65,12 @@ docker compose up
 
 After uploading the project, go to the documentation `http://localhost:8000/docs` to see the API documentation.
 
+### Docker
+
+The **dialog** docker image is distributed in [GitHub Container Registry](https://github.com/orgs/talkdai/packages/container/package/dialog) with the tag `latest`.
+
+**image:** `docker pull ghcr.io/talkdai/dialog:latest`
+
 ### local development
 
 We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) may help you.
