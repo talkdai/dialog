@@ -18,4 +18,3 @@ RUN pip install poetry && \
 WORKDIR /app/src
 
 CMD [ "/app/etc/run.sh" ]
-
