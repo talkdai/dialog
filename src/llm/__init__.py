@@ -25,7 +25,11 @@ CHAT_LLM = ChatOpenAI(
 )
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 PROMPT = PROJECT_CONFIG.get("prompt")
-FALLBACK_PROMPT = PROJECT_CONFIG.get("fallback").get("prompt")
+
+FALLBACK_PROMPT = "Sorry, I don't understand. Can you rephrase that?"
+fallback_config = PROJECT_CONFIG.get("fallback")
+if fallback_config and fallback_config.get("prompt"):
+    FALLBACK_PROMPT = PROJECT_CONFIG.get("fallback").get("prompt")
 
 
 def generate_embeddings(documents: List[str]):
