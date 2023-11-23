@@ -3,8 +3,8 @@ run-name: build images, deploy to ghcr
 
 on:
   push:
-    branches:
-      - 'main'
+    #branches:
+    #  - 'main'
 
 jobs:
   build:
@@ -27,7 +27,6 @@ jobs:
           password: ${{ secrets.PKG_GITHUB_TOKEN }}
 
       - name: ghcr.io/talkdai/dialog:latest
-        # if: ${{ github.ref == 'refs/heads/main' }}
         env:
           GITHUB_REF: ${GITHUB_REF}
         run: |
