@@ -102,4 +102,5 @@ class TableNameInSingular(Base):
         autoload_with=engine,
         extend_existing=True
     )
+    __tablename__ = "your_db_table_name"
 ```

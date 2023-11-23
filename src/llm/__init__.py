@@ -17,6 +17,7 @@ from models import CompanyContent
 from models.db import session
 from settings import OPENAI_API_KEY, PROJECT_CONFIG, VERBOSE_LLM
 from sqlalchemy import asc, select
+from sqlalchemy import func
 
 CHAT_LLM = ChatOpenAI(
     openai_api_key=OPENAI_API_KEY,
@@ -52,8 +53,9 @@ def get_most_relevant_contents_from_message(message, top=5):
         select(CompanyContent).filter(
             CompanyContent.embedding.l2_distance(message_embedding) < 5
         ).order_by(
-            asc(CompanyContent.embedding.l2_distance(message_embedding))
-        ).limit(top)
+            CompanyContent.embedding.l2_distance(message_embedding).asc()
+        )
+        .limit(top)
     ).all()
     return possible_contents
 

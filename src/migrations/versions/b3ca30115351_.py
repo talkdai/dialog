@@ -4,7 +4,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from pgvector.sqlalchemy import Vector
-
+from sqlalchemy import text
 
 # revision identifiers, used by Alembic.
 revision: str = 'b3ca30115351'
@@ -21,15 +21,8 @@ def upgrade() -> None:
         sa.Column('subcategory', sa.String(), nullable=False),
         sa.Column('question', sa.String(), nullable=False),
         sa.Column('content', sa.Text(), nullable=False),
-        sa.Column('vector', Vector(1536), nullable=False),
+        sa.Column('embedding', Vector(1536), nullable=False),
         sa.PrimaryKeyConstraint('id')
-    )
-    # Creates index on embeddings
-    op.create_index(
-        op.f('ix_contents_vector'),
-        'contents',
-        ['vector'],
-        unique=False
     )
 
     op.create_table(
@@ -45,7 +38,7 @@ def upgrade() -> None:
         sa.Column('parent', sa.Integer(), nullable=True),
         sa.Column('session_id', sa.String(), nullable=False),
         sa.Column('message', JSONB(), nullable=False),
-        sa.Column('timestamp', TIMESTAMP(), nullable=False),
+        sa.Column('timestamp', TIMESTAMP(), nullable=False, server_default=text('CURRENT_TIMESTAMP')),
         sa.PrimaryKeyConstraint('id')
     )
 

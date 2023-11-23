@@ -1,36 +1,48 @@
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Table
+from sqlalchemy.exc import NoSuchTableError
+from sqlalchemy import Table, MetaData
+from .db import engine, Base
 
-from .db import engine
+from sqlalchemy import Column
+from pgvector.sqlalchemy import Vector
 
-Base = declarative_base()
+from .db import Base
 
-
-class Chat(Base):
-    __table__ = Table(
-        "chats",
-        Base.metadata,
-        psql_autoload=True,
-        autoload_with=engine,
-        extend_existing=True
-    )
-
-
-class ChatMessages(Base):
-    __table__ = Table(
-        "chat_messages",
-        Base.metadata,
-        psql_autoload=True,
-        autoload_with=engine,
-        extend_existing=True
-    )
+metadata = MetaData()
+metadata.bind = engine
+try:
+    class ChatMessages(Base):
+        __table__ = Table(
+            'chat_messages', metadata,  autoload_with=engine
+        )
+        __tablename__ = 'chat_messages'
 
 
-class CompanyContent(Base):
-    __table__ = Table(
-        "contents",
-        Base.metadata,
-        psql_autoload=True,
-        autoload_with=engine,
-        extend_existing=True
-    )
+except NoSuchTableError:
+    ChatMessages = None
+
+try:
+    class Chat(Base):
+        __table__ = Table(
+            'chats', metadata,  autoload_with=engine
+        )
+        __tablename__ = 'chats'
+
+
+except NoSuchTableError:
+    Chat = None
+
+
+try:
+    class CompanyContent(Base):
+        __table__ = Table(
+            'contents',
+            metadata,
+            autoload_with=engine
+        )
+        __tablename__ = 'contents'
+
+    CompanyContent.__table__.columns["embedding"].type = Vector(1536)
+
+
+except NoSuchTableError:
+    CompanyContent = None
