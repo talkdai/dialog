@@ -11,3 +11,4 @@ PROJECT_CONFIG = config(
     cast=lambda filename: tomllib.loads(Path(filename).read_text()),
     default={},
 )
+LOG_REQUEST_TIMING = config("LOG_REQUEST_TIMING", default=False, cast=bool)

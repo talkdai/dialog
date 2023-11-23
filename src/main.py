@@ -1,21 +1,44 @@
 # *-* coding: utf-8 *-*
+import time
 import uuid
+import logging
+
+from llm import process_user_intent
+from llm.memory import get_messages
+
+from models import Chat as ChatEntity
+from models.db import engine, session
+
+from settings import LOG_REQUEST_TIMING
+
+from pydantic import BaseModel
+from sqlalchemy import text
 
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from llm import process_user_intent
-from llm.memory import get_messages
-from models import Chat as ChatEntity
-from models.db import engine, session
-from pydantic import BaseModel
-from sqlalchemy import text
+from starlette.requests import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+class ResponseTimeMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        start_time = time.time()
+        response = await call_next(request)
+        execution_time = time.time() - start_time
+        response.headers["X-Response-Time"] = str(execution_time)
+        logger.info(f"{request.method} {request.url.path} took {execution_time * 1000} milliseconds")
+        return response
 
 app = FastAPI(
     title="Dialog API",
     description="Humanized Conversation API (using LLM)",
     version="0.1.0",
     docs_url="/docs",
-    openapi_url="/openapi.json"
+    openapi_url="/openapi.json",
 )
 
 origins = ["*"]
@@ -28,6 +51,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+if LOG_REQUEST_TIMING:
+    app.add_middleware(
+        ResponseTimeMiddleware
+    )
 
 class Chat(BaseModel):
     message: str

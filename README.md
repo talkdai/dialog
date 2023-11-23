@@ -74,3 +74,8 @@ The **dialog** docker image is distributed in [GitHub Container Registry](https:
 ### local development
 
 We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) may help you.
+
+
+#### Timing requests
+
+To enable timing requests, set the `LOG_REQUEST_TIMING` environment variable to `True` on .env.
