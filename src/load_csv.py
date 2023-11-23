@@ -7,6 +7,7 @@ from models.db import session
 from sqlalchemy import text
 import hashlib
 
+
 def load_csv_and_generate_embeddings(path):
     df = pd.read_csv(path)
     necessary_cols = ["category", "subcategory", "question", "content"]
@@ -17,23 +18,28 @@ def load_csv_and_generate_embeddings(path):
     df = df[necessary_cols]
 
     # Create primary key column using category, subcategory, and question
-    df["primary_key"] = df.apply(lambda row: hashlib.md5(
-        (
-            row["category"] + row["subcategory"] + row["question"]
-        ).encode()).hexdigest(), axis=1)
+    df["primary_key"] = df.apply(
+        lambda row: hashlib.md5(
+            (row["category"] + row["subcategory"] + row["question"]).encode()
+        ).hexdigest(),
+        axis=1,
+    )
 
     df_in_db = pd.read_sql(
-        text(f"SELECT category, subcategory, question, content FROM {CompanyContent.__tablename__}"),
-        session.get_bind()
+        text(
+            f"SELECT category, subcategory, question, content FROM {CompanyContent.__tablename__}"
+        ),
+        session.get_bind(),
     )
 
     # Create primary key column using category, subcategory, and question for df_in_db
     if not df_in_db.empty:
         df_in_db["primary_key"] = df_in_db.apply(
             lambda row: hashlib.md5(
-                (
-                    row["category"] + row["subcategory"] + row["question"]
-                ).encode()).hexdigest(), axis=1)
+                (row["category"] + row["subcategory"] + row["question"]).encode()
+            ).hexdigest(),
+            axis=1,
+        )
 
     else:
         df_in_db["primary_key"] = []
@@ -50,13 +56,13 @@ def load_csv_and_generate_embeddings(path):
         CompanyContent.__tablename__,
         session.get_bind(),
         if_exists="append",
-        index=False
+        index=False,
     )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path", type=str, required=False,
-                        default="./know.csv")
+    parser.add_argument("--path", type=str, required=False, default="./know.csv")
     args = parser.parse_args()
 
     load_csv_and_generate_embeddings(args.path)

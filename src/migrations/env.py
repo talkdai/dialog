@@ -1,18 +1,19 @@
-from logging.config import fileConfig
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
 import sqlalchemy as sa
+
 from alembic import context
 from decouple import config as d_config
+from sqlalchemy import engine_from_config, pool
 
+from models.db import Base
 from pgvector.sqlalchemy import Vector
+from logging.config import fileConfig
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
 # Load the environment variables from the .env file
-config.set_main_option('sqlalchemy.url', d_config('DATABASE_URL'))
+config.set_main_option("sqlalchemy.url", d_config("DATABASE_URL"))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -23,7 +24,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from models.db import Base
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -70,9 +71,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
