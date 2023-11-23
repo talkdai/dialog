@@ -15,12 +15,11 @@ from learn.idf import categorize_conversation_history
 from llm.memory import generate_memory_instance
 from models import CompanyContent
 from models.db import session
-from settings import OPENAI_API_KEY, PROJECT_CONFIG, VERBOSE_LLM, LLM_CONFIG
+from settings import OPENAI_API_KEY, PROJECT_CONFIG, PROMPT, VERBOSE_LLM, LLM_CONFIG
 from sqlalchemy import asc, select
 
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-PROMPT = PROJECT_CONFIG.get("prompt")
-MODEL_NAME = PROMPT.get("model_name", default="gpt-3.5-turbo")
+
 CHAT_LLM = ChatOpenAI(
     openai_api_key=OPENAI_API_KEY,
     temperature=LLM_CONFIG.get("temperature"),
