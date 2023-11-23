@@ -61,7 +61,7 @@ Look at the [`.env.sample`](.env.sample) file to see the environment variables n
 > we assume you are familiar with [Docker](https://www.docker.com/)
 
 ```bash
-cp .env.example .env # edit the .env file, add the OPENAI token and the path to the .csv and .toml files
+cp .env.sample .env # edit the .env file, add the OPENAI token and the path to the .csv and .toml files
 docker compose up
 ```
 
