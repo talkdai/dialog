@@ -20,7 +20,7 @@ from sqlalchemy import asc, select
 
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 PROMPT = PROJECT_CONFIG.get("prompt")
-MODEL_NAME = PROJECT_CONFIG.get("model_name", default="gpt-3.5-turbo")
+MODEL_NAME = PROMPT.get("model_name", default="gpt-3.5-turbo")
 CHAT_LLM = ChatOpenAI(
     openai_api_key=OPENAI_API_KEY,
     temperature=LLM_CONFIG.get("temperature"),
