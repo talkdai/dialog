@@ -18,13 +18,14 @@ from models.db import session
 from settings import OPENAI_API_KEY, PROJECT_CONFIG, VERBOSE_LLM, LLM_CONFIG
 from sqlalchemy import asc, select
 
-CHAT_LLM = ChatOpenAI(
-    openai_api_key=OPENAI_API_KEY,
-    model_name="gpt-3.5-turbo",
-    temperature=LLM_CONFIG.get("temperature"),
-)
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 PROMPT = PROJECT_CONFIG.get("prompt")
+MODEL_NAME = PROJECT_CONFIG.get("model_name", default="gpt-3.5-turbo")
+CHAT_LLM = ChatOpenAI(
+    openai_api_key=OPENAI_API_KEY,
+    temperature=LLM_CONFIG.get("temperature"),
+    model_name=MODEL_NAME,
+)
 
 FALLBACK_PROMPT = "Sorry, I don't understand. Can you rephrase that?"
 fallback_config = PROJECT_CONFIG.get("fallback")
