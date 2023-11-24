@@ -15,7 +15,7 @@ from learn.idf import categorize_conversation_history
 from llm.memory import generate_memory_instance
 from models import CompanyContent
 from models.db import session
-from settings import OPENAI_API_KEY, PROJECT_CONFIG, PROMPT, VERBOSE_LLM, LLM_CONFIG
+from settings import OPENAI_API_KEY, PROJECT_CONFIG, PROMPT, VERBOSE_LLM, LLM_CONFIG, MODEL_NAME
 from sqlalchemy import asc, select
 
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
@@ -25,6 +25,7 @@ CHAT_LLM = ChatOpenAI(
     temperature=LLM_CONFIG.get("temperature"),
     model_name=MODEL_NAME,
 )
+EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
 FALLBACK_PROMPT = "Sorry, I don't understand. Can you rephrase that?"
 fallback_config = PROJECT_CONFIG.get("fallback")
