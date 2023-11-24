@@ -1,3 +1,6 @@
+lint:
+	poetry run black .
+
 db:
 	docker compose up db
 
