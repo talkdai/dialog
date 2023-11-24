@@ -26,15 +26,20 @@ category,subcategory,question,content
 faq,promotions,loyalty-program,"The company XYZ has a loyalty program when you refer new customers you get a discount on your next purchase, ..."
 ```
 
+To load the knowledge base into the database, make sure the database is up and then, inside `src` folder, run `make load-data path="../data/know.csv"` (or pass another path to you .csv).
+
 ### `.toml` prompt configuration
 
 The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are mandatory fields used for processing the conversation and connecting to the LLM.
 
 The `[fallback.prompt]` field is used when the LLM does not find a compatible embedding on the database, without it, it would hallucinate on possible answers for questions outside of the scope of the embeddings.
 
-It is also possible to add information to the prompt for subcategories, see below for an example of a complete configuration:
+It is also possible to add information to the prompt for subcategories and chose some optional llm parameters like temperature (defaults to 0.2), see below for an example of a complete configuration:
 
 ```toml
+[llm]
+temperature = 0.2
+
 [prompt]
 header = """You are a service operator called Avelino from XYZ, you are an expert in providing
 qualified service to high-end customers. Be brief in your answers, without being long-winded
@@ -61,7 +66,7 @@ Look at the [`.env.sample`](.env.sample) file to see the environment variables n
 > we assume you are familiar with [Docker](https://www.docker.com/)
 
 ```bash
-cp .env.example .env # edit the .env file, add the OPENAI token and the path to the .csv and .toml files
+cp .env.sample .env # edit the .env file, add the OPENAI token and the path to the .csv and .toml files
 docker compose up
 ```
 
@@ -74,7 +79,6 @@ The **dialog** docker image is distributed in [GitHub Container Registry](https:
 **image:** `docker pull ghcr.io/talkdai/dialog:latest`
 
 ### local development
-
 We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) may help you.
 
 #### Creating new/altering tables or columns
