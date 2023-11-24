@@ -11,3 +11,4 @@ PROJECT_CONFIG = config(
     cast=lambda filename: tomllib.loads(Path(filename).read_text()),
     default={},
 )
+LLM_CONFIG = PROJECT_CONFIG.get("llm") or {"temperature": 0.2}

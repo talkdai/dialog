@@ -32,9 +32,12 @@ The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are 
 
 The `[fallback.prompt]` field is used when the LLM does not find a compatible embedding on the database, without it, it would allucinate on possible answers for questions outside of the scope of the embeddings.
 
-It is also possible to add information to the prompt for subcategories, see below for an example of a complete configuration:
+It is also possible to add information to the prompt for subcategories and chose some optional llm parameters like temperature (defaults to 0.2), see below for an example of a complete configuration:
 
 ```toml
+[llm]
+temperature = 0.2
+
 [prompt]
 header = """You are a service operator called Avelino from XYZ, you are an expert in providing
 qualified service to high-end customers. Be brief in your answers, without being long-winded
