@@ -1,2 +1,0 @@
-style:
-	poetry run black .
