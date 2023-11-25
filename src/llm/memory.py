@@ -1,4 +1,3 @@
-
 from langchain.memory import PostgresChatMessageHistory
 from langchain.schema.messages import (
     BaseMessage,
@@ -13,6 +12,7 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
     """
     Custom chat message history for LLM
     """
+
     def __init__(self, *args, parent_session_id=None, **kwargs):
         self.parent_session_id = parent_session_id
         super().__init__(*args, **kwargs)
@@ -33,12 +33,16 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
 
     def add_tags(self, tags: str) -> None:
         """Add tags for a given session_id/uuid on chats table"""
-        session.query(Chat).where(Chat.uuid == self.session_id).update({Chat.tags: tags})
+        session.query(Chat).where(Chat.uuid == self.session_id).update(
+            {Chat.tags: tags}
+        )
         session.commit()
 
     def add_message(self, message: BaseMessage) -> None:
         """Append the message to the record in PostgreSQL"""
-        message = ChatMessages(session_id=self.session_id, message=_message_to_dict(message))
+        message = ChatMessages(
+            session_id=self.session_id, message=_message_to_dict(message)
+        )
         if self.parent_session_id:
             message.parent = self.parent_session_id
         session.add(message)
@@ -53,7 +57,7 @@ def generate_memory_instance(session_id, parent_session_id=None):
         connection_string=DATABASE_URL,
         session_id=session_id,
         parent_session_id=parent_session_id,
-        table_name="chat_messages"
+        table_name="chat_messages",
     )
 
 

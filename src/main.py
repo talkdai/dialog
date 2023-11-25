@@ -23,7 +23,7 @@ app = FastAPI(
     description="Humanized Conversation API (using LLM)",
     version="0.1.0",
     docs_url="/docs",
-    openapi_url="/openapi.json"
+    openapi_url="/openapi.json",
 )
 
 origins = ["*"]
@@ -45,7 +45,7 @@ class Chat(BaseModel):
 async def health():
     with engine.connect() as con:
         try:
-            con.execute(text('SELECT 1'))
+            con.execute(text("SELECT 1"))
             return {"message": "Dialogue API is healthy"}
         except:
             return {"message": "Failed to execute simple SQL"}
@@ -53,9 +53,7 @@ async def health():
 
 @app.post("/chat/{chat_id}")
 async def post_message(chat_id: str, message: Chat):
-    chat_obj = session.query(ChatEntity).filter(
-        ChatEntity.uuid == chat_id
-    ).first()
+    chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
 
     if not chat_obj:
         raise HTTPException(
@@ -68,11 +66,10 @@ async def post_message(chat_id: str, message: Chat):
     logging.info(f"Request processing time for chat_id {chat_id}: {duration}")
     return {"message": ai_message["text"]}
 
+
 @app.get("/chat/{chat_id}")
 async def get_chat_content(chat_id):
-    chat_obj = session.query(ChatEntity).filter(
-        ChatEntity.uuid == chat_id
-    ).first()
+    chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
 
     if not chat_obj:
         raise HTTPException(

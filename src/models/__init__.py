@@ -1,41 +1,41 @@
-from datetime import datetime
+from sqlalchemy.exc import NoSuchTableError
+from sqlalchemy import Table, MetaData
+from .db import engine, Base
 
+from sqlalchemy import Column
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
-from sqlalchemy.orm import declarative_base
 
-from .db import engine
+from .db import Base
 
-Base = declarative_base()
+metadata = MetaData()
+metadata.bind = engine
+try:
 
+    class ChatMessages(Base):
+        __table__ = Table("chat_messages", metadata, autoload_with=engine)
+        __tablename__ = "chat_messages"
 
-class Chat(Base):
-    __tablename__ = "chats"
+except NoSuchTableError:
+    ChatMessages = None
 
-    uuid = Column(String, primary_key=True)
-    tags = Column(String, nullable=True)
+try:
 
+    class Chat(Base):
+        __table__ = Table("chats", metadata, autoload_with=engine)
+        __tablename__ = "chats"
 
-class ChatMessages(Base):
-    __tablename__ = "chat_messages"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    parent = Column(Integer, nullable=True)
-    session_id = Column(String, nullable=False)
-    message = Column(JSONB, nullable=False)
-    timestamp = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+except NoSuchTableError:
+    Chat = None
 
 
-class CompanyContent(Base):
-    __tablename__ = "contents"
+try:
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    category = Column(String)
-    subcategory = Column(String)
-    question = Column(String)
-    content = Column(String)
-    embedding = Column(Vector(1536))
+    class CompanyContent(Base):
+        __table__ = Table("contents", metadata, autoload_with=engine)
+        __tablename__ = "contents"
+
+    CompanyContent.__table__.columns["embedding"].type = Vector(1536)
 
 
-Base.metadata.create_all(engine)
+except NoSuchTableError:
+    CompanyContent = None
