@@ -78,4 +78,4 @@ We've used Python and bundled packages with `poetry`, now it's up to you - âš ï¸
 
 #### Timing requests
 
-To enable timing requests, set the `LOG_REQUEST_TIMING` environment variable to `True` on .env.
+You can get the time it takes to process a request by getting its X-Response-Time header.

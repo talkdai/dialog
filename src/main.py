@@ -30,7 +30,6 @@ class ResponseTimeMiddleware(BaseHTTPMiddleware):
         response = await call_next(request)
         execution_time = time.time() - start_time
         response.headers["X-Response-Time"] = str(execution_time)
-        logger.info(f"{request.method} {request.url.path} took {execution_time * 1000} milliseconds")
         return response
 
 app = FastAPI(
@@ -51,10 +50,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-if LOG_REQUEST_TIMING:
-    app.add_middleware(
-        ResponseTimeMiddleware
-    )
+app.add_middleware(
+    ResponseTimeMiddleware
+)
 
 class Chat(BaseModel):
     message: str
