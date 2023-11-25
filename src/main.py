@@ -10,6 +10,14 @@ from models.db import engine, session
 from pydantic import BaseModel
 from sqlalchemy import text
 
+import datetime
+import logging
+from settings import LOGGING_LEVEL
+logging.basicConfig(
+    level=LOGGING_LEVEL,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 app = FastAPI(
     title="Dialog API",
     description="Humanized Conversation API (using LLM)",
@@ -54,8 +62,10 @@ async def post_message(chat_id: str, message: Chat):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Chat ID not found",
         )
-
+    start_time = datetime.datetime.now()
     ai_message = process_user_intent(chat_id, message.message)
+    duration = datetime.datetime.now() - start_time
+    logging.info(f"Request processing time for chat_id {chat_id}: {duration}")
     return {"message": ai_message["text"]}
 
 @app.get("/chat/{chat_id}")
