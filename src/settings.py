@@ -3,6 +3,8 @@ from pathlib import Path
 import tomllib
 from decouple import config
 
+LOGGING_LEVEL = config("LOGGING_LEVEL", default="INFO")
+
 DATABASE_URL = config("DATABASE_URL")
 OPENAI_API_KEY = config("OPENAI_API_KEY")
 VERBOSE_LLM = config("VERBOSE_LLM", default=False, cast=bool)
