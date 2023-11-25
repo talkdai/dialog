@@ -18,8 +18,6 @@ from models.db import session
 from settings import OPENAI_API_KEY, PROJECT_CONFIG, PROMPT, VERBOSE_LLM, LLM_CONFIG, MODEL_NAME
 from sqlalchemy import asc, select
 
-EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-
 CHAT_LLM = ChatOpenAI(
     openai_api_key=OPENAI_API_KEY,
     temperature=LLM_CONFIG.get("temperature"),
