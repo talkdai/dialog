@@ -125,13 +125,4 @@ def process_user_intent(session_id, message):
     # categorize conversation history in background
     asyncio.create_task(categorize_conversation_history(chat_memory))
 
-    return ai_message(
-        {
-            "user_message": message,
-        }
-    )
-
-    # categorize conversation history in background
-    asyncio.create_task(categorize_conversation_history(chat_memory))
-
     return ai_message
