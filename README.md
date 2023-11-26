@@ -48,6 +48,8 @@ Be polite and friendly!"""
 
 suggested = "Here is some possible content that could help the user in a better way."
 
+memory = true # default is true, if true, the llm will use the memory to generate the answer
+
 [prompt.subcategory.loyalty-program]
 
 header = """The client is interested in the loyalty program, and needs to be responded to in a
