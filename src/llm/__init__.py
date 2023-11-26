@@ -4,19 +4,18 @@ from typing import List
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.prompts import (
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    MessagesPlaceholder,
-    SystemMessagePromptTemplate,
-)
 from langchain.memory.buffer import ConversationBufferMemory
+from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
+                               MessagesPlaceholder,
+                               SystemMessagePromptTemplate)
+from sqlalchemy import select
+
 from learn.idf import categorize_conversation_history
 from llm.memory import generate_memory_instance
 from models import CompanyContent
 from models.db import session
-from settings import OPENAI_API_KEY, PROJECT_CONFIG, PROMPT, VERBOSE_LLM, LLM_CONFIG, MODEL_NAME
-from sqlalchemy import select
+from settings import (LLM_CONFIG, MODEL_NAME, OPENAI_API_KEY, PROJECT_CONFIG,
+                      PROMPT, VERBOSE_LLM)
 
 CHAT_LLM = ChatOpenAI(
     openai_api_key=OPENAI_API_KEY,
@@ -103,14 +102,30 @@ def process_user_intent(session_id, message):
 
     prompt = ChatPromptTemplate(messages=prompt_templating)
 
-    chat_memory = generate_memory_instance(session_id)
-    memory = ConversationBufferMemory(
-        chat_memory=chat_memory, memory_key="chat_history", return_messages=True
-    )
-    conversation = LLMChain(
-        llm=CHAT_LLM, prompt=prompt, verbose=VERBOSE_LLM, memory=memory
-    )
+    conversation_options = {
+        "llm": CHAT_LLM,
+        "prompt": prompt,
+        "verbose": VERBOSE_LLM
+    }
+    if PROMPT.get("memory", True):
+        chat_memory = generate_memory_instance(session_id)
+        memory = ConversationBufferMemory(
+            chat_memory=chat_memory,
+            memory_key="chat_history",
+            return_messages=True
+        )
+        conversation_options["memory"] = memory
+    conversation = LLMChain(**conversation_options)
     ai_message = conversation(
+        {
+            "user_message": message,
+        }
+    )
+
+    # categorize conversation history in background
+    asyncio.create_task(categorize_conversation_history(chat_memory))
+
+    return ai_message(
         {
             "user_message": message,
         }
