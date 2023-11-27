@@ -4,7 +4,8 @@ from typing import List
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.memory.buffer import ConversationBufferMemory
+# from langchain.memory.buffer import ConversationBufferMemory
+from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
                                MessagesPlaceholder,
                                SystemMessagePromptTemplate)
@@ -109,11 +110,13 @@ def process_user_intent(session_id, message):
     }
     if PROMPT.get("memory", True):
         chat_memory = generate_memory_instance(session_id)
-        memory = ConversationBufferMemory(
-            chat_memory=chat_memory,
-            memory_key="chat_history",
-            return_messages=True
-        )
+        buffer_memory = {
+            "chat_memory": chat_memory,
+            "memory_key": "chat_history",
+            "return_messages": True,
+            "k": PROMPT.get("memory_size", 5),
+        }
+        memory = ConversationBufferWindowMemory(**buffer_memory)
         conversation_options["memory"] = memory
     conversation = LLMChain(**conversation_options)
     ai_message = conversation(
