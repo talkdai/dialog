@@ -4,7 +4,6 @@ from typing import List
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
-# from langchain.memory.buffer import ConversationBufferMemory
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
                                MessagesPlaceholder,
