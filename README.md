@@ -50,6 +50,8 @@ suggested = "Here is some possible content that could help the user in a better 
 
 memory = true # default is true, if true, the llm will use the memory to generate the answer
 
+memory_size = 5 # default is 5, if memory is true, the llm will use the memory to generate the answer
+
 [prompt.subcategory.loyalty-program]
 
 header = """The client is interested in the loyalty program, and needs to be responded to in a
