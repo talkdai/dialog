@@ -7,9 +7,6 @@ ENV PYTHONFAULTHANDLER=1
 ENV PYTHONHASHSEED=random
 ENV PYTHONUNBUFFERED=1
 
-COPY . /workspace
-COPY .devcontainer/bashrc /root/.bashrc
-
 RUN apt-get update && \
 	apt-get install --no-install-recommends -yq \
   postgresql-client \
@@ -18,10 +15,11 @@ RUN apt-get update && \
   vim && \
   apt-get autoremove -y && apt-get clean -y
 
+COPY . /workspace
+COPY .devcontainer/bashrc /root/.bashrc
+
 WORKDIR /workspace
 
 RUN pip install poetry && \
   poetry config virtualenvs.create false && \
-  poetry install
-
-WORKDIR /workspace
+  poetry install --sync
