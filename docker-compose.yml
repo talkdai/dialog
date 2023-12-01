@@ -18,7 +18,7 @@ services:
       timeout: 60s
       retries: 5
       start_period: 80s
-  web:
+  dialog:
     build:
       context: .
       dockerfile: Dockerfile
