@@ -13,6 +13,9 @@ from sqlalchemy import text
 import datetime
 import logging
 from settings import LOGGING_LEVEL
+from webhooks.router import router
+
+
 logging.basicConfig(
     level=LOGGING_LEVEL,
     format="%(asctime)s - %(levelname)s - %(message)s"
@@ -36,6 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(router, prefix="/webhooks", tags=["webhooks"])
 
 class Chat(BaseModel):
     message: str
