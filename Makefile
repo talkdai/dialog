@@ -7,5 +7,6 @@ db-up:
 run:
 	poetry run uvicorn --app-dir src main:app --reload --host 0.0.0.0 --port 8000 --lifespan on --env-file .env
 
+# make load-data path="data/2023-12-02.csv"
 load-data:
 	poetry run python src/load_csv.py --path $(path)

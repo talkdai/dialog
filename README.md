@@ -96,7 +96,7 @@ We don't upload the application when the container is started. To upload the app
 > Remember to generate the embedding vectors and create the `.env` file based on the `.env.sample` file before uploading the application.
 
 ```sh
-make load-data know-base-path.csv
+make load-data path="know-base-path.csv"
 make run
 ```
 
