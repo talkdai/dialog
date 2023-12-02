@@ -1,18 +1,22 @@
 # *-* coding: utf-8 *-*
+import datetime
+import logging
 import uuid
 
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+
 from llm import process_user_intent
 from llm.memory import get_messages
+
 from models import Chat as ChatEntity
 from models.db import engine, session
+
 from pydantic import BaseModel
 from sqlalchemy import text
 
-import datetime
-import logging
 from settings import LOGGING_LEVEL
+from models.helpers import create_session
 from webhooks.router import router
 
 
@@ -87,8 +91,4 @@ async def get_chat_content(chat_id):
 
 @app.post("/session")
 async def create_session():
-    session_uuid = uuid.uuid4().hex
-    chat = ChatEntity(uuid=session_uuid)
-    session.add(chat)
-    session.commit()
-    return {"chat_id": session_uuid}
+    return create_session()

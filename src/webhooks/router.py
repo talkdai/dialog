@@ -13,47 +13,32 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 POSSIBLE_ORIGINS = {
-    "facebookplatform/1.0 (+http://developers.facebook.com)": whatsapp_serializer,
-    "facebookexternalua": whatsapp_serializer
+    "facebook": whatsapp_serializer,
 }
 
-POSSIBLE_RESPONSES = {
-    "facebookplatform/1.0 (+http://developers.facebook.com)": whatsapp_get_response,
-    "facebookexternalua": whatsapp_post_response
+GET_RESPONSES = {
+    "facebook": whatsapp_get_response,
 }
 
-def detect_origin(request):
-    """
-    Detects the request origin, so we can specify which serializer to use
-    """
-    referer = request.headers.get('referer')
-    origin = request.headers.get('origin')
-    user_agent = request.headers.get('user-agent')
-    if referer or origin:
-        referer = urlparse(referer).netloc
-        origin = urlparse(origin).netloc
-    else:
-        referer = None
-        origin = None
-    return referer, origin, user_agent
+POST_RESPONSES = {
+    "facebook": whatsapp_post_response
+}
 
-
-@router.get("/")
-def webhook_get(request: Request):
-    referer_header, origin_header, user_agent_header = detect_origin(request)
-    origin = referer_header or origin_header or user_agent_header
+@router.get("/{origin}")
+def webhook_get(origin: str, request: Request):
     is_existing_origin = origin in POSSIBLE_ORIGINS.keys()
     if not is_existing_origin:
         raise HTTPException(status_code=404)
 
-    response_function = POSSIBLE_RESPONSES.get(origin, None)
+    response_function = GET_RESPONSES.get(origin, None)
 
     return response_function(request)
 
 
-@router.post("/")
-def webhook_post(request: Request, payload: Any = Body(None)):
-    referer_header, origin_header, user_agent_header = detect_origin(request)
-    origin = referer_header or origin_header or user_agent_header
-    serializer = POSSIBLE_RESPONSES.get(origin, None)
+@router.post("/{origin}")
+def webhook_post(origin: str, request: Request, payload: Any = Body(None)):
+    serializer = POST_RESPONSES.get(origin, None)
+    if serializer is None:
+        raise HTTPException(status_code=404)
+
     return serializer(request, payload)

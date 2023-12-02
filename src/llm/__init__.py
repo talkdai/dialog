@@ -125,6 +125,14 @@ def process_user_intent(session_id, message):
     )
 
     # categorize conversation history in background
-    asyncio.create_task(categorize_conversation_history(chat_memory))
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError as e:
+        if str(e).startswith('There is no current event loop in thread'):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+        else:
+            raise
 
+    asyncio.get_event_loop().run_until_complete(categorize_conversation_history(chat_memory))
     return ai_message
