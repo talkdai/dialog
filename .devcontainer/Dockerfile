@@ -22,4 +22,4 @@ WORKDIR /workspace
 
 RUN pip install poetry && \
   poetry config virtualenvs.create false && \
-  poetry install --sync
+  poetry install
