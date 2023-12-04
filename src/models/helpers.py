@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound
 
 from models import Chat as ChatEntity
 from models.db import session
@@ -12,7 +13,11 @@ def create_session(identifier = None):
     else:
         session_uuid = identifier
 
-    instance = session.query(ChatEntity).filter_by(uuid=session_uuid).one()
+    try:
+        instance = session.query(ChatEntity).filter_by(uuid=session_uuid).one()
+    except NoResultFound:
+        instance = None
+
     if instance is not None:
         return {"chat_id": instance.uuid}
 
