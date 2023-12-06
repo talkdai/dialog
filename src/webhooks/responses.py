@@ -13,7 +13,7 @@ from webhooks.serializers import *
 logger = logging.getLogger(__name__)
 
 
-def whatsapp_get_response(request):
+async def whatsapp_get_response(request):
     """
     Returns the challenge response for WhatsApp if verify token matches
     the one available in settings, else returns None
@@ -24,7 +24,7 @@ def whatsapp_get_response(request):
     raise HTTPException(status_code=404)
 
 
-def whatsapp_post_response(request, body):
+async def whatsapp_post_response(request, body):
     value = body["entry"][0]["changes"][0]["value"]
     try:
         message = value["messages"][0]["text"]["body"]
@@ -42,7 +42,8 @@ def whatsapp_post_response(request, body):
 
     create_session(identifier=from_number)
 
-    processed_message = process_user_intent(from_number, message)["text"]
+    processed_message = await process_user_intent(from_number, message)
+    processed_message = processed_message["text"]
     logger.info("Processed message: %s", processed_message)
 
     data = {

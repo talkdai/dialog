@@ -69,7 +69,7 @@ async def post_message(chat_id: str, message: Chat):
             detail="Chat ID not found",
         )
     start_time = datetime.datetime.now()
-    ai_message = process_user_intent(chat_id, message.message)
+    ai_message = await process_user_intent(chat_id, message.message)
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time for chat_id {chat_id}: {duration}")
     return {"message": ai_message["text"]}

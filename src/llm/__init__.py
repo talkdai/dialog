@@ -48,14 +48,14 @@ def get_most_relevant_contents_from_message(message, top=5):
     message_embedding = generate_embedding(message)
     possible_contents = session.scalars(
         select(CompanyContent)
-        .filter(CompanyContent.embedding.l2_distance(message_embedding) < 5)
+        .filter(CompanyContent.embedding.l2_distance(message_embedding) < 1)
         .order_by(CompanyContent.embedding.l2_distance(message_embedding).asc())
         .limit(top)
     ).all()
     return possible_contents
 
 
-def process_user_intent(session_id, message):
+async def process_user_intent(session_id, message):
     """
     Process user intent using memory and embeddings
     """
