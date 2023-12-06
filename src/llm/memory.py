@@ -1,8 +1,6 @@
 from langchain.memory import PostgresChatMessageHistory
-from langchain.schema.messages import (
-    BaseMessage,
-    _message_to_dict,
-)
+from langchain.schema.messages import BaseMessage, _message_to_dict
+
 from models import Chat, ChatMessages
 from models.db import session
 from settings import DATABASE_URL

@@ -49,6 +49,10 @@ Be polite and friendly!"""
 
 suggested = "Here is some possible content that could help the user in a better way."
 
+memory = true # default is true, if true, the llm will use the memory to generate the answer
+
+memory_size = 5 # default is 5, if memory is true, the llm will use the memory to generate the answer
+
 [prompt.subcategory.loyalty-program]
 
 header = """The client is interested in the loyalty program, and needs to be responded to in a
@@ -78,6 +82,24 @@ After uploading the project, go to the documentation `http://localhost:8000/docs
 The **dialog** docker image is distributed in [GitHub Container Registry](https://github.com/orgs/talkdai/packages/container/package/dialog) with the tag `latest`.
 
 **image:** `docker pull ghcr.io/talkdai/dialog:latest`
+
+### dev container
+
+If you are using VSCode, you can use the [devcontainer](.devcontainer) to run the project.
+
+When we upload the environment into devcontainer, we upload the following containers:
+
+* `db`: container with the postgres database with **pgvector** extension
+* `dialog`: container with the api (the project)
+
+We don't upload the application when the container is started. To upload the application, run the `make run` command inside the container console (bash).
+
+> Remember to generate the embedding vectors and create the `.env` file based on the `.env.sample` file before uploading the application.
+
+```sh
+make load-data path="know-base-path.csv"
+make run
+```
 
 ### local development
 

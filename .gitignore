@@ -161,3 +161,5 @@ cython_debug/
 data
 cache/
 requirements.txt
+*.csv
+*.toml
