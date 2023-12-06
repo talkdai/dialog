@@ -82,6 +82,24 @@ The **dialog** docker image is distributed in [GitHub Container Registry](https:
 
 **image:** `docker pull ghcr.io/talkdai/dialog:latest`
 
+### dev container
+
+If you are using VSCode, you can use the [devcontainer](.devcontainer) to run the project.
+
+When we upload the environment into devcontainer, we upload the following containers:
+
+* `db`: container with the postgres database with **pgvector** extension
+* `dialog`: container with the api (the project)
+
+We don't upload the application when the container is started. To upload the application, run the `make run` command inside the container console (bash).
+
+> Remember to generate the embedding vectors and create the `.env` file based on the `.env.sample` file before uploading the application.
+
+```sh
+make load-data path="know-base-path.csv"
+make run
+```
+
 ### local development
 
 We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) may help you.
