@@ -4,7 +4,7 @@ import logging
 from fastapi import HTTPException
 
 from llm import process_user_intent
-from settings import WHATSAPP_VERIFY_TOKEN, WHATSAPP_API_TOKEN
+from settings import WHATSAPP_VERIFY_TOKEN, WHATSAPP_API_TOKEN, WHATSAPP_ACCOUNT_NUMBER
 
 from models.helpers import create_session
 
@@ -29,17 +29,16 @@ def whatsapp_post_response(request, body):
     try:
         message = value["messages"][0]["text"]["body"]
     except KeyError:
-        logger.error(f"Message body not found in request, {body}")
-        raise HTTPException(status_code=400)
+        raise HTTPException(status_code=200)
 
     phone_number_id = value["metadata"]["phone_number_id"]
     from_number = value["messages"][0]["from"]
+    logger.info(value)
     headers = {
         "Authorization": f"Bearer {WHATSAPP_API_TOKEN}",
         "Content-Type": "application/json",
     }
-    url = f"https://graph.facebook.com/v15.0/{phone_number_id}/messages"
-
+    url = f"https://graph.facebook.com/v17.0/{WHATSAPP_ACCOUNT_NUMBER}/messages"
 
     create_session(identifier=from_number)
 
@@ -53,5 +52,8 @@ def whatsapp_post_response(request, body):
         "text": {"body": processed_message},
     }
     response = requests.post(url, json=data, headers=headers)
+    if response.status_code not in [200, 201]:
+        logger.info(f"Failed request: {response.text}")
+
     response.raise_for_status()
     return {"status": "success"}
