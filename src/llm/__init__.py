@@ -134,5 +134,5 @@ def process_user_intent(session_id, message):
         else:
             raise
 
-    asyncio.get_event_loop().run_until_complete(categorize_conversation_history(chat_memory))
+    loop.run_until_complete(categorize_conversation_history(chat_memory))
     return ai_message

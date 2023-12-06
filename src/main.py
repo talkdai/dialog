@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from sqlalchemy import text
 
 from settings import LOGGING_LEVEL
-from models.helpers import create_session
+from models.helpers import create_session as db_create_session
 from webhooks.router import router
 
 
@@ -91,4 +91,4 @@ async def get_chat_content(chat_id):
 
 @app.post("/session")
 async def create_session():
-    return create_session()
+    return db_create_session()
