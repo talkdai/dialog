@@ -125,7 +125,5 @@ def process_user_intent(session_id, message):
     )
 
     # categorize conversation history in background
-
-    loop = asyncio.new_event_loop()
-    loop.run_until_complete(categorize_conversation_history(chat_memory))
+    asyncio.create_task(categorize_conversation_history(chat_memory))
     return ai_message
