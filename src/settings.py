@@ -14,7 +14,7 @@ PROJECT_CONFIG = config(
     default={},
 )
 
-LLM_CONFIG = {"temperature": 0.2, "model_name": "gpt-3.5-turbo"}  
+LLM_CONFIG = {"temperature": 0.2, "model_name": "gpt-3.5-turbo"}
 LLM_CONFIG.update(PROJECT_CONFIG.get("llm", {}))
 MODEL_NAME = LLM_CONFIG.get("model_name")
 PROMPT = PROJECT_CONFIG.get("prompt", {})
