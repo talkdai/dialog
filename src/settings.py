@@ -13,10 +13,12 @@ PROJECT_CONFIG = config(
     cast=lambda filename: tomllib.loads(Path(filename).read_text()),
     default={},
 )
-LLM_CONFIG = PROJECT_CONFIG.get("llm") or {"temperature": 0.2}
 
+LLM_CONFIG = {"temperature": 0.2, "model_name": "gpt-3.5-turbo"}  
+LLM_CONFIG.update(PROJECT_CONFIG.get("llm", {}))
+MODEL_NAME = LLM_CONFIG.get("model_name")
 PROMPT = PROJECT_CONFIG.get("prompt", {})
-MODEL_NAME = PROMPT.get("model_name", "gpt-3.5-turbo")
+
 WHATSAPP_VERIFY_TOKEN = config("WHATSAPP_VERIFY_TOKEN", "1234567890")
 WHATSAPP_API_TOKEN = config("WHATSAPP_API_TOKEN", "1234567890")
 WHATSAPP_ACCOUNT_NUMBER = config("WHATSAPP_ACCOUNT_NUMBER", "")
