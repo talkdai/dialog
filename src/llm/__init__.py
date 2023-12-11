@@ -60,7 +60,7 @@ async def process_user_intent(session_id, message):
     Process user intent using memory and embeddings
     """
     # top 2 most relevant contents
-    relevant_contents = get_most_relevant_contents_from_message(message, top=2)
+    relevant_contents = get_most_relevant_contents_from_message(message, top=1)
 
     if len(relevant_contents) == 0:
         prompt_templating = [
@@ -69,8 +69,8 @@ async def process_user_intent(session_id, message):
         ]
         relevant_contents = []
     else:
-        suggested_content = "\n\n".join(
-            [f"{c.question}\n{c.content}\n\n" for c in relevant_contents]
+        suggested_content = "Contexto: \n".join(
+            [f"{c.question}\n{c.content}\n" for c in relevant_contents]
         )
 
         prompt_templating = [
@@ -94,11 +94,11 @@ async def process_user_intent(session_id, message):
     if len(relevant_contents) > 0:
         prompt_templating.append(
             SystemMessagePromptTemplate.from_template(
-                f"{PROMPT.get('suggested')}\n\n{suggested_content}"
+                f"{PROMPT.get('suggested')}. {suggested_content}"
             )
         )
 
-    prompt_templating.append(HumanMessagePromptTemplate.from_template("{user_message}"))
+    prompt_templating.append(HumanMessagePromptTemplate.from_template("Responda a seguinte pergunta:\n{user_message}"))
 
     prompt = ChatPromptTemplate(messages=prompt_templating)
 
