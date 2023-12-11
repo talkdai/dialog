@@ -98,7 +98,8 @@ async def process_user_intent(session_id, message):
             )
         )
 
-    prompt_templating.append(HumanMessagePromptTemplate.from_template("Responda a seguinte pergunta:\n{user_message}"))
+    question_text = PROMPT.get("question_signalizer")
+    prompt_templating.append(HumanMessagePromptTemplate.from_template("{question_text}:\n{user_message}"))
 
     prompt = ChatPromptTemplate(messages=prompt_templating)
 
