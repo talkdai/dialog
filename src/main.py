@@ -1,7 +1,7 @@
 # *-* coding: utf-8 *-*
+import importlib
 import datetime
 import logging
-import uuid
 
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,7 +15,7 @@ from models.db import engine, session
 from pydantic import BaseModel
 from sqlalchemy import text
 
-from settings import LOGGING_LEVEL
+from settings import LOGGING_LEVEL, PLUGINS
 from models.helpers import create_session as db_create_session
 from webhooks.router import router
 
@@ -92,3 +92,16 @@ async def get_chat_content(chat_id):
 @app.post("/session")
 async def create_session():
     return db_create_session()
+
+
+for plugin in PLUGINS:
+    try:
+        logging.info(f"Loading plugin: {plugin}")
+        plugin_module = importlib.import_module(plugin)
+    except ImportError:
+        logging.warning(f"Failed to import plugin {plugin}")
+
+    try:
+        app.include_router(plugin_module.router)
+    except AttributeError:
+        logging.warning(f"Failed to add Plugin: {plugin} to main router")

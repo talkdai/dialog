@@ -132,3 +132,27 @@ class TableNameInSingular(Base):
     )
     __tablename__ = "your_db_table_name"
 ```
+
+## Adding plugins to the project
+
+The project is extensible and can support extra endpoints. To add new endpoints, you need to create a package inside the `src/plugins` folder and, inside the new package folder, add the following file:
+
+- `__init__.py`: the default package initializer from Python (this file can be empty), but we recommend you to create the router here.
+
+Inside the `__init__.py` file, you need to create a FastAPI router that will be loaded into the app dynamically:
+
+```python
+from fastapi import APIRouter
+
+router = APIRouter()
+
+# add your routes here
+```
+
+The variable that instantiates APIRouter must be called **router**.
+
+After creating the plugin, in order to run it, add the environment variable PLUGINS to your .env file:
+
+```bash
+PLUGINS=plugins.your_plugin_name # or PLUGINS=plugins.your_plugin_name.file_name if there is another file to be used as entrypoint
+```

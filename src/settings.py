@@ -13,6 +13,7 @@ PROJECT_CONFIG = config(
     cast=lambda filename: tomllib.loads(Path(filename).read_text()),
     default={},
 )
+PLUGINS = config("PLUGINS", cast=lambda s: s.split(","), default=[])
 
 LLM_CONFIG = {"temperature": 0.2, "model_name": "gpt-3.5-turbo"}
 LLM_CONFIG.update(PROJECT_CONFIG.get("llm", {}))
