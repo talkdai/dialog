@@ -156,3 +156,12 @@ After creating the plugin, in order to run it, add the environment variable PLUG
 ```bash
 PLUGINS=plugins.your_plugin_name # or PLUGINS=plugins.your_plugin_name.file_name if there is another file to be used as entrypoint
 ```
+
+### Tests
+
+Running tests on the project is simple, just add the flag `TEST` to the .env file/environment variables and run the project.
+
+```bash
+docker-compose up -d db # run the database
+docker-compose up -d dialog # run the api
+```
