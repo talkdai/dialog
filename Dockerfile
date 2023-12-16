@@ -7,13 +7,17 @@ ENV PYTHONFAULTHANDLER=1
 ENV PYTHONHASHSEED=random
 ENV PYTHONUNBUFFERED=1
 
-COPY . /app
-
 WORKDIR /app
+
+COPY poetry.lock pyproject.toml /app/
 
 RUN pip install poetry && \
   poetry config virtualenvs.create false && \
   poetry install --no-dev
+
+COPY . /app
+
+
 
 WORKDIR /app/src
 
