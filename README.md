@@ -34,10 +34,10 @@ The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are 
 
 The `[fallback.prompt]` field is used when the LLM does not find a compatible embedding on the database, without it, it would hallucinate on possible answers for questions outside of the scope of the embeddings.
 
-It is also possible to add information to the prompt for subcategories and chose some optional llm parameters like temperature (defaults to 0.2) or model_name, see below for an example of a complete configuration:
+It is also possible to add information to the prompt for subcategories and choose some optional llm parameters like temperature (defaults to 0.2) or model_name, see below for an example of a complete configuration:
 
 ```toml
-[llm]
+[model]
 temperature = 0.2
 model_name = "gpt-3.5-turbo"
 
@@ -48,10 +48,6 @@ and objective in your responses. Never say that you are a model (AI), always ans
 Be polite and friendly!"""
 
 suggested = "Here is some possible content that could help the user in a better way."
-
-memory = true # default is true, if true, the llm will use the memory to generate the answer
-
-memory_size = 5 # default is 5, if memory is true, the llm will use the memory to generate the answer
 
 [prompt.subcategory.loyalty-program]
 
@@ -133,7 +129,19 @@ class TableNameInSingular(Base):
     __tablename__ = "your_db_table_name"
 ```
 
-## Adding plugins to the project
+## Extending the default LLM
+
+This project uses as a base LLM implementation the class ChatOpenAI from Langchain. If you want to extend the default LLM, you can create a new class that inherits from AbstractLLM (located in the file src/llm/abstract_llm.py) and override the methods you want to change and add behavior.
+
+To use your custom LLM, just add the environment variable LLM_CLASS to your .env file/environment variables:
+
+```
+LLM_CLASS=plugins.my_llm.MyLLMClass
+```
+
+If you don't implement your own LLM model or your model doesn't inherit the class from AbstractLLM, the default LLM will be used by default.
+
+## Adding extra routes to the project
 
 The project is extensible and can support extra endpoints. To add new endpoints, you need to create a package inside the `src/plugins` folder and, inside the new package folder, add the following file:
 
@@ -151,7 +159,7 @@ router = APIRouter()
 
 The variable that instantiates APIRouter must be called **router**.
 
-After creating the plugin, in order to run it, add the environment variable PLUGINS to your .env file:
+After creating the plugin, to run it, add the environment variable PLUGINS to your .env file:
 
 ```bash
 PLUGINS=plugins.your_plugin_name # or PLUGINS=plugins.your_plugin_name.file_name if there is another file to be used as entrypoint
@@ -159,7 +167,7 @@ PLUGINS=plugins.your_plugin_name # or PLUGINS=plugins.your_plugin_name.file_name
 
 ### Tests
 
-Running tests on the project is simple, just add the flag `TEST` to the .env file/environment variables and run the project.
+Running tests on the project is simple, just add the flag `TEST=true` to the .env file/environment variables and run the project.
 
 ```bash
 docker-compose up -d db # run the database

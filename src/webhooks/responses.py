@@ -3,8 +3,13 @@ import logging
 
 from fastapi import HTTPException
 
-from llm import process_user_intent
-from settings import WHATSAPP_VERIFY_TOKEN, WHATSAPP_API_TOKEN, WHATSAPP_ACCOUNT_NUMBER
+from llm import get_llm_class
+from settings import (
+    WHATSAPP_VERIFY_TOKEN,
+    WHATSAPP_API_TOKEN,
+    WHATSAPP_ACCOUNT_NUMBER,
+    PROJECT_CONFIG
+)
 
 from models.helpers import create_session
 
@@ -42,7 +47,9 @@ async def whatsapp_post_response(request, body):
 
     create_session(identifier=from_number)
 
-    processed_message = await process_user_intent(from_number, message)
+    LLM = get_llm_class()
+    llm = LLM(config=PROJECT_CONFIG, session_id=from_number)
+    processed_message = llm.process(message)
     processed_message = processed_message["text"]
     logger.info("Processed message: %s", processed_message)
 
