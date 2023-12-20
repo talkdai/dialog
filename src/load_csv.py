@@ -20,8 +20,7 @@ def load_csv_and_generate_embeddings(path):
     # Create primary key column using category, subcategory, and question
     df["primary_key"] = df["category"] + df["subcategory"] + df["question"]
     df["primary_key"] = df["primary_key"].apply(
-        lambda row: hashlib.md5(row.encode()).hexdigest(),
-        axis=1
+        lambda row: hashlib.md5(row.encode()).hexdigest()
     )
 
     df_in_db = pd.read_sql(
@@ -35,8 +34,7 @@ def load_csv_and_generate_embeddings(path):
     if not df_in_db.empty:
         df_in_db["primary_key"] = df_in_db["category"] + df_in_db["subcategory"] + df_in_db["question"]
         df_in_db["primary_key"] = df_in_db["primary_key"].apply(
-            lambda row: hashlib.md5(row.encode()).hexdigest(),
-            axis=1
+            lambda row: hashlib.md5(row.encode()).hexdigest()
         )
 
     # Filter df for keys present in df and not present in df_in_db

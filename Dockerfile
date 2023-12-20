@@ -15,8 +15,8 @@ RUN pip install poetry && \
   poetry config virtualenvs.create false && \
   poetry install --no-dev
 
-COPY . /app
-
+COPY /src/ /app
+COPY /etc/ /app
 
 
 WORKDIR /app/src

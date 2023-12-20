@@ -3,8 +3,6 @@ import datetime
 import importlib
 import logging
 
-from copy import copy
-
 from llm import get_llm_class
 from llm.memory import get_messages
 from models import Chat as ChatEntity
