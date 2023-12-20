@@ -1,21 +1,23 @@
 # *-* coding: utf-8 *-*
-import importlib
 import datetime
+import importlib
 import logging
+
+from copy import copy
+
+from llm import get_llm_class
+from llm.memory import get_messages
+from models import Chat as ChatEntity
+from models.db import engine, session
+
+from settings import LOGGING_LEVEL, PLUGINS, PROJECT_CONFIG
+
+from sqlalchemy import text
+from pydantic import BaseModel
 
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 
-from llm import process_user_intent
-from llm.memory import get_messages
-
-from models import Chat as ChatEntity
-from models.db import engine, session
-
-from pydantic import BaseModel
-from sqlalchemy import text
-
-from settings import LOGGING_LEVEL, PLUGINS
 from models.helpers import create_session as db_create_session
 from webhooks.router import router
 
@@ -69,7 +71,9 @@ async def post_message(chat_id: str, message: Chat):
             detail="Chat ID not found",
         )
     start_time = datetime.datetime.now()
-    ai_message = await process_user_intent(chat_id, message.message)
+    LLM = get_llm_class()
+    llm_instance = LLM(config=PROJECT_CONFIG, session_id=chat_id)
+    ai_message = llm_instance.process(message.message)
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time for chat_id {chat_id}: {duration}")
     return {"message": ai_message["text"]}

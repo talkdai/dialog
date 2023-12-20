@@ -1,7 +1,7 @@
 import argparse
 
 import pandas as pd
-from llm import generate_embeddings
+from llm.embeddings import generate_embeddings
 from models import CompanyContent
 from models.db import session
 from sqlalchemy import text

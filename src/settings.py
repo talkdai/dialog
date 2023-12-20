@@ -15,10 +15,8 @@ PROJECT_CONFIG = config(
 )
 PLUGINS = config("PLUGINS", cast=lambda s: s.split(","), default=[])
 
-LLM_CONFIG = {"temperature": 0.2, "model_name": "gpt-3.5-turbo"}
-LLM_CONFIG.update(PROJECT_CONFIG.get("llm", {}))
-MODEL_NAME = LLM_CONFIG.get("model_name")
-PROMPT = PROJECT_CONFIG.get("prompt", {})
+# Used to load custom LLM classes
+LLM_CLASS = config("LLM_CLASS", default=None)
 
 WHATSAPP_VERIFY_TOKEN = config("WHATSAPP_VERIFY_TOKEN", "1234567890")
 WHATSAPP_API_TOKEN = config("WHATSAPP_API_TOKEN", "1234567890")
