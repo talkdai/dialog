@@ -18,11 +18,10 @@ def load_csv_and_generate_embeddings(path):
     df = df[necessary_cols]
 
     # Create primary key column using category, subcategory, and question
-    df["primary_key"] = df.apply(
-        lambda row: hashlib.md5(
-            (row["category"] + row["subcategory"] + row["question"]).encode()
-        ).hexdigest(),
-        axis=1,
+    df["primary_key"] = df["category"] + df["subcategory"] + df["question"]
+    df["primary_key"] = df["primary_key"].apply(
+        lambda row: hashlib.md5(row.encode()).hexdigest(),
+        axis=1
     )
 
     df_in_db = pd.read_sql(
@@ -34,18 +33,15 @@ def load_csv_and_generate_embeddings(path):
 
     # Create primary key column using category, subcategory, and question for df_in_db
     if not df_in_db.empty:
-        df_in_db["primary_key"] = df_in_db.apply(
-            lambda row: hashlib.md5(
-                (row["category"] + row["subcategory"] + row["question"]).encode()
-            ).hexdigest(),
-            axis=1,
+        df_in_db["primary_key"] = df_in_db["category"] + df_in_db["subcategory"] + df_in_db["question"]
+        df_in_db["primary_key"] = df_in_db["primary_key"].apply(
+            lambda row: hashlib.md5(row.encode()).hexdigest(),
+            axis=1
         )
 
-    else:
-        df_in_db["primary_key"] = []
-
     # Filter df for keys present in df and not present in df_in_db
-    df_filtered = df[~df["primary_key"].isin(df_in_db["primary_key"])]
+    new_keys = set(df["primary_key"]) - set(df_in_db["primary_key"])
+    df_filtered = df[df["primary_key"].isin(new_keys)]
 
     print("Generating embeddings for new questions...")
     print("New questions:", len(df_filtered))
