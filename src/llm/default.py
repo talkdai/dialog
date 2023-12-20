@@ -1,6 +1,8 @@
 import logging
+import asyncio
 
 from llm.abstract_llm import AbstractLLM
+from learn.idf import categorize_conversation_history
 from llm.memory import generate_memory_instance
 from llm.embeddings import get_most_relevant_contents_from_message
 
@@ -25,9 +27,6 @@ class DialogLLM(AbstractLLM):
                 parent_session_id=self.config.get("parent_session_id")
             )
         return None
-
-    def preprocess(self, input: str) -> str:
-        return input
 
     def generate_prompt(self, input):
         relevant_contents = get_most_relevant_contents_from_message(input, top=1)
@@ -87,6 +86,7 @@ class DialogLLM(AbstractLLM):
         return LLMChain(**conversation_options)
 
     def postprocess(self, input: str) -> str:
+        asyncio.create_task(categorize_conversation_history(self.memory))
         return input
 
     def process(self, input: str):

@@ -1,6 +1,8 @@
 import logging
 import importlib
 
+from typing import Type
+
 from .default import DialogLLM
 from .abstract_llm import AbstractLLM
 from settings import OPENAI_API_KEY, LLM_CLASS
