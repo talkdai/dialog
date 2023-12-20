@@ -6,7 +6,7 @@ from .abstract_llm import AbstractLLM
 from settings import OPENAI_API_KEY, LLM_CLASS
 
 
-def get_llm_class() -> AbstractLLM:
+def get_llm_class() -> Type[AbstractLLM]:
     if LLM_CLASS is None:
         return DialogLLM
 
