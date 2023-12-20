@@ -13,7 +13,7 @@ PROJECT_CONFIG = config(
     cast=lambda filename: tomllib.loads(Path(filename).read_text()),
     default={},
 )
-PLUGINS = config("PLUGINS", cast=lambda s: s.split(","), default="")
+PLUGINS = config("PLUGINS", cast=lambda x: x.split(",") if isinstance(x, str) else x, default=[])
 
 # Used to load custom LLM classes
 LLM_CLASS = config("LLM_CLASS", default=None)
