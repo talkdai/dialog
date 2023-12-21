@@ -5,7 +5,7 @@ from langchain.memory.chat_memory import BaseChatMemory
 from langchain.prompts import ChatPromptTemplate
 
 class AbstractLLM:
-    def __init__(self, config, session_id=None):
+    def __init__(self, config, session_id=None, parent_session_id=None):
         """
         :param config: Configuration dictionary
 
@@ -14,12 +14,13 @@ class AbstractLLM:
         can be used to configure the LLM temperature, prompt and other
         necessities.
         """
-        if config is None or not isinstance(config, dict):
+        if not isinstance(config, dict):
             raise ValueError("Config must be a dictionary")
 
         self.config = config
         self.prompt = None
         self.session_id = session_id
+        self.parent_session_id = parent_session_id
 
     def get_prompt(self, input) -> ChatPromptTemplate:
         """
@@ -60,12 +61,12 @@ class AbstractLLM:
         """
         return input
 
-    def postprocess(self, input: str) -> str:
+    def postprocess(self, output: str) -> str:
         """
         Function that post-process the LLM output, enabling users
         to modify the output before it is returned to the user.
         """
-        return input
+        return output
 
     def process(self, input: str):
         """
