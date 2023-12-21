@@ -24,7 +24,7 @@ class DialogLLM(AbstractLLM):
         if self.session_id:
             return generate_memory_instance(
                 session_id=self.session_id,
-                parent_session_id=self.config.get("parent_session_id")
+                parent_session_id=self.parent_session_id
             )
         return None
 
@@ -85,9 +85,9 @@ class DialogLLM(AbstractLLM):
 
         return LLMChain(**conversation_options)
 
-    def postprocess(self, input: str) -> str:
+    def postprocess(self, output: str) -> str:
         asyncio.create_task(categorize_conversation_history(self.memory))
-        return input
+        return output
 
     def process(self, input: str):
         processed_input = self.preprocess(input)
