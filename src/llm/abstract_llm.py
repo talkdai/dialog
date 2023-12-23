@@ -74,6 +74,7 @@ class AbstractLLM:
         of the LLM.
         """
         processed_input = self.preprocess(input)
+        self.generate_prompt(processed_input)
         output = self.llm({
             "user_message": processed_input,
         })

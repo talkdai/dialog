@@ -61,7 +61,7 @@ class DialogLLM(AbstractLLM):
         self.prompt = ChatPromptTemplate(messages=prompt_templating)
 
     @property
-    def llm_chain(self) -> LLMChain:
+    def llm(self) -> LLMChain:
         llm_config = self.config.get("model", {})
         conversation_options ={
             "llm": ChatOpenAI(
@@ -88,12 +88,3 @@ class DialogLLM(AbstractLLM):
     def postprocess(self, output: str) -> str:
         asyncio.create_task(categorize_conversation_history(self.memory))
         return output
-
-    def process(self, input: str):
-        processed_input = self.preprocess(input)
-        self.generate_prompt(processed_input)
-        output = self.llm_chain({
-            "user_message": processed_input,
-        })
-        processed_output = self.postprocess(output)
-        return processed_output
