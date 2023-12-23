@@ -8,7 +8,7 @@ from llm.memory import get_messages
 from models import Chat as ChatEntity
 from models.db import engine, session
 
-from settings import LOGGING_LEVEL, PLUGINS, PROJECT_CONFIG
+from settings import LOGGING_LEVEL, PLUGINS, PROJECT_CONFIG, STATIC_FILE_LOCATION
 
 from sqlalchemy import text
 from pydantic import BaseModel
@@ -18,7 +18,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.helpers import create_session as db_create_session
 from fastapi.staticfiles import StaticFiles
-from webhooks.router import router
 
 
 logging.basicConfig(
@@ -44,8 +43,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router, prefix="/webhooks", tags=["webhooks"])
-app.mount("/static", StaticFiles(directory="/app/static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_FILE_LOCATION), name="static")
 
 class Chat(BaseModel):
     message: str
