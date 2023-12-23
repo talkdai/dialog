@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import tomllib
-from decouple import config
+from decouple import config, Csv
 
 LOGGING_LEVEL = config("LOGGING_LEVEL", default="INFO")
 
@@ -13,7 +13,7 @@ PROJECT_CONFIG = config(
     cast=lambda filename: tomllib.loads(Path(filename).read_text()),
     default={},
 )
-PLUGINS = config("PLUGINS", cast=lambda x: x.split(",") if isinstance(x, str) else x, default=[])
+PLUGINS = config("PLUGINS", cast=Csv(), default=[])
 
 # Used to load custom LLM classes
 LLM_CLASS = config("LLM_CLASS", default=None)

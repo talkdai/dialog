@@ -17,6 +17,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from models.helpers import create_session as db_create_session
+from fastapi.staticfiles import StaticFiles
 from webhooks.router import router
 
 
@@ -44,6 +45,7 @@ app.add_middleware(
 )
 
 app.include_router(router, prefix="/webhooks", tags=["webhooks"])
+app.mount("/static", StaticFiles(directory="/app/static"), name="static")
 
 class Chat(BaseModel):
     message: str
@@ -105,5 +107,6 @@ for plugin in PLUGINS:
 
     try:
         app.include_router(plugin_module.router)
+        logging.info(f"Loaded plugin {plugin}")
     except AttributeError:
         logging.warning(f"Failed to add Plugin: {plugin} to main router")
