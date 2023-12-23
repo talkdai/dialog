@@ -165,6 +165,18 @@ After creating the plugin, to run it, add the environment variable PLUGINS to yo
 PLUGINS=plugins.your_plugin_name # or PLUGINS=plugins.your_plugin_name.file_name if there is another file to be used as entrypoint
 ```
 
+### WhatsApp Text to Audio Synthesis
+
+We already made a WhatsApp plugin that converts the LLM processed output from the message an user sent, into an audio file and sends it back to the user.
+
+To use this plugin, you need to clone the [WhatsApp Audio Synth repo](https://github.com/talkdai/whats_audio_synth) inside the plugins folder of this repo and add the following environment variables to your .env file:
+
+```bash
+WHATSAPP_API_TOKEN=
+WHATSAPP_ACCOUNT_NUMBER=
+PLUGINS=plugins.whats_audio_synth.main,
+```
+
 ### Tests
 
 Running tests on the project is simple, just add the flag `TEST=true` to the .env file/environment variables and run the project.
