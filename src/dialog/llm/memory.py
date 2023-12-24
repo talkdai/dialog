@@ -1,9 +1,9 @@
 from langchain.memory import PostgresChatMessageHistory
 from langchain.schema.messages import BaseMessage, _message_to_dict
 
-from models import Chat, ChatMessages
-from models.db import session
-from settings import DATABASE_URL
+from dialog.models import Chat, ChatMessages
+from dialog.models.db import session
+from dialog.settings import DATABASE_URL
 
 
 class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):

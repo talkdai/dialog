@@ -3,9 +3,9 @@ from typing import List
 from langchain.embeddings import OpenAIEmbeddings
 from sqlalchemy import select
 
-from models import CompanyContent
-from models.db import session
-from settings import OPENAI_API_KEY
+from dialog.models import CompanyContent
+from dialog.models.db import session
+from dialog.settings import OPENAI_API_KEY
 
 
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)

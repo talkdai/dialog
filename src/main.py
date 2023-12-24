@@ -3,12 +3,12 @@ import datetime
 import importlib
 import logging
 
-from llm import get_llm_class
-from llm.memory import get_messages
-from models import Chat as ChatEntity
-from models.db import engine, session
+from dialog.llm import get_llm_class
+from dialog.llm.memory import get_messages
+from dialog.models import Chat as ChatEntity
+from dialog.models.db import engine, session
 
-from settings import LOGGING_LEVEL, PLUGINS, PROJECT_CONFIG, STATIC_FILE_LOCATION
+from dialog.settings import LOGGING_LEVEL, PLUGINS, PROJECT_CONFIG, STATIC_FILE_LOCATION
 
 from sqlalchemy import text
 from pydantic import BaseModel
@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 
-from models.helpers import create_session as db_create_session
+from dialog.models.helpers import create_session as db_create_session
 from fastapi.staticfiles import StaticFiles
 
 
@@ -97,6 +97,7 @@ async def create_session():
 
 
 for plugin in PLUGINS:
+    plugin_module = None
     try:
         logging.info(f"Loading plugin: {plugin}")
         plugin_module = importlib.import_module(plugin)

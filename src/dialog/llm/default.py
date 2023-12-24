@@ -1,10 +1,10 @@
 import logging
 import asyncio
 
-from llm.abstract_llm import AbstractLLM
-from learn.idf import categorize_conversation_history
-from llm.memory import generate_memory_instance
-from llm.embeddings import get_most_relevant_contents_from_message
+from dialog.llm.abstract_llm import AbstractLLM
+from dialog.learn.idf import categorize_conversation_history
+from dialog.llm.memory import generate_memory_instance
+from dialog.llm.embeddings import get_most_relevant_contents_from_message
 
 from langchain.chains.llm import LLMChain
 from langchain.memory.chat_memory import BaseChatMemory
@@ -15,7 +15,7 @@ from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
                                MessagesPlaceholder,
                                SystemMessagePromptTemplate)
 
-from settings import OPENAI_API_KEY
+from dialog.settings import OPENAI_API_KEY
 
 
 class DialogLLM(AbstractLLM):

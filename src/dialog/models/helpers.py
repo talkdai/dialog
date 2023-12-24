@@ -3,8 +3,8 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 
-from models import Chat as ChatEntity
-from models.db import session
+from dialog.models import Chat as ChatEntity
+from dialog.models.db import session
 from psycopg2.errors import UniqueViolation
 
 
