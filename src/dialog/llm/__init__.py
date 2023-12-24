@@ -5,7 +5,7 @@ from typing import Type
 
 from .default import DialogLLM
 from .abstract_llm import AbstractLLM
-from settings import OPENAI_API_KEY, LLM_CLASS
+from dialog.settings import OPENAI_API_KEY, LLM_CLASS
 
 
 def get_llm_class() -> Type[AbstractLLM]:
