@@ -33,7 +33,7 @@ class DialogLLM(AbstractLLM):
 
         if len(relevant_contents) == 0:
             prompt_templating = [
-                SystemMessagePromptTemplate.from_template(self.config.get("fallback")),
+                SystemMessagePromptTemplate.from_template(self.config.get("prompt", {}).get("fallback")),
                 HumanMessagePromptTemplate.from_template("{user_message}"),
             ]
             relevant_contents = []

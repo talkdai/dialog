@@ -4,7 +4,7 @@ from alembic import context
 from decouple import config as d_config
 from sqlalchemy import engine_from_config, pool
 
-from models.db import Base
+from dialog.models.db import Base
 from pgvector.sqlalchemy import Vector
 from logging.config import fileConfig
 
