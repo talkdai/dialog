@@ -1,9 +1,9 @@
 import argparse
 
 import pandas as pd
-from llm.embeddings import generate_embeddings
-from models import CompanyContent
-from models.db import session
+from dialog.llm.embeddings import generate_embeddings
+from dialog.models import CompanyContent
+from dialog.models.db import session
 from sqlalchemy import text
 import hashlib
 
@@ -15,6 +15,9 @@ def load_csv_and_generate_embeddings(path):
         if col not in df.columns:
             raise Exception(f"Column {col} not found in {path}")
 
+    if "dataset" in df.columns:
+        necessary_cols.append("dataset")
+
     df = df[necessary_cols]
 
     # Create primary key column using category, subcategory, and question
@@ -25,7 +28,7 @@ def load_csv_and_generate_embeddings(path):
 
     df_in_db = pd.read_sql(
         text(
-            f"SELECT category, subcategory, question, content FROM {CompanyContent.__tablename__}"
+            f"SELECT category, subcategory, question, content, dataset FROM {CompanyContent.__tablename__}"
         ),
         session.get_bind(),
     )

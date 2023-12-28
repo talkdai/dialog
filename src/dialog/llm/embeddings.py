@@ -24,11 +24,18 @@ def generate_embedding(document: str):
     return EMBEDDINGS_LLM.embed_query(document)
 
 
-def get_most_relevant_contents_from_message(message, top=5):
+def get_most_relevant_contents_from_message(message, top=5, dataset=None):
     message_embedding = generate_embedding(message)
+    filters = [
+        CompanyContent.embedding.l2_distance(message_embedding) < 1,
+    ]
+
+    if dataset is not None:
+        filters.append(CompanyContent.dataset == dataset)
+
     possible_contents = session.scalars(
         select(CompanyContent)
-        .filter(CompanyContent.embedding.l2_distance(message_embedding) < 1)
+        .filter(*filters)
         .order_by(CompanyContent.embedding.l2_distance(message_embedding).asc())
         .limit(top)
     ).all()
