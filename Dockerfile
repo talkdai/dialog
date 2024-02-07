@@ -15,11 +15,9 @@ RUN pip install poetry && \
   poetry config virtualenvs.create false && \
   poetry install --no-dev
 
-COPY /src/ /app
-COPY /etc/ /app
-
+COPY /src /app/src
+COPY /etc /app/etc
 
 WORKDIR /app/src
 
-ENTRYPOINT [ "/app/etc/run.sh" ]
-
+CMD [ "/app/etc/run.sh" ]
