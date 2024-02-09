@@ -1,19 +1,18 @@
 # *-* coding: utf-8 *-*
 import datetime
-import importlib
 import logging
+
+from importlib_metadata import entry_points
 
 from dialog.llm import get_llm_class
 from dialog.llm.memory import get_messages
 from dialog.models import Chat as ChatEntity
 from dialog.models.db import engine, session
-
 from dialog.settings import (
     CORS_ALLOW_CREDENTIALS,
     CORS_ALLOW_HEADERS,
     CORS_ALLOW_METHODS,
     LOGGING_LEVEL,
-    PLUGINS,
     PROJECT_CONFIG,
     STATIC_FILE_LOCATION,
     CORS_ALLOW_ORIGINS
@@ -27,7 +26,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from dialog.models.helpers import create_session as db_create_session
 from fastapi.staticfiles import StaticFiles
-
 
 logging.basicConfig(
     level=LOGGING_LEVEL,
@@ -104,16 +102,15 @@ async def create_session():
     return db_create_session()
 
 
-for plugin in PLUGINS:
-    plugin_module = None
+plugins = entry_points(group="dialog")
+for plugin in plugins:
+    logging.info("Loading plugin: %s", plugin.name)
     try:
-        logging.info(f"Loading plugin: {plugin}")
-        plugin_module = importlib.import_module(plugin)
+        plugin_module = plugin.load()
     except ImportError:
-        logging.warning(f"Failed to import plugin {plugin}")
-
-    try:
-        app.include_router(plugin_module.router)
-        logging.info(f"Loaded plugin {plugin}")
-    except AttributeError:
-        logging.warning(f"Failed to add Plugin: {plugin} to main router")
+        logging.warning("Failed to load plugin: %s.", plugin.name)
+    else:
+        try:
+            plugin_module.register_plugin(app)
+        except AttributeError:
+            logging.warning("Failed to register plugin: %s", plugin.name)
