@@ -18,3 +18,9 @@ PLUGINS = config("PLUGINS", cast=Csv(), default=None)
 # Used to load custom LLM classes
 LLM_CLASS = config("LLM_CLASS", default=None)
 STATIC_FILE_LOCATION = config("STATIC_FILE_LOCATION", "/app/static")
+
+# Cors
+CORS_ALLOW_ORIGINS = config("CORS_ALLOW_ORIGINS", cast=Csv(), default="*")
+CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS", cast=bool, default=True)
+CORS_ALLOW_METHODS = config("CORS_ALLOW_METHODS", cast=Csv(), default="*")
+CORS_ALLOW_HEADERS = config("CORS_ALLOW_HEADERS", cast=Csv(), default="*")
