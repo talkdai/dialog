@@ -3,6 +3,8 @@
 alembic upgrade head
 python load_csv.py --path ${DIALOG_DATA_PATH}
 
+/app/etc/install-plugins.sh
+
 if  [ -n "${TEST}" ]; then
     python -m unittest
     exit 0
