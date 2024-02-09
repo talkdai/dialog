@@ -20,4 +20,4 @@ COPY /etc /app/etc
 
 WORKDIR /app/src
 
-CMD [ "/app/etc/run.sh" ]
+ENTRYPOINT [ "/app/etc/run.sh" ]
