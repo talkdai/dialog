@@ -8,7 +8,16 @@ from dialog.llm.memory import get_messages
 from dialog.models import Chat as ChatEntity
 from dialog.models.db import engine, session
 
-from dialog.settings import LOGGING_LEVEL, PLUGINS, PROJECT_CONFIG, STATIC_FILE_LOCATION
+from dialog.settings import (
+    CORS_ALLOW_CREDENTIALS,
+    CORS_ALLOW_HEADERS,
+    CORS_ALLOW_METHODS,
+    LOGGING_LEVEL,
+    PLUGINS,
+    PROJECT_CONFIG,
+    STATIC_FILE_LOCATION,
+    CORS_ALLOW_ORIGINS
+)
 
 from sqlalchemy import text
 from pydantic import BaseModel
@@ -33,14 +42,13 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
-origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=CORS_ALLOW_ORIGINS,
+    allow_credentials=CORS_ALLOW_CREDENTIALS,
+    allow_methods=CORS_ALLOW_METHODS,
+    allow_headers=CORS_ALLOW_HEADERS,
 )
 
 app.mount("/static", StaticFiles(directory=STATIC_FILE_LOCATION), name="static")
