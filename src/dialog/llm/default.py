@@ -29,7 +29,7 @@ class DialogLLM(AbstractLLM):
         return None
 
     def generate_prompt(self, input):
-        relevant_contents = get_most_relevant_contents_from_message(input, top=1)
+        relevant_contents = get_most_relevant_contents_from_message(input, top=1, dataset=self.dataset)
 
         if len(relevant_contents) == 0:
             prompt_templating = [

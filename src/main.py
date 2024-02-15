@@ -109,8 +109,8 @@ for plugin in PLUGINS:
     try:
         logging.info(f"Loading plugin: {plugin}")
         plugin_module = importlib.import_module(plugin)
-    except ImportError:
-        logging.warning(f"Failed to import plugin {plugin}")
+    except ImportError as e:
+        logging.warning(f"Failed to import plugin {plugin}, exception: {e}")
 
     try:
         app.include_router(plugin_module.router)
