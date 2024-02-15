@@ -8,7 +8,7 @@ homepage = "https://github.com/talkdai/dialog"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-fastapi = "^0.104.1"
+fastapi = "^0.109.1"
 sqlalchemy = "^2.0.23"
 langchain = "^0.0.333"
 uvicorn = {extras = ["standard"], version = "^0.24.0.post1"}
