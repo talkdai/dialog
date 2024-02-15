@@ -1,4 +1,6 @@
 FROM python:3.11-slim
+LABEL org.opencontainers.image.source https://github.com/talkdai/dialog
+LABEL org.opencontainers.image.licenses MIT
 
 ENV PIP_DEFAULT_TIMEOUT=100
 ENV PIP_DISABLE_PIP_VERSION_CHECK=on
