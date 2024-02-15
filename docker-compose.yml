@@ -33,5 +33,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://talkdai:talkdai@db:5432/talkdai
+      - STATIC_FILE_LOCATION=/app/static
     env_file:
       - .env
