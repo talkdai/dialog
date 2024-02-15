@@ -66,7 +66,7 @@ class DialogLLM(AbstractLLM):
         conversation_options ={
             "llm": ChatOpenAI(
                 **llm_config,
-                openai_api_key=OPENAI_API_KEY
+                openai_api_key=self.llm_key or OPENAI_API_KEY
             ),
             "prompt": self.prompt,
             "verbose": self.config.get("verbose", False)
