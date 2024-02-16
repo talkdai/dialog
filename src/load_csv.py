@@ -1,11 +1,12 @@
 import argparse
+import hashlib
 
 import pandas as pd
+from sqlalchemy import text
+
 from dialog.llm.embeddings import generate_embeddings
 from dialog.models import CompanyContent
 from dialog.models.db import session
-from sqlalchemy import text
-import hashlib
 
 
 def load_csv_and_generate_embeddings(path):
@@ -34,14 +35,15 @@ def load_csv_and_generate_embeddings(path):
     )
 
     # Create primary key column using category, subcategory, and question for df_in_db
+    new_keys = set(df["primary_key"])
     if not df_in_db.empty:
         df_in_db["primary_key"] = df_in_db["category"] + df_in_db["subcategory"] + df_in_db["question"]
         df_in_db["primary_key"] = df_in_db["primary_key"].apply(
             lambda row: hashlib.md5(row.encode()).hexdigest()
         )
+        new_keys = set(df["primary_key"]) - set(df_in_db["primary_key"])
 
     # Filter df for keys present in df and not present in df_in_db
-    new_keys = set(df["primary_key"]) - set(df_in_db["primary_key"])
     df_filtered = df[df["primary_key"].isin(new_keys)]
 
     print("Generating embeddings for new questions...")

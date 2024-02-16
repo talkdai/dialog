@@ -1,21 +1,19 @@
-import logging
 import asyncio
-
-from dialog.llm.abstract_llm import AbstractLLM
-from dialog.learn.idf import categorize_conversation_history
-from dialog.llm.memory import generate_memory_instance
-from dialog.llm.embeddings import get_most_relevant_contents_from_message
+import logging
 
 from langchain.chains.llm import LLMChain
-from langchain.memory.chat_memory import BaseChatMemory
-
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferWindowMemory
+from langchain.memory.chat_memory import BaseChatMemory
 from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
                                MessagesPlaceholder,
                                SystemMessagePromptTemplate)
 
-from dialog.settings import OPENAI_API_KEY
+from dialog.learn.idf import categorize_conversation_history
+from dialog.llm.abstract_llm import AbstractLLM
+from dialog.llm.embeddings import get_most_relevant_contents_from_message
+from dialog.llm.memory import generate_memory_instance
+from dialog.settings import OPENAI_API_KEY, VERBOSE_LLM
 
 
 class DialogLLM(AbstractLLM):
@@ -57,7 +55,8 @@ class DialogLLM(AbstractLLM):
 
         question_text = self.config.get("prompt").get("question_signalizer")
         prompt_templating.append(HumanMessagePromptTemplate.from_template(f"{question_text}" + ":\n{user_message}"))
-
+        if VERBOSE_LLM:
+            logging.info(f"Verbose LLM prompt: {prompt_templating}")
         self.prompt = ChatPromptTemplate(messages=prompt_templating)
 
     @property
