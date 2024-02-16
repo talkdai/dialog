@@ -1,12 +1,11 @@
 from typing import List
 
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 from sqlalchemy import select
 
 from dialog.models import CompanyContent
 from dialog.models.db import session
 from dialog.settings import OPENAI_API_KEY
-
 
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 

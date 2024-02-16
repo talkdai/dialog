@@ -71,6 +71,8 @@ cp .env.sample .env # edit the .env file, add the OPENAI token and the path to t
 docker compose up
 ```
 
+> **notes:** `DIALOG_DATA_PATH` and `PROJECT_CONFIG` the file path for this variable should prefixed with `/app/` _(mounted folder of the software)_.
+
 After uploading the project, go to the documentation `http://localhost:8000/docs` to see the API documentation.
 
 ### Docker
@@ -85,8 +87,8 @@ If you are using VSCode, you can use the [devcontainer](.devcontainer) to run th
 
 When we upload the environment into devcontainer, we upload the following containers:
 
-* `db`: container with the postgres database with **pgvector** extension
-* `dialog`: container with the api (the project)
+- `db`: container with the postgres database with **pgvector** extension
+- `dialog`: container with the api (the project)
 
 We don't upload the application when the container is started. To upload the application, run the `make run` command inside the container console (bash).
 
@@ -100,6 +102,8 @@ make run
 ### local development
 
 We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) may help you.
+
+> **notes:** we recommend using `docker-compose` to develop the project or please proceed with setting up the local environment at **your own risk**.
 
 #### Creating new/altering tables or columns
 
