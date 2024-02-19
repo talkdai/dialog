@@ -27,7 +27,7 @@ class DialogLLM(AbstractLLM):
         return None
 
     def generate_prompt(self, input):
-        relevant_contents = get_most_relevant_contents_from_message(input, top=1)
+        relevant_contents = get_most_relevant_contents_from_message(input, top=1, dataset=self.dataset)
 
         if len(relevant_contents) == 0:
             prompt_templating = [
@@ -65,7 +65,7 @@ class DialogLLM(AbstractLLM):
         conversation_options ={
             "llm": ChatOpenAI(
                 **llm_config,
-                openai_api_key=OPENAI_API_KEY
+                openai_api_key=self.llm_key or OPENAI_API_KEY
             ),
             "prompt": self.prompt,
             "verbose": self.config.get("verbose", False)

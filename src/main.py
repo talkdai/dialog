@@ -97,9 +97,17 @@ async def get_chat_content(chat_id):
     return {"message": messages}
 
 
+class Session(BaseModel):
+    chat_id: str
+
+
 @app.post("/session")
-async def create_session():
-    return db_create_session()
+async def create_session(session: Session | None = None):
+    if session:
+        identifier = session.chat_id
+    else:
+        identifier = None
+    return db_create_session(identifier=identifier)
 
 
 plugins = entry_points(group="dialog")

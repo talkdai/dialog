@@ -5,7 +5,7 @@ from langchain.memory.chat_memory import BaseChatMemory
 from langchain.prompts import ChatPromptTemplate
 
 class AbstractLLM:
-    def __init__(self, config, session_id=None, parent_session_id=None):
+    def __init__(self, config, session_id=None, parent_session_id=None, dataset=None, llm_key=None):
         """
         :param config: Configuration dictionary
 
@@ -19,7 +19,9 @@ class AbstractLLM:
 
         self.config = config
         self.prompt = None
-        self.session_id = session_id
+        self.session_id = session_id if dataset is None else f"{dataset}_{session_id}"
+        self.dataset = dataset
+        self.llm_key = llm_key
         self.parent_session_id = parent_session_id
 
     def get_prompt(self, input) -> ChatPromptTemplate:
