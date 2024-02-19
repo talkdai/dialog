@@ -1,6 +1,6 @@
 from typing import List
 
-from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from sqlalchemy import select
 
 from dialog.models import CompanyContent
