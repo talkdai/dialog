@@ -945,6 +945,23 @@ tenacity = ">=8.1.0,<9.0.0"
 extended-testing = ["jinja2 (>=3,<4)"]
 
 [[package]]
+name = "langchain-openai"
+version = "0.0.6"
+description = "An integration package connecting OpenAI and LangChain"
+optional = false
+python-versions = ">=3.8.1,<4.0"
+files = [
+    {file = "langchain_openai-0.0.6-py3-none-any.whl", hash = "sha256:2ef040e4447a26a9d3bd45dfac9cefa00797ea58555a3d91ab4f88699eb3a005"},
+    {file = "langchain_openai-0.0.6.tar.gz", hash = "sha256:f5c4ebe46f2c8635c8f0c26cc8df27700aacafea025410e418d5a080039974dd"},
+]
+
+[package.dependencies]
+langchain-core = ">=0.1.16,<0.2"
+numpy = ">=1,<2"
+openai = ">=1.10.0,<2.0.0"
+tiktoken = ">=0.5.2,<1"
+
+[[package]]
 name = "langsmith"
 version = "0.0.87"
 description = "Client library to connect to the LangSmith LLM Tracing and Evaluation Platform."
@@ -1309,7 +1326,10 @@ files = [
 ]
 
 [package.dependencies]
-numpy = {version = ">=1.23.2,<2", markers = "python_version == \"3.11\""}
+numpy = [
+    {version = ">=1.23.2,<2", markers = "python_version == \"3.11\""},
+    {version = ">=1.26.0,<2", markers = "python_version >= \"3.12\""},
+]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
 tzdata = ">=2022.7"
@@ -2145,7 +2165,7 @@ files = [
 ]
 
 [package.dependencies]
-greenlet = {version = "!=0.4.17", markers = "platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\""}
+greenlet = {version = "!=0.4.17", markers = "platform_machine == \"win32\" or platform_machine == \"WIN32\" or platform_machine == \"AMD64\" or platform_machine == \"amd64\" or platform_machine == \"x86_64\" or platform_machine == \"ppc64le\" or platform_machine == \"aarch64\""}
 typing-extensions = ">=4.6.0"
 
 [package.extras]
@@ -2743,5 +2763,5 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.11,<3.12"
-content-hash = "03b247903a870362180ab1189a5b80a7de2a5e532e0d0447c9098a2220a14aaf"
+python-versions = ">=3.11,<3.13"
+content-hash = "aded698ce7bb59f310a858efb01895c0d808b1d57e8338f2105ee87f4f649052"
