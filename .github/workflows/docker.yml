@@ -9,11 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.repository == 'talkdai/dialog'
     environment: build
     defaults:
       run:
         shell: bash
-
     steps:
       - uses: actions/checkout@v4
         with:
