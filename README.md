@@ -1,4 +1,4 @@
-# Dialog
+# talkd/dialog
 
 Humanized Conversation API (using LLM)
 
