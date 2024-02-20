@@ -103,10 +103,9 @@ class Session(BaseModel):
 
 @app.post("/session")
 async def create_session(session: Session | None = None):
+    identifier = None
     if session:
         identifier = session.chat_id
-    else:
-        identifier = None
     return db_create_session(identifier=identifier)
 
 

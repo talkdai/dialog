@@ -13,7 +13,8 @@ from dialog.learn.idf import categorize_conversation_history
 from dialog.llm.abstract_llm import AbstractLLM
 from dialog.llm.embeddings import get_most_relevant_contents_from_message
 from dialog.llm.memory import generate_memory_instance
-from dialog.settings import OPENAI_API_KEY, VERBOSE_LLM
+from dialog.settings import (OPENAI_API_KEY, VERBOSE_LLM, LLM_RELEVANT_CONTENTS,
+                             LLM_TEMPERATURE, LLM_MEMORY_SIZE)
 
 
 class DialogLLM(AbstractLLM):
@@ -27,7 +28,7 @@ class DialogLLM(AbstractLLM):
         return None
 
     def generate_prompt(self, input):
-        relevant_contents = get_most_relevant_contents_from_message(input, top=1, dataset=self.dataset)
+        relevant_contents = get_most_relevant_contents_from_message(input, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset)
 
         if len(relevant_contents) == 0:
             prompt_templating = [
@@ -76,7 +77,7 @@ class DialogLLM(AbstractLLM):
                 "chat_memory": self.memory,
                 "memory_key": "chat_history",
                 "return_messages": True,
-                "k": self.config.get("memory_size", 5)
+                "k": self.config.get("memory_size", LLM_MEMORY_SIZE)
             }
             conversation_options["memory"] = ConversationBufferWindowMemory(
                 **buffer_config
