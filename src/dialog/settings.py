@@ -17,9 +17,9 @@ PLUGINS = config("PLUGINS", cast=Csv(), default=None)
 
 # Used to load custom LLM classes
 LLM_CLASS = config("LLM_CLASS", default=None)
-LLM_TEMPERATURE = config("LLM_TEMPERATURE", default=0.2)
-LLM_RELEVANT_CONTENTS = config("LLM_RELEVANT_CONTENTS", default=1)
-LLM_MEMORY_SIZE = config("LLM_MEMORY_SIZE", default=5)
+LLM_TEMPERATURE = config("LLM_TEMPERATURE", default=0.2, cast=float)
+LLM_RELEVANT_CONTENTS = config("LLM_RELEVANT_CONTENTS", default=1, cast=int)
+LLM_MEMORY_SIZE = config("LLM_MEMORY_SIZE", default=5, cast=int)
 STATIC_FILE_LOCATION = config("STATIC_FILE_LOCATION", "/app/static")
 
 # Cors
