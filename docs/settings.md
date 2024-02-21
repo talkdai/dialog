@@ -1,12 +1,6 @@
-# talkd/dialog
+# Setting up the config
 
-Humanized Conversation API (using LLM)
-
-> conversations in a human way without exposing that it's a LLM answering
-
-For more information you can use our [documentation](https://dialog.talkd.ai)
-
-## Quick Start
+## Settings
 
 To use this project, you need to have a `.csv` file with the knowledge base and a `.toml` file with your prompt configuration.
 
@@ -63,12 +57,3 @@ prompt = """I'm sorry, I didn't understand your question. Could you rephrase it?
 ### Environment Variables
 
 Look at the [`.env.sample`](.env.sample) file to see the environment variables needed to run the project.
-
-## Run the project
-
-> we assume you are familiar with [Docker](https://www.docker.com/)
-
-```bash
-cp .env.sample .env # edit the .env file, add the OPENAI token and the path to the .csv and .toml files
-docker-compose up
-```
