@@ -2,6 +2,8 @@
 import datetime
 import logging
 
+from typing import Optional
+
 from importlib_metadata import entry_points
 
 from dialog.llm import get_llm_class
