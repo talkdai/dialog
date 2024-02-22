@@ -31,7 +31,6 @@ langchain-openai = "^0.0.6"
 ipdb = "^0.13.13"
 black = "^23.11.0"
 isort = "^5.12.0"
-pytest = "^8.0.1"
 
 [build-system]
 requires = ["poetry-core"]
