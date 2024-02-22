@@ -7,7 +7,7 @@ from langchain.memory.chat_memory import BaseChatMemory
 from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
                                MessagesPlaceholder,
                                SystemMessagePromptTemplate)
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai.chat_models import ChatOpenAI
 
 from dialog.learn.idf import categorize_conversation_history
 from dialog.llm.abstract_llm import AbstractLLM
@@ -29,41 +29,27 @@ class DialogLLM(AbstractLLM):
 
     def generate_prompt(self, input):
         relevant_contents = get_most_relevant_contents_from_message(input, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset)
-
-        if len(relevant_contents) == 0:
-            prompt_templating = [
-                SystemMessagePromptTemplate.from_template(self.config.get("prompt", {}).get("fallback")),
-                HumanMessagePromptTemplate.from_template("{user_message}"),
-            ]
-            relevant_contents = []
-        else:
-            suggested_content = "Contexto: \n".join(
+        prompt_config = self.config.get("prompt")
+        header = prompt_config.get("header")
+        suggested = prompt_config.get("suggested")
+        messages = []
+        if len(relevant_contents) > 0:
+            context = "Context: \n".join(
                 [f"{c.question}\n{c.content}\n" for c in relevant_contents]
             )
-
-            prompt_templating = [
-                SystemMessagePromptTemplate.from_template(self.config.get("prompt").get("header")),
-                MessagesPlaceholder(variable_name="chat_history"),
-            ]
-
-        if len(relevant_contents) > 0:
-            suggested_message = self.config.get("prompt", {}).get('suggested')
-            prompt_templating.append(
-                SystemMessagePromptTemplate.from_template(
-                    f"{suggested_message}. {suggested_content}"
-                )
-            )
-
-        question_text = self.config.get("prompt").get("question_signalizer")
-        prompt_templating.append(HumanMessagePromptTemplate.from_template(f"{question_text}" + ":\n{user_message}"))
+            messages.append(SystemMessagePromptTemplate.from_template(header))
+            messages.append(SystemMessagePromptTemplate.from_template(f"{suggested}. {context}"))
+            messages.append(MessagesPlaceholder(variable_name="chat_history", optional=True))
+            messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
+            
+        self.prompt = ChatPromptTemplate.from_messages(messages)
         if VERBOSE_LLM:
-            logging.info(f"Verbose LLM prompt: {prompt_templating}")
-        self.prompt = ChatPromptTemplate(messages=prompt_templating)
+            logging.info(f"Verbose LLM prompt: {self.prompt.pretty_print()}")
 
     @property
     def llm(self) -> LLMChain:
         llm_config = self.config.get("model", {})
-        conversation_options ={
+        conversation_options = {
             "llm": ChatOpenAI(
                 **llm_config,
                 openai_api_key=self.llm_key or OPENAI_API_KEY
@@ -86,5 +72,6 @@ class DialogLLM(AbstractLLM):
         return LLMChain(**conversation_options)
 
     def postprocess(self, output: str) -> str:
-        asyncio.create_task(categorize_conversation_history(self.memory))
+        if self.memory:
+            asyncio.create_task(categorize_conversation_history(self.memory))
         return output
