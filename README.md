@@ -59,6 +59,7 @@ salesy way; the loyalty program is our growth strategy."""
 [fallback]
 prompt = """I'm sorry, I didn't understand your question. Could you rephrase it?"""
 ```
+
 ### Environment Variables
 
 Look at the [`.env.sample`](.env.sample) file to see the environment variables needed to run the project.
