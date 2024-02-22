@@ -19,7 +19,9 @@ class AbstractLLM:
 
         self.config = config
         self.prompt = None
-        self.session_id = session_id if dataset is None else f"{dataset}_{session_id}"
+        self.session_id = None
+        if session_id:
+            self.session_id = session_id if dataset is None else f"{dataset}_{session_id}" 
         self.dataset = dataset
         self.llm_key = llm_key
         self.parent_session_id = parent_session_id
@@ -75,9 +77,12 @@ class AbstractLLM:
         Function that encapsulates the pre-processing, processing and post-processing
         of the LLM.
         """
+        fallback = self.config.get("fallback", "I'm sorry, I didn't understand your question. Could you rephrase it?")
         processed_input = self.preprocess(input)
         self.generate_prompt(processed_input)
-        output = self.llm({
+        if len(self.prompt.messages) == 0:
+            return {"text": fallback}
+        output = self.llm.invoke({
             "user_message": processed_input,
         })
         processed_output = self.postprocess(output)

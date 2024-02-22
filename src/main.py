@@ -83,6 +83,17 @@ async def post_message(chat_id: str, message: Chat):
     return {"message": ai_message["text"]}
 
 
+@app.post("/chat")
+async def post_message(message: Chat):
+    start_time = datetime.datetime.now()
+    LLM = get_llm_class()
+    llm_instance = LLM(config=PROJECT_CONFIG)
+    ai_message = llm_instance.process(message.message)
+    duration = datetime.datetime.now() - start_time
+    logging.info(f"Request processing time: {duration}")
+    return {"message": ai_message["text"]}
+
+
 @app.get("/chat/{chat_id}")
 async def get_chat_content(chat_id):
     chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
@@ -98,7 +109,7 @@ async def get_chat_content(chat_id):
 
 
 class Session(BaseModel):
-    chat_id: str
+    chat_id: str | None 
 
 
 @app.post("/session")
@@ -106,7 +117,7 @@ async def create_session(session: Session | None = None):
     identifier = None
     if session:
         identifier = session.chat_id
-    return db_create_session(identifier=identifier)
+    return db_create_session(session_uuid=identifier)
 
 
 plugins = entry_points(group="dialog")

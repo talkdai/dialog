@@ -4,8 +4,8 @@ from dialog.models import Chat as ChatEntity
 from dialog.models.db import session
 
 
-def create_session(identifier=None):
-    if identifier is None:
+def create_session(session_uuid=None):
+    if session_uuid is None:
         session_uuid = uuid.uuid4().hex
 
     chat = session.query(ChatEntity).filter_by(uuid=session_uuid).first()
