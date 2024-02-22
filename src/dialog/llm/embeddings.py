@@ -26,7 +26,7 @@ def generate_embedding(document: str):
 def get_most_relevant_contents_from_message(message, top=5, dataset=None):
     message_embedding = generate_embedding(message)
     filters = [
-        CompanyContent.embedding.l2_distance(message_embedding) < 1,
+        CompanyContent.embedding.cosine_distance(message_embedding) < 0.2,
     ]
 
     if dataset is not None:
@@ -35,7 +35,7 @@ def get_most_relevant_contents_from_message(message, top=5, dataset=None):
     possible_contents = session.scalars(
         select(CompanyContent)
         .filter(*filters)
-        .order_by(CompanyContent.embedding.l2_distance(message_embedding).asc())
+        .order_by(CompanyContent.embedding.cosine_distance(message_embedding))
         .limit(top)
     ).all()
     return possible_contents

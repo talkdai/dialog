@@ -58,7 +58,6 @@ salesy way; the loyalty program is our growth strategy."""
 
 [fallback]
 prompt = """I'm sorry, I didn't understand your question. Could you rephrase it?"""
-```
 
 ### Environment Variables
 
