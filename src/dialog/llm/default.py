@@ -30,6 +30,7 @@ class DialogLLM(AbstractLLM):
     def generate_prompt(self, input):
         relevant_contents = get_most_relevant_contents_from_message(input, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset)
         prompt_config = self.config.get("prompt")
+        fallback = prompt_config.get("fallback")
         header = prompt_config.get("header")
         suggested = prompt_config.get("suggested")
         messages = []
@@ -40,6 +41,9 @@ class DialogLLM(AbstractLLM):
             messages.append(SystemMessagePromptTemplate.from_template(header))
             messages.append(SystemMessagePromptTemplate.from_template(f"{suggested}. {context}"))
             messages.append(MessagesPlaceholder(variable_name="chat_history", optional=True))
+            messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
+        else:
+            messages.append(SystemMessagePromptTemplate.from_template(fallback))
             messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
             
         self.prompt = ChatPromptTemplate.from_messages(messages)
