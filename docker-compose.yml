@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   db:
-    image: ankane/pgvector:v0.5.0
+    image: pgvector/pgvector:pg15
     restart: always
     ports:
       - '5432:5432'
