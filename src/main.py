@@ -85,8 +85,8 @@ async def post_message(chat_id: str, message: Chat):
     return {"message": ai_message["text"]}
 
 
-@app.post("/chat")
-async def post_message(message: Chat):
+@app.post("/ask")
+async def post_message_no_memory(message: Chat):
     start_time = datetime.datetime.now()
     LLM = get_llm_class()
     llm_instance = LLM(config=PROJECT_CONFIG)

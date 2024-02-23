@@ -28,7 +28,7 @@ class TestViewsAPI(unittest.TestCase):
         self.assertIn("message", response.json())
 
     def test_post_message_no_session_id(self):
-        response = client.post(f"/chat", json={"message": "Hello"})
+        response = client.post("/ask", json={"message": "Hello"})
         self.assertEqual(response.status_code, 200)
         self.assertIn("message", response.json())
 
