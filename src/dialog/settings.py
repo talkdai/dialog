@@ -21,7 +21,7 @@ LLM_TEMPERATURE = config("LLM_TEMPERATURE", default=0.2, cast=float)
 LLM_RELEVANT_CONTENTS = config("LLM_RELEVANT_CONTENTS", default=1, cast=int)
 LLM_MEMORY_SIZE = config("LLM_MEMORY_SIZE", default=5, cast=int)
 STATIC_FILE_LOCATION = config("STATIC_FILE_LOCATION", "/app/static")
-CONSINE_SIMILARITY_THRESHOLD = config("CONSINE_SIMILARITY_THRESHOLD", default=0.2, cast=float)
+COSINE_SIMILARITY_THRESHOLD = config("CONSINE_SIMILARITY_THRESHOLD", default=0.2, cast=float)
 
 # Cors
 CORS_ALLOW_ORIGINS = config("CORS_ALLOW_ORIGINS", cast=Csv(), default="*")
