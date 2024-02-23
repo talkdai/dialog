@@ -64,6 +64,8 @@ prompt = """I'm sorry, I didn't understand your question. Could you rephrase it?
 
 Look at the [`.env.sample`](.env.sample) file to see the environment variables needed to run the project.
 
+There are other configurations not detailed in `.env.sample`, we recommend you to [read our documentation](https://dialog.talkd.ai/settings#environment-variables) that discusses configuration.
+
 ## Run the project
 
 > we assume you are familiar with [Docker](https://www.docker.com/)
