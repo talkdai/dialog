@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 from dialog.models import CompanyContent
 from dialog.models.db import session
-from dialog.settings import OPENAI_API_KEY
+from dialog.settings import OPENAI_API_KEY, CONSINE_SIMILARITY_THRESHOLD
 
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
@@ -26,7 +26,7 @@ def generate_embedding(document: str):
 def get_most_relevant_contents_from_message(message, top=5, dataset=None):
     message_embedding = generate_embedding(message)
     filters = [
-        CompanyContent.embedding.cosine_distance(message_embedding) < 0.2,
+        CompanyContent.embedding.cosine_distance(message_embedding) < CONSINE_SIMILARITY_THRESHOLD,
     ]
 
     if dataset is not None:
