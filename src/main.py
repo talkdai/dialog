@@ -2,12 +2,8 @@
 import datetime
 import logging
 
-from typing import Optional
-
 from importlib_metadata import entry_points
 
-from dialog.llm import get_llm_class
-from dialog.llm.memory import get_messages
 from dialog.models import Chat as ChatEntity
 from dialog.models.db import engine, session
 from dialog.settings import (
@@ -28,6 +24,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from dialog.models.helpers import create_session as db_create_session
 from fastapi.staticfiles import StaticFiles
+
+from dialog.chains.rag_chain import get_rag_chain
 
 logging.basicConfig(
     level=LOGGING_LEVEL,
@@ -67,47 +65,43 @@ async def health():
             return {"message": "Failed to execute simple SQL"}
 
 
-@app.post("/chat/{chat_id}")
-async def post_message(chat_id: str, message: Chat):
-    chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
+# @app.post("/chat/{chat_id}")
+# async def post_message(chat_id: str, message: Chat):
+#     chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
 
-    if not chat_obj:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Chat ID not found",
-        )
-    start_time = datetime.datetime.now()
-    LLM = get_llm_class()
-    llm_instance = LLM(config=PROJECT_CONFIG, session_id=chat_id)
-    ai_message = llm_instance.process(message.message)
-    duration = datetime.datetime.now() - start_time
-    logging.info(f"Request processing time for chat_id {chat_id}: {duration}")
-    return {"message": ai_message["text"]}
+#     if not chat_obj:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Chat ID not found",
+#         )
+#     start_time = datetime.datetime.now()
+#     LLM = get_llm_class()
+#     llm_instance = LLM(config=PROJECT_CONFIG, session_id=chat_id)
+#     ai_message = llm_instance.process(message.message)
+#     duration = datetime.datetime.now() - start_time
+#     logging.info(f"Request processing time for chat_id {chat_id}: {duration}")
+#     return {"message": ai_message["text"]}
 
 
 @app.post("/ask")
 async def post_message_no_memory(message: Chat):
-    start_time = datetime.datetime.now()
-    LLM = get_llm_class()
-    llm_instance = LLM(config=PROJECT_CONFIG)
-    ai_message = llm_instance.process(message.message)
-    duration = datetime.datetime.now() - start_time
-    logging.info(f"Request processing time: {duration}")
-    return {"message": ai_message["text"]}
+    rag_chain = get_rag_chain()
+    answer = rag_chain.invoke(message.message)
+    return {"message": answer}
 
 
-@app.get("/chat/{chat_id}")
-async def get_chat_content(chat_id):
-    chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
+# @app.get("/chat/{chat_id}")
+# async def get_chat_content(chat_id):
+#     chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
 
-    if not chat_obj:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Chat ID not found",
-        )
+#     if not chat_obj:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Chat ID not found",
+#         )
 
-    messages = get_messages(chat_id)
-    return {"message": messages}
+#     messages = get_messages(chat_id)
+#     return {"message": messages}
 
 
 class Session(BaseModel):
