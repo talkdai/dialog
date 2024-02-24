@@ -4,9 +4,9 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.vectorstores.pgvector import PGVector
 
-from dialog.settings import COLLECTION_NAME, DATABASE_URL
+from dialog.settings import COLLECTION_NAME, DATABASE_URL, PROJECT_CONFIG
 
-DEFAULT_METADATA_COLUMNS = ['category', 'subcategory', 'question', 'content', 'actions']
+DEFAULT_METADATA_COLUMNS = PROJECT_CONFIG.get("documents").get("metadata_cols")
 
 def make_embeddings(path: str):
     loader = CSVLoader(path, metadata_columns=DEFAULT_METADATA_COLUMNS)
