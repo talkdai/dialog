@@ -1,7 +1,7 @@
 #!/bin/bash
 
 alembic upgrade head
-python load_csv.py --path ${DIALOG_DATA_PATH}
+python load_embeddings.py --path ${DIALOG_DATA_PATH}
 
 /app/etc/install-plugins.sh
 
