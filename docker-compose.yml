@@ -11,7 +11,6 @@ services:
       POSTGRES_DB: talkdai
     volumes:
        - ./data/db:/var/lib/postgresql/data
-       - ./etc/db-ext-vector.sql:/docker-entrypoint-initdb.d/db-ext-vector.sql
     healthcheck:
       test: ["CMD", "pg_isready", "-d", "talkdai", "-U", "talkdai"]
       interval: 10s
