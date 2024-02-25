@@ -14,7 +14,7 @@ from dialog.settings import PROJECT_CONFIG
 from dialog.vectorstores.pgvector import CustomPGVector
 
 PROMPT_TEMPLATE = PROJECT_CONFIG.get("prompt").get("template")
-CONTEXTUALIZE_HISTORY_PROMPT = PROJECT_CONFIG.get("prompt").get("contextualize_history")
+CONTEXTUALIZE_HISTORY_PROMPT = PROJECT_CONFIG.get("prompt").get("contextualize_history_template")
 MODEL_CONFIG = PROJECT_CONFIG.get("model", {})
 DEFAULT_DOCUMENT_PROMPT = PromptTemplate.from_template(template="{page_content}")
 RETRIEVER_TOP_K = PROJECT_CONFIG.get("retriever").get("top_k")
@@ -38,7 +38,13 @@ def format_docs(docs):
 def get_rag_chain():
     vectorstore = CustomPGVector()
     retriever = vectorstore.as_retriever(search_kwargs={"k": RETRIEVER_TOP_K})
-    prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+    # prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", PROMPT_TEMPLATE),
+            ("human", "{question}"),
+        ]
+    )
     llm = get_llm()
 
     chain = (
@@ -47,7 +53,7 @@ def get_rag_chain():
         | llm
         | StrOutputParser()
     )
-    return chain
+    return chain.with_config({"run_name": "RAGWithoutMemoryChain"})
 
 
 def get_contextualizer_chain():
@@ -59,7 +65,8 @@ def get_contextualizer_chain():
         ]
     )
     model = get_llm()
-    return contextualize_prompt | model | StrOutputParser()
+    chain = contextualize_prompt | model | StrOutputParser()
+    return chain.with_config({"run_name": "MemoryContextualizerChain"})
 
 
 def get_rag_chain_with_memory():
@@ -73,7 +80,7 @@ def get_rag_chain_with_memory():
             MessagesPlaceholder(variable_name="chat_history"),
             ("human", "{question}"),
         ]
-    )
+    ).with_config({"run_name": "ContextualizeHistoryPrompt"})
 
     def contextualized_question(input: dict):
         if input.get("chat_history"):
@@ -85,8 +92,8 @@ def get_rag_chain_with_memory():
         RunnablePassthrough.assign(
             context=contextualized_question | retriever | format_docs
         )
-        | prompt
+        | prompt.with_config({"run_name": "FinalPrompt"})
         | llm
     )
 
-    return rag_chain
+    return rag_chain.with_config({"run_name": "RAGWithtMemoryChain"})
