@@ -97,27 +97,11 @@ async def post_message_no_memory(message: Message):
     return {"message": answer}
 
 
-# @app.get("/chat/{chat_id}")
-# async def get_chat_content(chat_id):
-#     chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
-
-#     if not chat_obj:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="Chat ID not found",
-#         )
-
-#     messages = get_messages(chat_id)
-#     return {"message": messages}
-
-
-
-@app.post("/session")
-async def create_session(session: Session | None = None):
-    identifier = None
-    if session:
-        identifier = session.chat_id
-    return db_create_session(identifier=identifier)
+@app.get("/chat/{chat_id}")
+async def get_chat_content(chat_id):
+    memory = CustomPostgresChatMessageHistory(session_id=chat_id)
+    history = await memory.aget_messages()
+    return {"messages": [{"content": message.content, "sender": message.type} for message in history]}
 
 
 plugins = entry_points(group="dialog")
