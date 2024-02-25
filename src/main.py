@@ -4,8 +4,7 @@ import logging
 
 from importlib_metadata import entry_points
 
-from dialog.models import Chat as ChatEntity
-from dialog.models.db import engine, session
+from dialog.models.db import engine
 from dialog.settings import (
     CORS_ALLOW_CREDENTIALS,
     CORS_ALLOW_HEADERS,
@@ -19,13 +18,12 @@ from dialog.settings import (
 from sqlalchemy import text
 from pydantic import BaseModel
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from dialog.models.helpers import create_session as db_create_session
 from fastapi.staticfiles import StaticFiles
 
-from dialog.chains.rag_chain import get_rag_chain, get_rag_chain_with_memory, get_contextualizer_chain
+from dialog.chains.rag_chain import get_rag_chain, get_rag_chain_with_memory
 from dialog.memory.postgres_memory import CustomPostgresChatMessageHistory
 
 logging.basicConfig(

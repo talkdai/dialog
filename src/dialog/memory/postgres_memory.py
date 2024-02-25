@@ -3,9 +3,9 @@ from langchain.memory import PostgresChatMessageHistory
 from langchain_core.messages import BaseMessage
 from langchain_core.runnables import run_in_executor
 
-from dialog.settings import DATABASE_URL, LLM_MEMORY_SIZE
+from dialog.settings import DATABASE_URL, PROJECT_CONFIG
 
-
+LLM_MEMORY_SIZE = PROJECT_CONFIG.get("memory").get("memory_size")
 class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
     """
     Custom wrapper of PostgresChatMessageHistory that allows custom functionalities.
