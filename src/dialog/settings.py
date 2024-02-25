@@ -21,9 +21,8 @@ PROJECT_CONFIG = config(
 )
 LLM_TEMPERATURE = config("LLM_TEMPERATURE", default=0.2, cast=float)
 LLM_RELEVANT_CONTENTS = config("LLM_RELEVANT_CONTENTS", default=1, cast=int)
-LLM_MEMORY_SIZE = config("LLM_MEMORY_SIZE", default=5, cast=int)
+LLM_MEMORY_SIZE = config("LLM_MEMORY_SIZE", default=2, cast=int) # 1 round means 2 messages (1 from user, 1 from chatbot)
 STATIC_FILE_LOCATION = config("STATIC_FILE_LOCATION", "/app/static")
-COSINE_SIMILARITY_THRESHOLD = config("CONSINE_SIMILARITY_THRESHOLD", default=0.8, cast=float)
 VERBOSE_LLM = config("VERBOSE_LLM", default=False, cast=bool)
 
 # Cors
