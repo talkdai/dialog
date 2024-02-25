@@ -14,12 +14,17 @@ We recommend that you create a folder inside this project called `data` and put 
 
 ### `.csv` knowledge base
 
+The knowledge base must have the `document` column, with question and answer together, to build the embeddings. Other fields are optional and are metadata and can be used for better filtering later (WIP). We recommend to start with this example:
+
 **fields:**
 
 - category
 - subcategory: used to customize the prompt for specific questions
 - question
-- content: used to generate the embedding
+- content (question answer)
+- document (question and answer together, used to build embeddings)
+
+You can indicate metadata columns in the `.toml` configuration (see example beloew)
 
 **example:**
 
@@ -44,20 +49,35 @@ temperature = 0.2
 model_name = "gpt-3.5-turbo"
 
 [prompt]
-header = """You are a service operator called Avelino from XYZ, you are an expert in providing
-qualified service to high-end customers. Be brief in your answers, without being long-winded
-and objective in your responses. Never say that you are a model (AI), always answer as Avelino.
-Be polite and friendly!"""
+template = """You are an assistant for question-answering tasks.
+Use the following pieces of retrieved context (in Documents section) to answer the question.
+If you don't know the answer, just say that you don't know.
+Use five sentences maximum and keep the answer concise
 
-suggested = "Here is some possible content that could help the user in a better way."
+Act like a service operator called Avelino from XYZ, you are an expert in providing
+qualified service to high-end customers. Never say that you are a model (AI), always answer as Avelino.
+Be polite and friendly!
 
-[prompt.subcategory.loyalty-program]
+\nDocuments:
+{context}\n
+"""
 
-header = """The client is interested in the loyalty program, and needs to be responded to in a
-salesy way; the loyalty program is our growth strategy."""
+contextualize_history_template = """Given a chat history and the latest user question \
+which might reference context in the chat history, formulate a standalone question \
+which can be understood without the chat history. Do NOT answer the question, \
+just reformulate it if needed and otherwise return it as is."""
 
 [fallback]
 prompt = """I'm sorry, I didn't understand your question. Could you rephrase it?"""
+
+[memory]
+memory_size = 2
+
+[documents]
+metadata_cols = ['category', 'subcategory', 'question', 'content', 'actions']
+
+[retriever]
+top_k = 4
 ```
 
 ### Environment Variables
