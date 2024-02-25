@@ -3,6 +3,7 @@ import uuid
 from dialog.models import Chat as ChatEntity
 from dialog.models.db import session
 
+
 def create_session(identifier=None):
     if identifier is None:
         identifier = uuid.uuid4().hex
