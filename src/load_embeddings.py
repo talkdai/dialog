@@ -17,9 +17,10 @@ def make_embeddings(path: str):
         collection_name=COLLECTION_NAME,
         connection_string=DATABASE_URL,
         embedding_function=OpenAIEmbeddings(),
+        pre_delete_collection=True
     )
     # TODO: add only new documents using a hash of the document for comparison
-    store.add_documents(docs, pre_delete_collection=True)
+    store.add_documents(docs)
     print(f"Added {len(docs)} documents to the store.")
 
 

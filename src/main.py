@@ -13,7 +13,7 @@ from dialog.settings import (
     LOGGING_LEVEL,
     PROJECT_CONFIG,
     STATIC_FILE_LOCATION,
-    CORS_ALLOW_ORIGINS
+    CORS_ALLOW_ORIGINS,
 )
 
 from sqlalchemy import text
@@ -25,11 +25,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from dialog.models.helpers import create_session as db_create_session
 from fastapi.staticfiles import StaticFiles
 
-from dialog.chains.rag_chain import get_rag_chain
+from dialog.chains.rag_chain import get_rag_chain, get_rag_chain_with_memory, get_contextualizer_chain
+from dialog.memory.postgres_memory import CustomPostgresChatMessageHistory
 
 logging.basicConfig(
-    level=LOGGING_LEVEL,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    level=LOGGING_LEVEL, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
 app = FastAPI(
@@ -51,8 +51,12 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory=STATIC_FILE_LOCATION), name="static")
 
-class Chat(BaseModel):
-    message: str
+
+class Message(BaseModel):
+    content: str
+
+class Session(BaseModel):
+    chat_id: str
 
 
 @app.get("/health")
@@ -65,28 +69,31 @@ async def health():
             return {"message": "Failed to execute simple SQL"}
 
 
-# @app.post("/chat/{chat_id}")
-# async def post_message(chat_id: str, message: Chat):
-#     chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
-
-#     if not chat_obj:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="Chat ID not found",
-#         )
-#     start_time = datetime.datetime.now()
-#     LLM = get_llm_class()
-#     llm_instance = LLM(config=PROJECT_CONFIG, session_id=chat_id)
-#     ai_message = llm_instance.process(message.message)
-#     duration = datetime.datetime.now() - start_time
-#     logging.info(f"Request processing time for chat_id {chat_id}: {duration}")
-#     return {"message": ai_message["text"]}
+@app.post("/chat/{chat_id}")
+async def post_message(chat_id: str, message: Message):
+    # Get the answer from the RAG model using the memory history,
+    # which itself is contextualized together with the question to make a standalone question
+    memory = CustomPostgresChatMessageHistory(session_id=chat_id)
+    history = await memory.aget_messages()
+    inputs = {
+        "question": message.content,
+        "chat_history": history
+        
+    }
+    rag_chain_with_memory = get_rag_chain_with_memory()
+    answer = rag_chain_with_memory.invoke(inputs)
+    
+    # Save the question and answer to the memory
+    memory.add_user_message(message.content)
+    memory.add_ai_message(answer)
+    
+    return {"message": answer.content}
 
 
 @app.post("/ask")
-async def post_message_no_memory(message: Chat):
+async def post_message_no_memory(message: Message):
     rag_chain = get_rag_chain()
-    answer = rag_chain.invoke(message.message)
+    answer = rag_chain.invoke(message.content)
     return {"message": answer}
 
 
@@ -103,9 +110,6 @@ async def post_message_no_memory(message: Chat):
 #     messages = get_messages(chat_id)
 #     return {"message": messages}
 
-
-class Session(BaseModel):
-    chat_id: str
 
 
 @app.post("/session")
