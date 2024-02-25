@@ -33,7 +33,7 @@ category,subcategory,question,content
 faq,promotions,loyalty-program,"The company XYZ has a loyalty program when you refer new customers you get a discount on your next purchase, ..."
 ```
 
-To load the knowledge base into the database, make sure the database is up and then, inside `src` folder, run `make load-data path="../data/know.csv"` (or pass another path to you .csv).
+These embeddings are created when `dialog` service is getting up.
 
 ### `.toml` prompt configuration
 
