@@ -44,7 +44,7 @@ def load_csv_and_generate_embeddings(path):
         new_keys = set(df["primary_key"]) - set(df_in_db["primary_key"])
 
     # Filter df for keys present in df and not present in df_in_db
-    df_filtered = df[df["primary_key"].isin(new_keys)]
+    df_filtered = df[df["primary_key"].isin(new_keys)].copy()
 
     print("Generating embeddings for new questions...")
     print("New questions:", len(df_filtered))
