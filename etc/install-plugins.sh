@@ -5,13 +5,7 @@ if [ -z "$PLUGINS" ]; then
   exit 1
 fi
 
-# Split the list of plugins using a comma as the delimiter
-IFS=',' read -ra plugins <<< "$PLUGINS"
-
-# Iterate over the libraries and install each one
-for plugin in "${plugins[@]}"; do
-  echo "Installing plugin: $plugin"
-  pip install "$plugin"
-done
+packages=$(echo "$PLUGINS" | tr ',' ' ')
+pip install $packages
 
 echo "Plugins installation completed."
