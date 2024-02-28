@@ -1,12 +1,10 @@
 # Setting up the config
 
-## Settings
-
 To use this project, you need to have a `.csv` file with the knowledge base and a `.toml` file with your prompt configuration.
 
 We recommend that you create a folder inside this project called `data` and put CSVs and TOMLs files over there.
 
-### `.csv` knowledge base
+## `.csv` knowledge base
 
 **fields:**
 
@@ -54,11 +52,11 @@ salesy way; the loyalty program is our growth strategy."""
 prompt = """I'm sorry, I didn't understand your question. Could you rephrase it?"""
 ```
 
-### Environment Variables
+## Environment Variables
 
 Look at the [`.env.sample`](.env.sample) file to see the environment variables needed to run the project.
 
-#### LangSmith
+### LangSmith
 
 **Optionally:** if you wish to add observability to your llm application, you may want to use [Langsmith](https://docs.smith.langchain.com/) (so far, for personal use only) to help to debug, test, evaluate, and monitor your chains used in dialog. Follow the [setup instructions](https://docs.smith.langchain.com/setup) and add the env vars into the `.env` file:
 
@@ -68,3 +66,15 @@ LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"
 LANGCHAIN_API_KEY=<YOUR_LANGCHAIN_API_KEY>
 LANGCHAIN_PROJECT=<YOUR_LANGCHAIN_PROJECT>
 ```
+
+## Generate an embedding `load_csv.py`
+
+Embeddings create a vector representation of a question and answer pair from the knowledge base, enabling semantic search where we look for text passages that are most similar in the vector space.
+
+We have a CLI that generates embeddings by reading the knowledge base `csv`.
+By default, `load_csv.py` performs a **diff** between the existing vector database and the new questions and answers in the `csv`.
+
+The **CLI** has some parameters:
+
+*﻿`--path`: path to the CSV (knowledge base)
+*﻿`--cleandb`: deletes all previously imported vectors and reimports everything again.
