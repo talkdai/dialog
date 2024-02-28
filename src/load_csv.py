@@ -28,7 +28,8 @@ def load_csv_and_generate_embeddings(path, cleardb=False):
     )
 
     if cleardb:
-        CompanyContent.query.delete()
+        session.query(CompanyContent).delete()
+        session.commit()
 
     df_in_db = pd.read_sql(
         text(
