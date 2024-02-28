@@ -6,14 +6,12 @@ from dialog.models.db import session
 
 def create_session(identifier=None):
     if identifier is None:
-        session_uuid = uuid.uuid4().hex
+        identifier = uuid.uuid4().hex
 
-    chat = session.query(ChatEntity).filter_by(uuid=session_uuid).first()
-    if chat:
-        return {"chat_id": chat.uuid}
+    chat = session.query(ChatEntity).filter_by(uuid=identifier).first()
+    if not chat:
+        chat = ChatEntity(uuid=identifier)
+        session.add(chat)
+        session.commit()
 
-    chat = ChatEntity(uuid=session_uuid)
-    session.add(chat)
-    session.commit()
-
-    return {"chat_id": session_uuid}
+    return {"chat_id": chat.uuid}
