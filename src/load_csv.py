@@ -9,7 +9,7 @@ from dialog.models import CompanyContent
 from dialog.models.db import session
 
 
-def load_csv_and_generate_embeddings(path):
+def load_csv_and_generate_embeddings(path, cleardb=False):
     df = pd.read_csv(path)
     necessary_cols = ["category", "subcategory", "question", "content"]
     for col in necessary_cols:
@@ -26,6 +26,9 @@ def load_csv_and_generate_embeddings(path):
     df["primary_key"] = df["primary_key"].apply(
         lambda row: hashlib.md5(row.encode()).hexdigest()
     )
+
+    if cleardb:
+        CompanyContent.query.delete()
 
     df_in_db = pd.read_sql(
         text(
@@ -62,6 +65,7 @@ def load_csv_and_generate_embeddings(path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, required=False, default="./know.csv")
+    parser.add_argument("--cleardb", type=bool, required=False, default=False)
     args = parser.parse_args()
 
-    load_csv_and_generate_embeddings(args.path)
+    load_csv_and_generate_embeddings(args.path, args.cleardb)
