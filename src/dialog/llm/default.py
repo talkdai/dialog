@@ -30,7 +30,7 @@ class DialogLLM(AbstractLLM):
     def generate_prompt(self, input):
         relevant_contents = get_most_relevant_contents_from_message(input, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset)
         prompt_config = self.config.get("prompt")
-        fallback = prompt_config.get("fallback")
+        fallback = self.config.get("fallback").get("prompt")
         header = prompt_config.get("header")
         suggested = prompt_config.get("suggested")
         messages = []
