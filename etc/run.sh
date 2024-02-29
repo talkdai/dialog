@@ -1,7 +1,8 @@
 #!/bin/bash
 
 alembic upgrade head
-python load_csv.py --path ${DIALOG_DATA_PATH}
+[[ -z "${DIALOG_LOADCSV_CLEARDB}" ]] || CLEARDB_COMMAND=--cleardb
+python load_csv.py --path ${DIALOG_DATA_PATH} ${CLEARDB_COMMAND}
 
 /app/etc/install-plugins.sh
 
