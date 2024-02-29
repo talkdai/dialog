@@ -14,7 +14,7 @@ from dialog.llm.abstract_llm import AbstractLLM
 from dialog.llm.embeddings import get_most_relevant_contents_from_message
 from dialog.llm.memory import generate_memory_instance
 from dialog.settings import (OPENAI_API_KEY, VERBOSE_LLM, LLM_RELEVANT_CONTENTS,
-                             LLM_TEMPERATURE, LLM_MEMORY_SIZE)
+                             LLM_TEMPERATURE, LLM_MEMORY_SIZE, FALLBACK_PROMPT_TEMPLATE)
 
 
 class DialogLLM(AbstractLLM):
@@ -30,7 +30,6 @@ class DialogLLM(AbstractLLM):
     def generate_prompt(self, input):
         relevant_contents = get_most_relevant_contents_from_message(input, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset)
         prompt_config = self.config.get("prompt")
-        fallback = self.config.get("fallback").get("prompt")
         header = prompt_config.get("header")
         suggested = prompt_config.get("suggested")
         messages = []
@@ -43,7 +42,7 @@ class DialogLLM(AbstractLLM):
             messages.append(MessagesPlaceholder(variable_name="chat_history", optional=True))
             messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
         else:
-            messages.append(SystemMessagePromptTemplate.from_template(fallback))
+            messages.append(SystemMessagePromptTemplate.from_template(FALLBACK_PROMPT_TEMPLATE))
             messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
             
         self.prompt = ChatPromptTemplate.from_messages(messages)
