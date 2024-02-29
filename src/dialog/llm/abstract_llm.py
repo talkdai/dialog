@@ -19,6 +19,7 @@ class AbstractLLM:
 
         self.config = config
         self.prompt = None
+        self.fallback = None
         self.session_id = None
         if session_id:
             self.session_id = session_id if dataset is None else f"{dataset}_{session_id}" 
@@ -79,8 +80,11 @@ class AbstractLLM:
         """
         processed_input = self.preprocess(input)
         self.generate_prompt(processed_input)
-        output = self.llm({
-            "user_message": processed_input,
-        })
+        if self.fallback:
+            output = {"text": self.fallback}
+        else:
+            output = self.llm({
+                "user_message": processed_input,
+            })
         processed_output = self.postprocess(output)
         return processed_output

@@ -41,13 +41,11 @@ class DialogLLM(AbstractLLM):
             messages.append(SystemMessagePromptTemplate.from_template(f"{suggested}. {context}"))
             messages.append(MessagesPlaceholder(variable_name="chat_history", optional=True))
             messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
+            self.prompt = ChatPromptTemplate.from_messages(messages)
+            if VERBOSE_LLM:
+                logging.info(f"Verbose LLM prompt: {self.prompt.pretty_print()}")
         else:
-            messages.append(SystemMessagePromptTemplate.from_template(FALLBACK_PROMPT_TEMPLATE))
-            messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
-            
-        self.prompt = ChatPromptTemplate.from_messages(messages)
-        if VERBOSE_LLM:
-            logging.info(f"Verbose LLM prompt: {self.prompt.pretty_print()}")
+            self.fallback = FALLBACK_PROMPT_TEMPLATE
 
     @property
     def llm(self) -> LLMChain:
