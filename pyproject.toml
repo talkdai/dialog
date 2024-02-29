@@ -26,6 +26,7 @@ alembic = "^1.12.1"
 langchain-community = "^0.0.20"
 importlib-metadata = "^7.0.1"
 langchain-openai = "^0.0.6"
+pyarrow = "^15.0.0"
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.13"
