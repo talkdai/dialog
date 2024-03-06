@@ -33,18 +33,18 @@ class DialogLLM(AbstractLLM):
         header = prompt_config.get("header")
         suggested = prompt_config.get("suggested")
         messages = []
-        if len(relevant_contents) > 0:
-            context = "Context: \n".join(
-                [f"{c.question}\n{c.content}\n" for c in relevant_contents]
-            )
-            messages.append(SystemMessagePromptTemplate.from_template(header))
-            messages.append(SystemMessagePromptTemplate.from_template(f"{suggested}. {context}"))
-            messages.append(MessagesPlaceholder(variable_name="chat_history", optional=True))
-            messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
-            self.prompt = ChatPromptTemplate.from_messages(messages)
-            if VERBOSE_LLM:
-                logging.info(f"Verbose LLM prompt: {self.prompt.pretty_print()}")
-        else:
+        context = "Context: \n".join(
+            [f"{c.question}\n{c.content}\n" for c in relevant_contents]
+        )
+        messages.append(SystemMessagePromptTemplate.from_template(header))
+        messages.append(SystemMessagePromptTemplate.from_template(f"{suggested}. {context}"))
+        messages.append(MessagesPlaceholder(variable_name="chat_history", optional=True))
+        messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
+        self.prompt = ChatPromptTemplate.from_messages(messages)
+        if VERBOSE_LLM:
+            logging.info(f"{len(relevant_contents)} Documents retrieved from knowledge base")
+            logging.info(f"Verbose LLM prompt: {self.prompt.pretty_print()}")
+        if len(relevant_contents) == 0:
             self.fallback = FALLBACK_PROMPT_TEMPLATE
 
     @property

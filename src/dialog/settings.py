@@ -22,7 +22,7 @@ LLM_RELEVANT_CONTENTS = config("LLM_RELEVANT_CONTENTS", default=1, cast=int)
 LLM_MEMORY_SIZE = config("LLM_MEMORY_SIZE", default=5, cast=int)
 STATIC_FILE_LOCATION = config("STATIC_FILE_LOCATION", "/app/static")
 COSINE_SIMILARITY_THRESHOLD = config("CONSINE_SIMILARITY_THRESHOLD", default=0.2, cast=float)
-FALLBACK_PROMPT_TEMPLATE = PROJECT_CONFIG.get("fallback", {"prompt": "I'm sorry, I don't understand that."}).get("prompt")
+FALLBACK_PROMPT_TEMPLATE = PROJECT_CONFIG.get("fallback", {"prompt": None}).get("prompt")
 
 # Cors
 CORS_ALLOW_ORIGINS = config("CORS_ALLOW_ORIGINS", cast=Csv(), default="*")
