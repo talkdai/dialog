@@ -14,7 +14,7 @@ from dialog.llm.abstract_llm import AbstractLLM
 from dialog.llm.embeddings import get_most_relevant_contents_from_message
 from dialog.llm.memory import generate_memory_instance
 from dialog.settings import (LLM_MEMORY_SIZE, LLM_RELEVANT_CONTENTS,
-                             OPENAI_API_KEY, VERBOSE_LLM)
+                             OPENAI_API_KEY, VERBOSE_LLM, FALLBACK_NOT_FOUND_RELEVANT_CONTENTS)
 
 
 class DialogLLM(AbstractLLM):
@@ -52,7 +52,8 @@ class DialogLLM(AbstractLLM):
             messages.append(
                 HumanMessagePromptTemplate.from_template("{user_message}"))
 
-        self.prompt = ChatPromptTemplate.from_messages(messages)
+        if not FALLBACK_NOT_FOUND_RELEVANT_CONTENTS:
+            self.prompt = ChatPromptTemplate.from_messages(messages)
         if VERBOSE_LLM:
             logging.info(f"Verbose LLM prompt: {self.prompt.pretty_print()}")
 
