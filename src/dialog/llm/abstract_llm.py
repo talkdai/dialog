@@ -19,6 +19,7 @@ class AbstractLLM:
         self.config = config
         self.prompt = None
         self.session_id = None
+        self.relevant_contents = None
         if session_id:
             self.session_id = session_id if dataset is None else f"{dataset}_{session_id}"
         self.dataset = dataset
@@ -78,10 +79,11 @@ class AbstractLLM:
         """
         processed_input = self.preprocess(input)
         self.generate_prompt(processed_input)
+        if len(self.relevant_contents) == 0 and \
+            self.config.get("prompt").get("fallback_not_found_relevant_contents"):
+            return {"text": self.config.get("prompt").get("fallback_not_found_relevant_contents")}
         output = self.llm({
             "user_message": processed_input,
         })
         processed_output = self.postprocess(output)
-        if self.config.get("prompt").get("fallback_not_found_relevant_contents"):
-            return {"text": self.config.get("prompt").get("fallback_not_found_relevant_contents")}
         return processed_output
