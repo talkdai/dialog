@@ -34,7 +34,9 @@ To load the knowledge base into the database, make sure the database is up and t
 
 The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are mandatory fields used for processing the conversation and connecting to the LLM.
 
-The `[fallback.prompt]` field is used when the LLM does not find a compatible embedding on the database, without it, it would hallucinate on possible answers for questions outside of the scope of the embeddings.
+The `[fallback.prompt]` field is used when the LLM does not find a compatible embedding on the database, without it, it could hallucinate on possible answers for questions outside of the scope of the embeddings.
+
+> In `[fallback.prompt]` the response will be processed by LLM. If you need to return a default message when there is no recommended question in the knowledge base, use the `fallback_not_found_relevant_contents` configuration in the `.toml` *(project configuration)*.
 
 It is also possible to add information to the prompt for subcategories and choose some optional llm parameters like temperature (defaults to 0.2) or model_name, see below for an example of a complete configuration:
 

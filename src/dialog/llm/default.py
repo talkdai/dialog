@@ -13,8 +13,8 @@ from dialog.learn.idf import categorize_conversation_history
 from dialog.llm.abstract_llm import AbstractLLM
 from dialog.llm.embeddings import get_most_relevant_contents_from_message
 from dialog.llm.memory import generate_memory_instance
-from dialog.settings import (OPENAI_API_KEY, VERBOSE_LLM, LLM_RELEVANT_CONTENTS,
-                             LLM_TEMPERATURE, LLM_MEMORY_SIZE)
+from dialog.settings import (LLM_MEMORY_SIZE, LLM_RELEVANT_CONTENTS,
+                             OPENAI_API_KEY, VERBOSE_LLM)
 
 
 class DialogLLM(AbstractLLM):
@@ -27,25 +27,31 @@ class DialogLLM(AbstractLLM):
             )
         return None
 
-    def generate_prompt(self, input):
-        relevant_contents = get_most_relevant_contents_from_message(input, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset)
+    def generate_prompt(self, text):
+        self.relevant_contents = get_most_relevant_contents_from_message(
+            text, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset)
         prompt_config = self.config.get("prompt")
         fallback = self.config.get("fallback").get("prompt")
         header = prompt_config.get("header")
         suggested = prompt_config.get("suggested")
         messages = []
-        if len(relevant_contents) > 0:
+        if len(self.relevant_contents) > 0:
             context = "Context: \n".join(
-                [f"{c.question}\n{c.content}\n" for c in relevant_contents]
+                [f"{c.question}\n{c.content}\n" for c in self.relevant_contents]
             )
             messages.append(SystemMessagePromptTemplate.from_template(header))
-            messages.append(SystemMessagePromptTemplate.from_template(f"{suggested}. {context}"))
-            messages.append(MessagesPlaceholder(variable_name="chat_history", optional=True))
-            messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
+            messages.append(SystemMessagePromptTemplate.from_template(
+                f"{suggested}. {context}"))
+            messages.append(MessagesPlaceholder(variable_name="chat_history",
+            optional=True))
+            messages.append(
+                HumanMessagePromptTemplate.from_template("{user_message}"))
         else:
-            messages.append(SystemMessagePromptTemplate.from_template(fallback))
-            messages.append(HumanMessagePromptTemplate.from_template("{user_message}"))
-            
+            messages.append(
+                SystemMessagePromptTemplate.from_template(fallback))
+            messages.append(
+                HumanMessagePromptTemplate.from_template("{user_message}"))
+
         self.prompt = ChatPromptTemplate.from_messages(messages)
         if VERBOSE_LLM:
             logging.info(f"Verbose LLM prompt: {self.prompt.pretty_print()}")
