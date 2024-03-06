@@ -2,8 +2,6 @@ from langchain.chains.llm import LLMChain
 from langchain.memory.chat_memory import BaseChatMemory
 from langchain.prompts import ChatPromptTemplate
 
-from dialog.settings import FALLBACK_NOT_FOUND_RELEVANT_CONTENTS
-
 
 class AbstractLLM:
     def __init__(self, config, session_id=None, parent_session_id=None, dataset=None, llm_key=None):
@@ -21,7 +19,6 @@ class AbstractLLM:
         self.config = config
         self.prompt = None
         self.session_id = None
-        self.relevant_contents = None
         if session_id:
             self.session_id = session_id if dataset is None else f"{dataset}_{session_id}"
         self.dataset = dataset
@@ -85,7 +82,6 @@ class AbstractLLM:
             "user_message": processed_input,
         })
         processed_output = self.postprocess(output)
-
-        if len(self.relevant_contents) <= 0 and FALLBACK_NOT_FOUND_RELEVANT_CONTENTS:
-            return {"text": FALLBACK_NOT_FOUND_RELEVANT_CONTENTS}
+        if self.config.get("prompt").get("fallback_not_found_relevant_contents"):
+            return {"text": self.config.get("prompt").get("fallback_not_found_relevant_contents")}
         return processed_output
