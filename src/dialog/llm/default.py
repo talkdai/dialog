@@ -28,7 +28,7 @@ class DialogLLM(AbstractLLM):
         return None
 
     def generate_prompt(self, text):
-        relevant_contents = get_most_relevant_contents_from_message(
+        self.relevant_contents = get_most_relevant_contents_from_message(
             text, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset)
         prompt_config = self.config.get("prompt")
         fallback = prompt_config.get("fallback") or \
@@ -36,9 +36,9 @@ class DialogLLM(AbstractLLM):
         header = prompt_config.get("header")
         suggested = prompt_config.get("suggested")
         messages = []
-        if len(relevant_contents) > 0:
+        if len(self.relevant_contents) > 0:
             context = "Context: \n".join(
-                [f"{c.question}\n{c.content}\n" for c in relevant_contents]
+                [f"{c.question}\n{c.content}\n" for c in self.relevant_contents]
             )
             messages.append(SystemMessagePromptTemplate.from_template(header))
             messages.append(SystemMessagePromptTemplate.from_template(
@@ -48,14 +48,12 @@ class DialogLLM(AbstractLLM):
                     variable_name="chat_history", optional=True))
             messages.append(
                 HumanMessagePromptTemplate.from_template("{user_message}"))
-            self.prompt = ChatPromptTemplate.from_messages(messages)
         else:
             messages.append(
                 SystemMessagePromptTemplate.from_template(fallback))
             messages.append(
                 HumanMessagePromptTemplate.from_template("{user_message}"))
-            if not prompt_config.get("fallback_not_found_relevant_contents"):
-                self.prompt = ChatPromptTemplate.from_messages(messages)
+        self.prompt = ChatPromptTemplate.from_messages(messages)
 
         if VERBOSE_LLM:
             logging.info(f"Verbose LLM prompt: {self.prompt.pretty_print()}")
