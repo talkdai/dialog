@@ -26,7 +26,9 @@ To load the knowledge base into the database, make sure the database is up and t
 
 The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are mandatory fields used for processing the conversation and connecting to the LLM.
 
-The `[fallback.prompt]` field is used when the LLM does not find a compatible embedding on the database, without it, it would hallucinate on possible answers for questions outside of the scope of the embeddings.
+The `[prompt.fallback]` field is used when the LLM does not find a compatible embedding in the database; that is, the `[prompt.header]` **is ignored** and the `[prompt.fallback]` is used. Without it, there could be hallucinations about possible answers to questions outside the scope of the embeddings.
+
+> In `[prompt.fallback]` the response will be processed by LLM. If you need to return a default message when there is no recommended question in the knowledge base, use the `[prompt.fallback_not_found_relevant_contents]` configuration in the `.toml` *(project configuration)*.
 
 It is also possible to add information to the prompt for subcategories and choose some optional llm parameters like temperature (defaults to 0.2) or model_name, see below for an example of a complete configuration:
 
@@ -43,13 +45,14 @@ Be polite and friendly!"""
 
 suggested = "Here is some possible content that could help the user in a better way."
 
+fallback = "I'm sorry, I couldn't find a relevant answer for your question."
+
+fallback_not_found_relevant_contents = "I'm sorry, I couldn't find a relevant answer for your question."
+
 [prompt.subcategory.loyalty-program]
 
 header = """The client is interested in the loyalty program, and needs to be responded to in a
 salesy way; the loyalty program is our growth strategy."""
-
-[fallback]
-prompt = """I'm sorry, I didn't understand your question. Could you rephrase it?"""
 ```
 
 ## Environment Variables
@@ -76,5 +79,5 @@ By default, `load_csv.py` performs a **diff** between the existing vector databa
 
 The **CLI** has some parameters:
 
-* `--path`: path to the CSV (knowledge base);
-* `--cleandb`: deletes all previously imported vectors and reimports everything again. **In Docker** define the environment variable `DIALOG_LOADCSV_CLEARDB` can be set to `true` to enable this option.
+- `--path`: path to the CSV (knowledge base);
+- `--cleandb`: deletes all previously imported vectors and reimports everything again. **In Docker** define the environment variable `DIALOG_LOADCSV_CLEARDB` can be set to `true` to enable this option.
