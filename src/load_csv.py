@@ -9,7 +9,7 @@ from dialog.models import CompanyContent
 from dialog.models.db import session
 
 
-def load_csv_and_generate_embeddings(path, cleardb=False):
+def load_csv_and_generate_embeddings(path, cleardb=False, columns=["content"]):
     df = pd.read_csv(path)
     necessary_cols = ["category", "subcategory", "question", "content"]
     for col in necessary_cols:
@@ -54,7 +54,8 @@ def load_csv_and_generate_embeddings(path, cleardb=False):
     print("New questions:", len(df_filtered))
 
     df_filtered.drop(columns=["primary_key"], inplace=True)
-    df_filtered["embedding"] = generate_embeddings(df_filtered["content"])
+    df_filtered["embedding"] = generate_embeddings(
+        "\n".join([df_filtered[column] for column in columns]))
     df_filtered.to_sql(
         CompanyContent.__tablename__,
         session.get_bind(),
@@ -67,6 +68,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, required=False, default="./know.csv")
     parser.add_argument("--cleardb", action="store_true")
+    parser.add_argument("--columns", type=str, required=False, default="content")
     args = parser.parse_args()
 
-    load_csv_and_generate_embeddings(args.path, args.cleardb)
+    load_csv_and_generate_embeddings(
+        args.path, args.cleardb, args.columns.split(","))
