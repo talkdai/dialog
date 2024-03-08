@@ -55,7 +55,7 @@ def load_csv_and_generate_embeddings(path, cleardb=False, columns=("content",)):
 
     df_filtered.drop(columns=["primary_key"], inplace=True)
     df_filtered["embedding"] = generate_embeddings(
-        "\n".join([df_filtered[column] for column in columns]))
+        "\n".join(df_filtered[column] for column in columns))
     df_filtered.to_sql(
         CompanyContent.__tablename__,
         session.get_bind(),
