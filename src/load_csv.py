@@ -68,7 +68,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, required=False, default="./know.csv")
     parser.add_argument("--cleardb", action="store_true")
-    parser.add_argument("--columns", type=str, required=False, default="content")
+    parser.add_argument("--columns", nargs="*", default=["content"])
     args = parser.parse_args()
 
     load_csv_and_generate_embeddings(
