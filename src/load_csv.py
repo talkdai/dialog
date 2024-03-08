@@ -9,7 +9,7 @@ from dialog.models import CompanyContent
 from dialog.models.db import session
 
 
-def load_csv_and_generate_embeddings(path, cleardb=False, columns=["content"]):
+def load_csv_and_generate_embeddings(path, cleardb=False, columns=("content",)):
     df = pd.read_csv(path)
     necessary_cols = ["category", "subcategory", "question", "content"]
     for col in necessary_cols:
