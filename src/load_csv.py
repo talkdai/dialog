@@ -72,4 +72,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     load_csv_and_generate_embeddings(
-        args.path, args.cleardb, args.columns.split(","))
+        args.path, args.cleardb, args.columns)
