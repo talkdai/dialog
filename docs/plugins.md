@@ -47,3 +47,8 @@ WHATSAPP_API_TOKEN=
 WHATSAPP_ACCOUNT_NUMBER=
 PLUGINS=plugins.whats_audio_synth.main,
 ```
+
+
+### Using Langchain's LCEL structure
+
+If you want to use Langchain's LCEL structure, you can use the `DialogLcelLLM` setting the variable to the 'dialog.llm.lcel_default.DialogLcelLLM'.
