@@ -9,6 +9,7 @@ from importlib_metadata import entry_points
 from dialog.llm import get_llm_class
 from dialog.llm.memory import get_messages
 from dialog.models import Chat as ChatEntity
+from dialog.schemas import ChatModel, SessionModel
 from dialog.models.db import engine, session
 from dialog.settings import (
     CORS_ALLOW_CREDENTIALS,
@@ -21,8 +22,6 @@ from dialog.settings import (
 )
 
 from sqlalchemy import text
-from pydantic import BaseModel
-
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -53,9 +52,6 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory=STATIC_FILE_LOCATION), name="static")
 
-class Chat(BaseModel):
-    message: str
-
 
 @app.get("/health")
 async def health():
@@ -68,7 +64,12 @@ async def health():
 
 
 @app.post("/chat/{chat_id}")
-async def post_message(chat_id: str, message: Chat):
+async def post_message(chat_id: str, message: ChatModel):
+    """
+    Endpoint to post a message to a certain chat id.
+
+    This endpoint will use the LLM to process the message and return the response.
+    """
     chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
 
     if not chat_obj:
@@ -86,7 +87,11 @@ async def post_message(chat_id: str, message: Chat):
 
 
 @app.post("/ask")
-async def post_message_no_memory(message: Chat):
+async def ask_question_to_llm(message: ChatModel):
+    """
+    This posts a single message to the LLM and returns the response without
+    using memory.
+    """
     start_time = datetime.datetime.now()
     LLM = get_llm_class()
     llm_instance = LLM(config=PROJECT_CONFIG)
@@ -98,6 +103,9 @@ async def post_message_no_memory(message: Chat):
 
 @app.get("/chat/{chat_id}")
 async def get_chat_content(chat_id):
+    """
+    Endpoint to fetch all messages from a certain chat id.
+    """
     chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
 
     if not chat_obj:
@@ -109,13 +117,11 @@ async def get_chat_content(chat_id):
     messages = get_messages(chat_id)
     return {"message": messages}
 
-
-class Session(BaseModel):
-    chat_id: str
-
-
 @app.post("/session")
-async def create_session(session: Session | None = None):
+async def create_session(session: SessionModel | None = None):
+    """
+    Endpoint to create a new chat session.
+    """
     identifier = None
     if session:
         identifier = session.chat_id
