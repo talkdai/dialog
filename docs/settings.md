@@ -80,4 +80,5 @@ By default, `load_csv.py` performs a **diff** between the existing vector databa
 The **CLI** has some parameters:
 
 - `--path`: path to the CSV (knowledge base);
-- `--cleandb`: deletes all previously imported vectors and reimports everything again. **In Docker** define the environment variable `DIALOG_LOADCSV_CLEARDB` can be set to `true` to enable this option.
+- `--cleandb`: deletes all previously imported vectors and reimports everything again. **In Docker** define the environment variable `DIALOG_LOADCSV_CLEARDB` can be set to `true` to enable this option;
+- `--columns`: defines the columns of the knowledge base (csv) that will be used to generate the embedding. By default, the `content` column is used.
