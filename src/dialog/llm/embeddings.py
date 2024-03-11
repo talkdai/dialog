@@ -4,8 +4,8 @@ from langchain_openai import OpenAIEmbeddings
 from sqlalchemy import select
 
 from dialog.models import CompanyContent
-from dialog.models.db import session
-from dialog.settings import OPENAI_API_KEY, COSINE_SIMILARITY_THRESHOLD
+from dialog.models.db import session_scope
+from dialog.settings import COSINE_SIMILARITY_THRESHOLD, OPENAI_API_KEY
 
 EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
@@ -32,10 +32,11 @@ def get_most_relevant_contents_from_message(message, top=5, dataset=None):
     if dataset is not None:
         filters.append(CompanyContent.dataset == dataset)
 
-    possible_contents = session.scalars(
-        select(CompanyContent)
-        .filter(*filters)
-        .order_by(CompanyContent.embedding.cosine_distance(message_embedding))
-        .limit(top)
-    ).all()
+    with session_scope() as session:
+        possible_contents = session.scalars(
+            select(CompanyContent)
+            .filter(*filters)
+            .order_by(CompanyContent.embedding.cosine_distance(message_embedding))
+            .limit(top)
+        ).all()
     return possible_contents

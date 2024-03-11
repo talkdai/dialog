@@ -1,11 +1,24 @@
-from dialog.settings import DATABASE_URL
+from contextlib import contextmanager
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-engine = create_engine(DATABASE_URL)
+from dialog.settings import DATABASE_URL
 
-Session = sessionmaker(bind=engine)
-session = Session()
+@contextmanager
+def session_scope():
+    """Provide a transactional scope around a series of operations."""
+    engine = create_engine(DATABASE_URL)
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 Base = declarative_base()

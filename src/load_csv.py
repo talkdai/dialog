@@ -6,7 +6,7 @@ from sqlalchemy import text
 
 from dialog.llm.embeddings import generate_embeddings
 from dialog.models import CompanyContent
-from dialog.models.db import session
+from dialog.models.db import session_scope
 
 
 def load_csv_and_generate_embeddings(path, cleardb=False, columns=("content",)):
@@ -28,15 +28,16 @@ def load_csv_and_generate_embeddings(path, cleardb=False, columns=("content",)):
     )
 
     if cleardb:
-        session.query(CompanyContent).delete()
-        session.commit()
+        with session_scope() as session:
+            session.query(CompanyContent).delete()
 
-    df_in_db = pd.read_sql(
-        text(
-            f"SELECT category, subcategory, question, content, dataset FROM {CompanyContent.__tablename__}"
-        ),
-        session.get_bind(),
-    )
+    with session_scope() as session:
+        df_in_db = pd.read_sql(
+            text(
+                f"SELECT category, subcategory, question, content, dataset FROM {CompanyContent.__tablename__}"
+            ),
+            session.get_bind(),
+        )
 
     # Create primary key column using category, subcategory, and question for df_in_db
     new_keys = set(df["primary_key"])
@@ -56,12 +57,13 @@ def load_csv_and_generate_embeddings(path, cleardb=False, columns=("content",)):
     df_filtered.drop(columns=["primary_key"], inplace=True)
     df_filtered["embedding"] = generate_embeddings(
         "\n".join(df_filtered[column] for column in columns))
-    df_filtered.to_sql(
-        CompanyContent.__tablename__,
-        session.get_bind(),
-        if_exists="append",
-        index=False,
-    )
+    with session_scope() as session:
+        df_filtered.to_sql(
+            CompanyContent.__tablename__,
+            session.get_bind(),
+            if_exists="append",
+            index=False,
+        )
 
 
 if __name__ == "__main__":

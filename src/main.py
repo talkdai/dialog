@@ -2,41 +2,26 @@
 import datetime
 import logging
 
-from typing import Optional
-
-from importlib_metadata import entry_points
-
 from dialog.llm import get_llm_class
 from dialog.llm.memory import get_messages
 from dialog.models import Chat as ChatEntity
 from dialog.models.db import engine, session
+from dialog.models.helpers import create_session as db_create_session
 from dialog.settings import (
     CORS_ALLOW_CREDENTIALS,
     CORS_ALLOW_HEADERS,
     CORS_ALLOW_METHODS,
+    CORS_ALLOW_ORIGINS,
     LOGGING_LEVEL,
     PROJECT_CONFIG,
     STATIC_FILE_LOCATION,
-    CORS_ALLOW_ORIGINS
 )
-
-from sqlalchemy import text
-from pydantic import BaseModel
-
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-
-from dialog.models.helpers import create_session as db_create_session
 from fastapi.staticfiles import StaticFiles
-
-logging.basicConfig(
-    level=LOGGING_LEVEL,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
-app = FastAPI(
-    title="Dialog API",
-    description="Humanized Conversation API (using LLM)",
+from importlib_metadata import entry_points
+from pydantic import BaseModel
+from sqlalchemy import text
     version="0.1.0",
     docs_url="/docs",
     openapi_url="/openapi.json",
