@@ -26,4 +26,4 @@ def get_llm_class() -> Type[AbstractLLM]:
         logging.info(f"LLM class {LLM_CLASS} does not implement AbstractLLM. Using default LLM")
         return DialogLLM
 
-    return DialogLLM
+    return llm_class or DialogLLM

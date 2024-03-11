@@ -3,6 +3,7 @@ import logging
 
 from langchain.chains.llm import LLMChain
 from langchain.memory import ConversationBufferWindowMemory
+from langchain_core.runnables import RunnablePassthrough
 from langchain.memory.chat_memory import BaseChatMemory
 from langchain.prompts import (
     ChatPromptTemplate,
@@ -14,7 +15,7 @@ from langchain_openai.chat_models import ChatOpenAI
 from dialog.learn.idf import categorize_conversation_history
 from dialog.llm.abstract_llm import AbstractLLM
 from dialog.llm.embeddings import get_most_relevant_contents_from_message
-from dialog.llm.memory import generate_memory_instance
+from dialog.llm.memory import generate_memory_instance, get_messages
 from dialog.settings import (
     LLM_MEMORY_SIZE,
     LLM_RELEVANT_CONTENTS,
@@ -46,29 +47,25 @@ class DialogLcelLLM(AbstractLLM):
         fallback = prompt_config.get("fallback") or self.config.get("fallback").get("prompt") # maintaining compatibility with the previous configuration
         header = prompt_config.get("header")
         suggested = prompt_config.get("suggested")
-        messages = []
         if len(self.relevant_contents) > 0:
             context = "Context: \n".join(
                 [f"{c.question}\n{c.content}\n" for c in self.relevant_contents]
             )
             self.prompt = ChatPromptTemplate.from_template(
                 "\n".join([
-                    SystemMessagePromptTemplate.from_template(header),
-                    messages.append(SystemMessagePromptTemplate.from_template(
-                        f"{suggested}. {context}"
-                    )),
-                    "{chat_history}",
+                    header,
+                    suggested,
+                    context,
                     "{user_message}"
                 ])
             )
         else:
-            ChatPromptTemplate.from_template(
+            self.prompt = ChatPromptTemplate.from_template(
                 "\n".join([
                     fallback,
-                    HumanMessagePromptTemplate.from_template("{user_message}")
+                    "{user_message}"
                 ])
             )
-        self.prompt = ChatPromptTemplate.from_messages(messages)
 
         if VERBOSE_LLM:
             logging.info(f"Verbose LLM prompt: {self.prompt.pretty_print()}")
@@ -106,8 +103,8 @@ class DialogLcelLLM(AbstractLLM):
     def process(self, input):
         processed_input = self.preprocess(input)
         self.generate_prompt(processed_input)
-        chain = self.prompt | self.llm | self.parser
+        chain = self.prompt | self.llm
         output = chain.invoke({
-            "user_message": processed_input,
+            "user_message": processed_input
         })
         return self.postprocess(output)
