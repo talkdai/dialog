@@ -1,15 +1,14 @@
-# *-* coding: utf-8 *-*
 import datetime
 import logging
 
-from typing import Optional
+from typing import Annotated
 
 from importlib_metadata import entry_points
 
 from dialog.llm import get_llm_class
 from dialog.llm.memory import get_messages
 from dialog.models import Chat as ChatEntity
-from dialog.models.db import engine, session
+from dialog.models.db import engine, get_session
 from dialog.settings import (
     CORS_ALLOW_CREDENTIALS,
     CORS_ALLOW_HEADERS,
@@ -17,21 +16,21 @@ from dialog.settings import (
     LOGGING_LEVEL,
     PROJECT_CONFIG,
     STATIC_FILE_LOCATION,
-    CORS_ALLOW_ORIGINS
+    CORS_ALLOW_ORIGINS,
 )
 
 from sqlalchemy import text
+from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from dialog.models.helpers import create_session as db_create_session
 from fastapi.staticfiles import StaticFiles
 
 logging.basicConfig(
-    level=LOGGING_LEVEL,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    level=LOGGING_LEVEL, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
 app = FastAPI(
@@ -53,6 +52,9 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory=STATIC_FILE_LOCATION), name="static")
 
+DbSession = Annotated[Session, Depends(get_session)]
+
+
 class Chat(BaseModel):
     message: str
 
@@ -68,7 +70,7 @@ async def health():
 
 
 @app.post("/chat/{chat_id}")
-async def post_message(chat_id: str, message: Chat):
+async def post_message(chat_id: str, message: Chat, session: DbSession):
     chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
 
     if not chat_obj:
@@ -78,7 +80,7 @@ async def post_message(chat_id: str, message: Chat):
         )
     start_time = datetime.datetime.now()
     LLM = get_llm_class()
-    llm_instance = LLM(config=PROJECT_CONFIG, session_id=chat_id)
+    llm_instance = LLM(config=PROJECT_CONFIG, db_session=session, session_id=chat_id)
     ai_message = llm_instance.process(message.message)
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time for chat_id {chat_id}: {duration}")
@@ -86,10 +88,10 @@ async def post_message(chat_id: str, message: Chat):
 
 
 @app.post("/ask")
-async def post_message_no_memory(message: Chat):
+async def post_message_no_memory(message: Chat, session: DbSession):
     start_time = datetime.datetime.now()
     LLM = get_llm_class()
-    llm_instance = LLM(config=PROJECT_CONFIG)
+    llm_instance = LLM(config=PROJECT_CONFIG, db_session=session)
     ai_message = llm_instance.process(message.message)
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time: {duration}")
@@ -97,7 +99,7 @@ async def post_message_no_memory(message: Chat):
 
 
 @app.get("/chat/{chat_id}")
-async def get_chat_content(chat_id):
+async def get_chat_content(chat_id: str, session: DbSession):
     chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
 
     if not chat_obj:
@@ -110,16 +112,16 @@ async def get_chat_content(chat_id):
     return {"message": messages}
 
 
-class Session(BaseModel):
+class ChatSession(BaseModel):
     chat_id: str
 
 
 @app.post("/session")
-async def create_session(session: Session | None = None):
+async def create_session(db_session: DbSession, session: ChatSession | None = None):
     identifier = None
     if session:
         identifier = session.chat_id
-    return db_create_session(identifier=identifier)
+    return db_create_session(db_session, identifier=identifier)
 
 
 plugins = entry_points(group="dialog")

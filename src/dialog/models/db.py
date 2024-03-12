@@ -9,3 +9,8 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 Base = declarative_base()
+
+
+def get_session():
+    with Session() as session:
+        yield session

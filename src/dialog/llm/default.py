@@ -29,7 +29,8 @@ class DialogLLM(AbstractLLM):
 
     def generate_prompt(self, text):
         self.relevant_contents = get_most_relevant_contents_from_message(
-            text, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset)
+            self.db_session, text, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset
+        )
         prompt_config = self.config.get("prompt")
         fallback = prompt_config.get("fallback") or \
             self.config.get("fallback").get("prompt") # maintaining compatibility with the previous configuration
