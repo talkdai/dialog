@@ -28,6 +28,9 @@ LLM_MEMORY_SIZE = config("LLM_MEMORY_SIZE", default=5, cast=int)
 STATIC_FILE_LOCATION = config("STATIC_FILE_LOCATION", "/app/static")
 COSINE_SIMILARITY_THRESHOLD = config("CONSINE_SIMILARITY_THRESHOLD", default=0.2, cast=float)
 
+# knowledge base
+EMBED_COLUMNS = config("EMBED_COLUMNS", cast=Csv(), default=["content"])
+
 # Cors
 CORS_ALLOW_ORIGINS = config("CORS_ALLOW_ORIGINS", cast=Csv(), default="*")
 CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS", cast=bool, default=True)

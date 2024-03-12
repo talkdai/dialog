@@ -8,6 +8,8 @@ from dialog.llm.embeddings import generate_embeddings
 from dialog.models import CompanyContent
 from dialog.models.db import session
 
+from dialog.settings import EMBED_COLUMNS
+
 
 def load_csv_and_generate_embeddings(path, cleardb=False, embed_columns=("content",)):
     df = pd.read_csv(path)
@@ -67,8 +69,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, required=False, default="./know.csv")
     parser.add_argument("--cleardb", action="store_true")
-    parser.add_argument("--columns", nargs="*", default=["content"])
+    parser.add_argument("--embed-columns", nargs="*", default=["content"])
     args = parser.parse_args()
 
     load_csv_and_generate_embeddings(
-        args.path, args.cleardb, args.columns)
+        args.path, args.cleardb, EMBED_COLUMNS)
