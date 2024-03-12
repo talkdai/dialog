@@ -6,7 +6,7 @@ from sqlalchemy import text
 
 from dialog.llm.embeddings import generate_embeddings
 from dialog.models import CompanyContent
-from dialog.models.db import session
+from dialog.models.db import Session
 
 
 def load_csv_and_generate_embeddings(path, cleardb=False, columns=("content",)):
@@ -27,41 +27,42 @@ def load_csv_and_generate_embeddings(path, cleardb=False, columns=("content",)):
         lambda row: hashlib.md5(row.encode()).hexdigest()
     )
 
-    if cleardb:
-        session.query(CompanyContent).delete()
-        session.commit()
+    with Session() as session:
+        if cleardb:
+            session.query(CompanyContent).delete()
+            session.commit()
 
-    df_in_db = pd.read_sql(
-        text(
-            f"SELECT category, subcategory, question, content, dataset FROM {CompanyContent.__tablename__}"
-        ),
-        session.get_bind(),
-    )
-
-    # Create primary key column using category, subcategory, and question for df_in_db
-    new_keys = set(df["primary_key"])
-    if not df_in_db.empty:
-        df_in_db["primary_key"] = df_in_db["category"] + df_in_db["subcategory"] + df_in_db["question"]
-        df_in_db["primary_key"] = df_in_db["primary_key"].apply(
-            lambda row: hashlib.md5(row.encode()).hexdigest()
+        df_in_db = pd.read_sql(
+            text(
+                f"SELECT category, subcategory, question, content, dataset FROM {CompanyContent.__tablename__}"
+            ),
+            session.get_bind(),
         )
-        new_keys = set(df["primary_key"]) - set(df_in_db["primary_key"])
 
-    # Filter df for keys present in df and not present in df_in_db
-    df_filtered = df[df["primary_key"].isin(new_keys)].copy()
+        # Create primary key column using category, subcategory, and question for df_in_db
+        new_keys = set(df["primary_key"])
+        if not df_in_db.empty:
+            df_in_db["primary_key"] = df_in_db["category"] + df_in_db["subcategory"] + df_in_db["question"]
+            df_in_db["primary_key"] = df_in_db["primary_key"].apply(
+                lambda row: hashlib.md5(row.encode()).hexdigest()
+            )
+            new_keys = set(df["primary_key"]) - set(df_in_db["primary_key"])
 
-    print("Generating embeddings for new questions...")
-    print("New questions:", len(df_filtered))
+        # Filter df for keys present in df and not present in df_in_db
+        df_filtered = df[df["primary_key"].isin(new_keys)].copy()
 
-    df_filtered.drop(columns=["primary_key"], inplace=True)
-    df_filtered["embedding"] = generate_embeddings(
-        "\n".join(df_filtered[column] for column in columns))
-    df_filtered.to_sql(
-        CompanyContent.__tablename__,
-        session.get_bind(),
-        if_exists="append",
-        index=False,
-    )
+        print("Generating embeddings for new questions...")
+        print("New questions:", len(df_filtered))
+
+        df_filtered.drop(columns=["primary_key"], inplace=True)
+        df_filtered["embedding"] = generate_embeddings(
+            "\n".join(df_filtered[column] for column in columns))
+        df_filtered.to_sql(
+            CompanyContent.__tablename__,
+            session.get_bind(),
+            if_exists="append",
+            index=False,
+        )
 
 
 if __name__ == "__main__":

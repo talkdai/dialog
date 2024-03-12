@@ -4,7 +4,7 @@ from langchain.prompts import ChatPromptTemplate
 
 
 class AbstractLLM:
-    def __init__(self, config, session_id=None, parent_session_id=None, dataset=None, llm_key=None):
+    def __init__(self, config, db_session, session_id=None, parent_session_id=None, dataset=None, llm_key=None):
         """
         :param config: Configuration dictionary
 
@@ -17,6 +17,7 @@ class AbstractLLM:
             raise ValueError("Config must be a dictionary")
 
         self.config = config
+        self.db_session = db_session
         self.prompt = None
         self.session_id = None
         self.relevant_contents = None
