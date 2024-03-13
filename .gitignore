@@ -163,3 +163,5 @@ cache/
 requirements.txt
 *.csv
 *.toml
+!src/tests/fixtures/*.csv
+!src/tests/fixtures/*.toml

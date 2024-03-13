@@ -27,11 +27,15 @@ langchain-community = "^0.0.20"
 importlib-metadata = "^7.0.1"
 langchain-openai = "^0.0.6"
 pyarrow = "^15.0.0"
+iniconfig = "^2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.13"
 black = "^23.11.0"
 isort = "^5.12.0"
+responses = "^0.25.0"
+pytest-mock = "^3.12.0"
+pytest-alembic = "^0.11.0"
 
 [build-system]
 requires = ["poetry-core"]
