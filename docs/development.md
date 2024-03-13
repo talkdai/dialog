@@ -62,11 +62,11 @@ make run
 
 ## Running Tests
 
-Running tests on the project is simple, just add the flag `TEST=true` to the .env file/environment variables and run the project.
+Running tests on the project is simple, just use our tests docker-compose file.
 
 ```bash
-docker-compose up -d db # run the database
-docker-compose up -d dialog # run the api
+docker-compose -f docker-compose.test.yml up -d db # run the database
+docker-compose -f docker-compose.test.yml up -d dialog # run the api
 ```
 
 Right now our coverage is pretty limited, we would like to have more code covered as soon as possible.
