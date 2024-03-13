@@ -12,6 +12,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 COPY poetry.lock pyproject.toml /app/
+COPY pytest.ini /app/src/
 
 RUN pip install -U pip poetry && \
   poetry config virtualenvs.create false && \
@@ -21,6 +22,9 @@ COPY /static /app/static
 COPY /etc /app/etc
 COPY /src /app/src
 
+RUN chmod +x /app/etc/run.sh
+RUN chmod +x /app/etc/run-tests.sh
+
 WORKDIR /app/src
 
-ENTRYPOINT [ "/app/etc/run.sh" ]
+CMD [ "/app/etc/run.sh" ]

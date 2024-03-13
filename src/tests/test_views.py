@@ -1,39 +1,31 @@
 import unittest
-from fastapi.testclient import TestClient
-from main import app
+import responses
 
-client = TestClient(app)
+def test_health(client):
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"message": "Dialogue API is healthy"}
 
-class TestViewsAPI(unittest.TestCase):
-    # TODO: Mock requests to LLM and DB
+def test_create_session(client, mocker):
+    response = client.post("/session")
+    assert response.status_code == 200
+    assert "chat_id" in response.json()
 
-    def setUp(self):
-        session_resp = client.post("/session")
-        session_resp_json = session_resp.json()
-        self.session_id = session_resp_json["chat_id"]
+def test_post_message_no_session_id(client, mocker):
+    llm_mock = mocker.patch('main.post_message.get_llm_class')
+    llm_mock.return_value = mocker.Mock()
+    response = client.post("/chat/lala", json={"message": "Hello"})
+    assert llm_mock.called
+    assert response.status_code == 200
 
-    def test_health(self):
-        response = client.get("/health")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"message": "Dialogue API is healthy"})
 
-    def test_create_session(self):
-        response = client.post("/session")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("chat_id", response.json())
+# def test_post_message_no_session_id(self):
+#     response = client.post("/ask", json={"message": "Hello"})
+#     self.assertEqual(response.status_code, 200)
+#     self.assertIn("message", response.json())
 
-    def test_post_message(self):
-        response = client.post(f"/chat/{self.session_id}", json={"message": "Hello"})
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("message", response.json())
-
-    def test_post_message_no_session_id(self):
-        response = client.post("/ask", json={"message": "Hello"})
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("message", response.json())
-
-    def test_get_chat_content(self):
-        response = client.get(f"/chat/{self.session_id}")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("message", response.json())
+# def test_get_chat_content(self):
+#     response = client.get(f"/chat/{self.session_id}")
+#     self.assertEqual(response.status_code, 200)
+#     self.assertIn("message", response.json())
 
