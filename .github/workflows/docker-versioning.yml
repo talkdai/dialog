@@ -1,0 +1,34 @@
+name: docker
+run-name: build images, deploy to ghcr
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.repository == 'talkdai/dialog'
+    environment: build
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.PKG_GITHUB_TOKEN }}
+
+      - name: ghcr.io/talkdai/dialog:${{ github.ref }}
+        env:
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+            docker build -t ghcr.io/talkdai/dialog:${{ github.ref }} .
+            docker push ghcr.io/talkdai/dialog:${{ github.ref }}
