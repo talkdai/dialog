@@ -26,9 +26,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.PKG_GITHUB_TOKEN }}
 
-      - name: ghcr.io/talkdai/dialog:${{ github.ref }}
+      - name: ghcr.io/talkdai/dialog:${{ github.ref_name }}
         env:
-          GITHUB_REF: ${{ github.ref }}
+          GITHUB_REF: ${{ github.ref_name }}
         run: |
-            docker build -t ghcr.io/talkdai/dialog:${{ github.ref }} .
-            docker push ghcr.io/talkdai/dialog:${{ github.ref }}
+            docker build -t ghcr.io/talkdai/dialog:${{ github.ref_name }} .
+            docker push ghcr.io/talkdai/dialog:${{ github.ref_name }}
