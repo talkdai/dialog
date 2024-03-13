@@ -10,3 +10,9 @@ run:
 # make load-data path="data/2023-12-02.csv"
 load-data:
 	poetry run python src/load_csv.py --path $(path)
+
+test-build:
+	docker-compose -f docker-compose.test.yml up --build
+
+test:
+	docker-compose -f docker-compose.test.yml up
