@@ -8,8 +8,7 @@ from dialog.llm.embeddings import generate_embeddings
 from dialog.models import CompanyContent
 from dialog.models.db import session
 
-
-def load_csv_and_generate_embeddings(path, cleardb=False, columns=("content",)):
+def load_csv_and_generate_embeddings(path, cleardb=False, embed_columns=("content",)):
     df = pd.read_csv(path)
     necessary_cols = ["category", "subcategory", "question", "content"]
     for col in necessary_cols:
@@ -52,10 +51,9 @@ def load_csv_and_generate_embeddings(path, cleardb=False, columns=("content",)):
 
     print("Generating embeddings for new questions...")
     print("New questions:", len(df_filtered))
-
+    print("embed_columns: ", embed_columns)
     df_filtered.drop(columns=["primary_key"], inplace=True)
-    df_filtered["embedding"] = generate_embeddings(
-        "\n".join(df_filtered[column] for column in columns))
+    df_filtered["embedding"] = generate_embeddings(df_filtered[embed_columns].agg('\n'.join, axis=1).to_list())
     df_filtered.to_sql(
         CompanyContent.__tablename__,
         session.get_bind(),
@@ -68,8 +66,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, required=False, default="./know.csv")
     parser.add_argument("--cleardb", action="store_true")
-    parser.add_argument("--columns", nargs="*", default=["content"])
+    parser.add_argument("--embed-columns", default="content")
     args = parser.parse_args()
 
     load_csv_and_generate_embeddings(
-        args.path, args.cleardb, args.columns)
+        args.path, args.cleardb, args.embed_columns.split(','))
