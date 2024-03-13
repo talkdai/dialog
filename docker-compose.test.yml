@@ -1,0 +1,28 @@
+version: '3.3'
+services:
+  db:
+    image: pgvector/pgvector:pg15
+    restart: always
+    environment:
+      POSTGRES_USER: talkdai
+      POSTGRES_PASSWORD: talkdai
+      POSTGRES_DB: talkdai
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "talkdai", "-U", "talkdai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  dialog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: /app/etc/run-tests.sh
+    stdin_open: true
+    tty: true
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./src/tests/.env.testing
+    volumes:
+      - ./src/tests/:/app/src/tests/
