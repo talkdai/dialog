@@ -70,3 +70,13 @@ docker-compose -f docker-compose.test.yml up -d dialog # run the api
 ```
 
 Right now our coverage is pretty limited, we would like to have more code covered as soon as possible.
+
+
+## Commits
+
+Since we are using semantic versioning on the project, we are looking forward for good commit messages and,
+on those commits, we are expecting to have certain tags on minor or major updates (so we can update the version automatically).
+
+    - #minor: for minor updates
+    - #major: for major updates
+    - All else will be considered a patch
