@@ -4,7 +4,7 @@ Humanized Conversation API (using LLM)
 
 > conversations in a human way without exposing that it's a LLM answering
 
-For more information you can use our [documentation](https://dialog.talkd.ai)
+For more information, check our [documentation](https://dialog.talkd.ai)!
 
 ## Quick Start
 
