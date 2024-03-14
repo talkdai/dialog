@@ -25,7 +25,7 @@ We recommend that you create a folder inside this project called `data` and put 
 
 ### `.csv` knowledge base
 
-The knowledge base has obligatory columns:
+The knowledge base has needed columns:
 
 - category
 - subcategory: used to customize the prompt for specific questions
@@ -39,7 +39,7 @@ category,subcategory,question,content
 faq,promotions,loyalty-program,"The company XYZ has a loyalty program when you refer new customers you get a discount on your next purchase, ..."
 ```
 
-When the `dialog` service starts, it load the knowledge base into the database, so make sure the database is up and paths are correct (see [environtment variables](##environment-variables) section). Alternatively, inside `src` folder, run `make load-data path="<path-to-your-knowledge-base>.csv"`. 
+When the `dialog` service starts, it loads the knowledge base into the database, so make sure the database is up and paths are correct (see [environment variables](##environment-variables) section). Alternatively, inside `src` folder, run `make load-data path="<path-to-your-knowledge-base>.csv"`. 
 
 See [our documentation](https://dialog.talkd.ai/settings#csv-knowledge-base) for more options about the the knowledge base, including embedding more coluns together.
 
@@ -65,7 +65,8 @@ qualified service to high-end customers. Be brief in your answers, without being
 and objective in your responses. Never say that you are a model (AI), always answer as Avelino.
 Be polite and friendly!"""
 
-suggested = "Here is some possible content that could help the user in a better way."
+suggested = "Here is some possible content 
+that could help the user in a better way."
 
 fallback = "I'm sorry, I couldn't find a relevant answer for your question."
 
@@ -79,6 +80,6 @@ salesy way; the loyalty program is our growth strategy."""
 
 ### Environment Variables
 
-Look at the [`.env.sample`](.env.sample) file to see the environment variables needed to run the project. Make sure to add the OpenAI token and paths to the `.csv` and `.toml` files. We recommend you to [read our documentation](https://dialog.talkd.ai/settings#environment-variables) that discusses configuration.
+Look at the [`.env.sample`](.env.sample) file to see the environment variables needed to run the project. While the `.csv` contains only the knowledge base, the `.toml` contains some llm parameters and prompts, and finally the `.env` contains the OpenAI token, paths and some project parameters. We recommend you to [read our documentation](https://dialog.talkd.ai/settings#environment-variables) that discusses configuration.
 
 
