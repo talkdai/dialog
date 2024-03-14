@@ -79,9 +79,11 @@ class AbstractLLM:
         """
         processed_input = self.preprocess(input)
         self.generate_prompt(processed_input)
+
         if len(self.relevant_contents) == 0 and \
-            self.config.get("prompt").get("fallback_not_found_relevant_contents"):
-            return {"text": self.config.get("prompt").get("fallback_not_found_relevant_contents")}
+            self.config.get("prompt").get("fallback"):
+            return {"text": self.config.get("prompt").get("fallback")}
+
         output = self.llm({
             "user_message": processed_input,
         })

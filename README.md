@@ -36,7 +36,7 @@ The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are 
 
 The `[prompt.fallback]` field is used when the LLM does not find a compatible embedding in the database; that is, the `[prompt.header]` **is ignored** and the `[prompt.fallback]` is used. Without it, there could be hallucinations about possible answers to questions outside the scope of the embeddings.
 
-> In `[prompt.fallback]` the response will be processed by LLM. If you need to return a default message when there is no recommended question in the knowledge base, use the `[prompt.fallback_not_found_relevant_contents]` configuration in the `.toml` *(project configuration)*.
+> Depending on how you code your LLM class, you can choose to either use the fallback variable from the config as a default response or to use the  variable as an input to the LLM. Using our default implementation, it will be used on the prompt for the LLM.
 
 It is also possible to add information to the prompt for subcategories and choose some optional llm parameters like temperature (defaults to 0.2) or model_name, see below for an example of a complete configuration:
 
@@ -54,8 +54,6 @@ Be polite and friendly!"""
 suggested = "Here is some possible content that could help the user in a better way."
 
 fallback = "I'm sorry, I couldn't find a relevant answer for your question."
-
-fallback_not_found_relevant_contents = "I'm sorry, I couldn't find a relevant answer for your question."
 
 [prompt.subcategory.loyalty-program]
 

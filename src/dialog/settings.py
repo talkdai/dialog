@@ -20,7 +20,6 @@ PROJECT_CONFIG = config.get(
 )
 PROJECT_PROMPT = PROJECT_CONFIG.get("prompt", {})
 FALLBACK = PROJECT_PROMPT.get("fallback")
-FALLBACK_NOT_FOUND_RELEVANT_CONTENTS = PROJECT_PROMPT.get("fallback_not_found_relevant_contents")
 
 # Langchain and LLM parameters and settings
 LLM_CLASS = config.get("LLM_CLASS", default=None)
