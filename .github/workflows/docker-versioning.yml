@@ -1,4 +1,4 @@
-name: docker
+name: docker-versioning
 run-name: build images, deploy to ghcr
 
 on:
