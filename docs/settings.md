@@ -6,21 +6,32 @@ We recommend that you create a folder inside this project called `data` and put 
 
 ## `.csv` knowledge base
 
-**fields:**
+To use this project, you need to have a `.csv` file with the knowledge base and a `.toml` file with your prompt configuration.
+
+We recommend that you create a folder inside this project called `data` and put CSVs and TOMLs files over there.
+
+### `.csv` knowledge base
+
+The knowledge base has obligatory columns:
 
 - category
 - subcategory: used to customize the prompt for specific questions
 - question
 - content: used to generate the embedding
 
-**example:**
+**Example:**
 
 ```csv
 category,subcategory,question,content
 faq,promotions,loyalty-program,"The company XYZ has a loyalty program when you refer new customers you get a discount on your next purchase, ..."
 ```
 
-To load the knowledge base into the database, make sure the database is up and then, inside `src` folder, run `make load-data path="../data/know.csv"` (or pass another path to you .csv).
+When the `dialog` service starts, it load the knowledge base into the database, so make sure the database is up and paths are correct (see [environtment variables](##environment-variables) section). Alternatively, inside `src` folder, run `make load-data path="<path-to-your-knowledge-base>.csv"`. 
+
+To embed more columns together, you can add a environment variable `DIALOG_LOADCSV_EMBED_COLUMNS` in `.env` with desired columns. This is typically the case for examples like Q&A, where question and answer are in different columns, for example:
+```
+DIALOG_LOADCSV_EMBED_COLUMNS=question,answer
+```
 
 ### `.toml` prompt configuration
 
