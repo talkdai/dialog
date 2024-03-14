@@ -6,6 +6,17 @@ Humanized Conversation API (using LLM)
 
 For more information, check our [documentation](https://dialog.talkd.ai)!
 
+## Run the project
+
+We assume you are familiar with [Docker](https://www.docker.com/). Follow the [Quick Start](##quick-start) for setup and then run
+
+```bash
+docker-compose up
+```
+it will start two services: 
+- `db`: where the PostgresSQL database runs to support chat history and document retrieval for [RAG](https://en.wikipedia.org/wiki/Prompt_engineering#Retrieval-augmented_generation);
+- `dialog`: the service with the api.
+
 ## Quick Start
 
 To use this project, you need to have a `.csv` file with the knowledge base and a `.toml` file with your prompt configuration.
@@ -14,21 +25,24 @@ We recommend that you create a folder inside this project called `data` and put 
 
 ### `.csv` knowledge base
 
-**fields:**
+The knowledge base has obligatory columns:
 
 - category
 - subcategory: used to customize the prompt for specific questions
 - question
 - content: used to generate the embedding
 
-**example:**
+**Example:**
 
 ```csv
 category,subcategory,question,content
 faq,promotions,loyalty-program,"The company XYZ has a loyalty program when you refer new customers you get a discount on your next purchase, ..."
 ```
 
-To load the knowledge base into the database, make sure the database is up and then, inside `src` folder, run `make load-data path="../data/know.csv"` (or pass another path to you .csv).
+When the `dialog` service starts, it load the knowledge base into the database, so make sure the database is up and paths are correct (see [environtment variables](##environment-variables) section). Alternatively, inside `src` folder, run `make load-data path="<path-to-your-knowledge-base>.csv"`. 
+
+See [our documentation](https://dialog.talkd.ai/settings#csv-knowledge-base) for more options about the the knowledge base, including embedding more coluns together.
+
 
 ### `.toml` prompt configuration
 
@@ -65,15 +79,6 @@ salesy way; the loyalty program is our growth strategy."""
 
 ### Environment Variables
 
-Look at the [`.env.sample`](.env.sample) file to see the environment variables needed to run the project.
+Look at the [`.env.sample`](.env.sample) file to see the environment variables needed to run the project. Make sure to add the OpenAI token and paths to the `.csv` and `.toml` files. We recommend you to [read our documentation](https://dialog.talkd.ai/settings#environment-variables) that discusses configuration.
 
-There are other configurations not detailed in `.env.sample`, we recommend you to [read our documentation](https://dialog.talkd.ai/settings#environment-variables) that discusses configuration.
 
-## Run the project
-
-> we assume you are familiar with [Docker](https://www.docker.com/)
-
-```bash
-cp .env.sample .env # edit the .env file, add the OPENAI token and the path to the .csv and .toml files
-docker-compose up
-```
