@@ -4,7 +4,7 @@ run-name: test and coverage
 on: [push]
 
 jobs:
-  docker:
+  test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
