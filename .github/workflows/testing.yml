@@ -1,0 +1,14 @@
+name: test
+run-name: test and coverage
+
+on: [push]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Test
+      run: docker compose -f docker-compose.test.yml run --rm --build dialog
