@@ -12,7 +12,7 @@ load-data:
 	poetry run python src/load_csv.py --path $(path)
 
 test-build:
-	docker-compose -f docker-compose.test.yml up --build
+	docker compose -f docker-compose.test.yml run --rm --build dialog
 
 test:
-	docker-compose -f docker-compose.test.yml up
+	docker compose -f docker-compose.test.yml run --rm dialog
