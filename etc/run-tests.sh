@@ -2,4 +2,4 @@
 cd /app/src/
 poetry install
 poetry run alembic upgrade head
-poetry run pytest
+poetry run pytest --cov --cov-config=.coveragerc
