@@ -1,0 +1,7 @@
+[run]
+branch = True
+omit = tests/*
+
+[report]
+show_missing = True
+skip_empty = True
