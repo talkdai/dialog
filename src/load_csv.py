@@ -51,9 +51,12 @@ def load_csv_and_generate_embeddings(path, cleardb=False, embed_columns=("conten
 
     print("Generating embeddings for new questions...")
     print("New questions:", len(df_filtered))
+    if len(df_filtered) == 0:
+        return
+
     print("embed_columns: ", embed_columns)
     df_filtered.drop(columns=["primary_key"], inplace=True)
-    df_filtered["embedding"] = generate_embeddings(df_filtered[embed_columns].agg('\n'.join, axis=1).to_list())
+    df_filtered["embedding"] = generate_embeddings(list(df_filtered[embed_columns].agg('\n'.join, axis=1)))
     df_filtered.to_sql(
         CompanyContent.__tablename__,
         session.get_bind(),

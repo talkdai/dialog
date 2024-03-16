@@ -21,9 +21,4 @@ def get_llm_class() -> Type[AbstractLLM]:
     except Exception as e:
         logging.info(f"Failed to load LLM class {LLM_CLASS}. Using default LLM")
 
-    # Checks if llm_class implements AbstractLLM
-    if not issubclass(llm_class, AbstractLLM):
-        logging.info(f"LLM class {LLM_CLASS} does not implement AbstractLLM. Using default LLM")
-        return DialogLLM
-
     return llm_class or DialogLLM
