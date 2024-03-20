@@ -31,7 +31,7 @@ iniconfig = "^2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.13"
-black = "^23.11.0"
+black = "^24.3.0"
 isort = "^5.12.0"
 responses = "^0.25.0"
 pytest-mock = "^3.12.0"
