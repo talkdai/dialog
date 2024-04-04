@@ -82,4 +82,11 @@ salesy way; the loyalty program is our growth strategy."""
 
 Look at the [`.env.sample`](.env.sample) file to see the environment variables needed to run the project. While the `.csv` contains only the knowledge base, the `.toml` contains some llm parameters and prompts, and finally the `.env` contains the OpenAI token, paths and some project parameters. We recommend you to [read our documentation](https://dialog.talkd.ai/settings#environment-variables) that discusses configuration.
 
+## Maintainers
 
+We are thankful for all of the contributions we receive, mostly are reviewed by this awesome maintaining team we have:
+
+ - [avelino](https://github.com/avelino)
+ - [vmesel](https://github.com/vmesel)
+ - [walison17](https://github.com/walison17)
+ - [lgabs](https://github.com/lgabs/)
