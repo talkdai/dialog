@@ -13,8 +13,7 @@ from dialog.learn.idf import categorize_conversation_history
 from dialog.llm.abstract_llm import AbstractLLM
 from dialog.llm.embeddings import get_most_relevant_contents_from_message
 from dialog.llm.memory import generate_memory_instance
-from dialog.settings import (LLM_MEMORY_SIZE, LLM_RELEVANT_CONTENTS,
-                             OPENAI_API_KEY, VERBOSE_LLM)
+from dialog.settings import Settings
 
 
 class DialogLLM(AbstractLLM):
@@ -29,7 +28,11 @@ class DialogLLM(AbstractLLM):
 
     def generate_prompt(self, text):
         self.relevant_contents = get_most_relevant_contents_from_message(
-            text, top=LLM_RELEVANT_CONTENTS, dataset=self.dataset)
+            text,
+            top=Settings().LLM_RELEVANT_CONTENTS,
+            dataset=self.dataset,
+            session=self.dbsession
+        )
         prompt_config = self.config.get("prompt")
         fallback = prompt_config.get("fallback") or \
             self.config.get("fallback").get("prompt") # maintaining compatibility with the previous configuration
@@ -55,7 +58,7 @@ class DialogLLM(AbstractLLM):
                 HumanMessagePromptTemplate.from_template("{user_message}"))
         self.prompt = ChatPromptTemplate.from_messages(messages)
 
-        if VERBOSE_LLM:
+        if Settings().VERBOSE_LLM:
             logging.info(f"Verbose LLM prompt: {self.prompt.pretty_print()}")
 
     @property
@@ -64,7 +67,7 @@ class DialogLLM(AbstractLLM):
         conversation_options = {
             "llm": ChatOpenAI(
                 **llm_config,
-                openai_api_key=self.llm_key or OPENAI_API_KEY
+                openai_api_key=self.llm_key or Settings().OPENAI_API_KEY
             ),
             "prompt": self.prompt,
             "verbose": self.config.get("verbose", False)
@@ -75,7 +78,7 @@ class DialogLLM(AbstractLLM):
                 "chat_memory": self.memory,
                 "memory_key": "chat_history",
                 "return_messages": True,
-                "k": self.config.get("memory_size", LLM_MEMORY_SIZE)
+                "k": self.config.get("memory_size", Settings().LLM_MEMORY_SIZE)
             }
             conversation_options["memory"] = ConversationBufferWindowMemory(
                 **buffer_config

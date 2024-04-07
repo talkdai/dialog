@@ -1,11 +1,13 @@
-from dialog.settings import DATABASE_URL
+from dialog.settings import Settings
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, DeclarativeBase
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(Settings().DATABASE_URL)
 
-Session = sessionmaker(bind=engine)
-session = Session()
+class Base(DeclarativeBase):
+    pass
 
-Base = declarative_base()
+def get_session():  # pragma: no cover
+    with Session(engine) as session:
+        yield session
+

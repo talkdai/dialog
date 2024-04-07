@@ -1,4 +1,6 @@
-from dialog.models import ChatMessages
+import pytest
+
+from dialog.models import ChatMessages, Chat
 
 def test_health(client):
     response = client.get("/health")
@@ -10,9 +12,7 @@ def test_create_session(client, mocker):
     assert response.status_code == 200
     assert "chat_id" in response.json()
 
-def test_post_message_no_session_id(client, chat_session, mocker):
-    llm_mock = mocker.patch('main.get_llm_class')
-    llm_mock.process.return_value = {"text": "Hello"}
+def test_post_message_no_session_id(client, chat_session, mocker, llm_mock, dbsession):
     session_id = chat_session["chat_id"]
     response = client.post(f"/chat/{session_id}", json={"message": "Hello"})
     assert llm_mock.called
@@ -20,16 +20,31 @@ def test_post_message_no_session_id(client, chat_session, mocker):
     assert "message" in response.json()
 
 
-def test_ask_question_no_session_id(client, chat_session, mocker):
-    llm_mock = mocker.patch('main.get_llm_class')
-    llm_mock.process.return_value = {"text": "Hello"}
+def test_ask_question_no_session_id(client, mocker, llm_mock, dbsession):
     response = client.post("/ask", json={"message": "Hello"})
     assert response.status_code == 200
     assert "message" in response.json()
+    assert llm_mock.called
+    assert dbsession.query(Chat).count() == 0
 
 def test_get_chat_content(client, chat_session, dbsession):
     chat = ChatMessages(session_id=chat_session["chat_id"], message="Hello")
     dbsession.add(chat)
+    dbsession.flush()
     response = client.get(f"/chat/{chat_session['chat_id']}")
     assert response.status_code == 200
     assert "message" in response.json()
+    assert dbsession.query(ChatMessages).count() == 1
+
+def test_get_all_sessions(client, chat_session):
+    response = client.get("/sessions")
+    assert response.status_code == 200
+    assert "sessions" in response.json()
+    assert len(response.json()["sessions"]) == 1
+
+def test_invalid_database_connection(client, mocker):
+    mocker.patch("dialog.routers.dialog.engine.connect", side_effect=Exception)
+    with pytest.raises(Exception):
+        response = client.get("/health")
+        assert response.status_code == 500
+        assert response.json() == {"message": "Failed to execute simple SQL"}

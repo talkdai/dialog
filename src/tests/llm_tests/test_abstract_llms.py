@@ -1,6 +1,9 @@
+import os
 import pytest
 
+from dialog.llm import get_llm_class
 from dialog.llm.abstract_llm import AbstractLLM
+from dialog.llm.default import DialogLLM
 
 
 def test_abstract_llm_for_invalid_config():
@@ -31,3 +34,17 @@ def test_abstract_llm_with_valid_config():
 
     with pytest.raises(NotImplementedError):
         llm.get_prompt("input")
+
+def test_get_llm_class_get_default_class():
+    llm_class = get_llm_class()
+    assert llm_class == DialogLLM
+
+def test_get_llm_class_get_custom_class():
+    os.environ["LLM_CLASS"] = "dialog.llm.abstract_llm.AbstractLLM"
+    llm_class = get_llm_class()
+    assert llm_class == AbstractLLM
+
+def test_get_llm_class_with_invalid_class():
+    os.environ["LLM_CLASS"] = "dialogl.llm.invalid_llm.InvalidLLM"
+    llm_class = get_llm_class()
+    assert llm_class == DialogLLM

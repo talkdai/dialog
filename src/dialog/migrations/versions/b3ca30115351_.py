@@ -52,5 +52,5 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_table("chat_messages")
     op.drop_table("chats")
-    op.drop_index(op.f("ix_contents_vector"), table_name="contents")
+    # op.drop_index(op.f("ix_contents_vector"), table_name="contents")
     op.drop_table("contents")

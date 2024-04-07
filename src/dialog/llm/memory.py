@@ -2,8 +2,8 @@ from langchain.memory import PostgresChatMessageHistory
 from langchain.schema.messages import BaseMessage, _message_to_dict
 
 from dialog.models import Chat, ChatMessages
-from dialog.models.db import session
-from dialog.settings import DATABASE_URL
+from dialog.models.db import get_session
+from dialog.settings import Settings
 
 
 class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
@@ -11,8 +11,9 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
     Custom chat message history for LLM
     """
 
-    def __init__(self, *args, parent_session_id=None, **kwargs):
+    def __init__(self, *args, parent_session_id=None, dbsession=None, **kwargs):
         self.parent_session_id = parent_session_id
+        self.dbsession = dbsession
         super().__init__(*args, **kwargs)
 
     def _create_table_if_not_exists(self) -> None:
@@ -31,10 +32,10 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
 
     def add_tags(self, tags: str) -> None:
         """Add tags for a given session_id/uuid on chats table"""
-        session.query(Chat).where(Chat.uuid == self.session_id).update(
+        self.dbsession.query(Chat).where(Chat.uuid == self.session_id).update(
             {Chat.tags: tags}
         )
-        session.commit()
+        self.dbsession.commit()
 
     def add_message(self, message: BaseMessage) -> None:
         """Append the message to the record in PostgreSQL"""
@@ -43,23 +44,24 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
         )
         if self.parent_session_id:
             message.parent = self.parent_session_id
-        session.add(message)
-        session.commit()
+        self.dbsession.add(message)
+        self.dbsession.commit()
 
 
-def generate_memory_instance(session_id, parent_session_id=None):
+def generate_memory_instance(session_id, parent_session_id=None, dbsession=None):
     """
     Generate a memory instance for a given session_id
     """
     return CustomPostgresChatMessageHistory(
-        connection_string=DATABASE_URL,
+        connection_string=Settings().DATABASE_URL,
         session_id=session_id,
         parent_session_id=parent_session_id,
         table_name="chat_messages",
+        dbsession=dbsession
     )
 
 
-def add_user_message_to_message_history(session_id, message, memory=None):
+def add_user_message_to_message_history(session_id, message, memory=None, dbsession=None):
     """
     Add a user message to the message history and returns the updated
     memory instance
@@ -71,9 +73,9 @@ def add_user_message_to_message_history(session_id, message, memory=None):
     return memory
 
 
-def get_messages(session_id):
+def get_messages(session_id, dbsession=None):
     """
     Get all messages for a given session_id
     """
-    memory = generate_memory_instance(session_id)
+    memory = generate_memory_instance(session_id, dbsession=dbsession)
     return memory.messages
