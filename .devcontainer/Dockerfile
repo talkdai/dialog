@@ -23,3 +23,5 @@ WORKDIR /workspace
 RUN pip install poetry && \
   poetry config virtualenvs.create false && \
   poetry install
+
+RUN createdb -h localhost -U talkdai -w -e test_talkdai

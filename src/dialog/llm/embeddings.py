@@ -4,10 +4,10 @@ from langchain_openai import OpenAIEmbeddings
 from sqlalchemy import select
 
 from dialog.models import CompanyContent
-from dialog.models.db import session
-from dialog.settings import OPENAI_API_KEY, COSINE_SIMILARITY_THRESHOLD
+from dialog.models.db import get_session
+from dialog.settings import Settings
 
-EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+EMBEDDINGS_LLM = OpenAIEmbeddings(openai_api_key=Settings().OPENAI_API_KEY)
 
 def generate_embeddings(documents: List[str]):
     """
@@ -23,10 +23,10 @@ def generate_embedding(document: str):
     return EMBEDDINGS_LLM.embed_query(document)
 
 
-def get_most_relevant_contents_from_message(message, top=5, dataset=None):
+def get_most_relevant_contents_from_message(message, top=5, dataset=None, session=None):
     message_embedding = generate_embedding(message)
     filters = [
-        CompanyContent.embedding.cosine_distance(message_embedding) < COSINE_SIMILARITY_THRESHOLD,
+        CompanyContent.embedding.cosine_distance(message_embedding) < Settings().COSINE_SIMILARITY_THRESHOLD,
     ]
 
     if dataset is not None:
