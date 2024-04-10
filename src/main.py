@@ -35,20 +35,20 @@ def get_application() -> FastAPI:
         api_router, prefix="",
     )
     app.mount("/static", StaticFiles(directory=Settings().STATIC_FILE_LOCATION), name="static")
+    plugins = entry_points(group="dialog")
+    for plugin in plugins:
+        logging.info("Loading plugin: %s", plugin.name)
+        try:
+            plugin_module = plugin.load()
+        except ImportError as e:
+            logging.warning(f"Failed to load plugin: {plugin.name}. Traceback: \n\n {e.format_exc()}", )
+        else:
+            try:
+                plugin_module.register_plugin(app)
+            except AttributeError:
+                logging.warning(f"Failed to register plugin: {plugin.name}\n\n{e.format_exc()}")
+
     return app
 
 
 app = get_application()
-
-plugins = entry_points(group="dialog")
-for plugin in plugins:
-    logging.info("Loading plugin: %s", plugin.name)
-    try:
-        plugin_module = plugin.load()
-    except ImportError as e:
-        logging.warning(f"Failed to load plugin: {plugin.name}. Traceback: \n\n {e.__str__()}", )
-    else:
-        try:
-            plugin_module.register_plugin(app)
-        except AttributeError:
-            logging.warning("Failed to register plugin: %s", plugin.name)
