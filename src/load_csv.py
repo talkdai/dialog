@@ -8,7 +8,7 @@ from dialog.llm.embeddings import generate_embeddings
 from dialog.models import CompanyContent
 from dialog.models.db import get_session
 
-session = get_session()
+session = next(get_session())
 
 def load_csv_and_generate_embeddings(path, cleardb=False, embed_columns=("content",)):
     df = pd.read_csv(path)
