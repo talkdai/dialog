@@ -1,6 +1,7 @@
 from langchain.chains.llm import LLMChain
 from langchain.memory.chat_memory import BaseChatMemory
 from langchain.prompts import ChatPromptTemplate
+from dialog.models.db import get_session
 
 
 class AbstractLLM:
@@ -25,7 +26,7 @@ class AbstractLLM:
         self.dataset = dataset
         self.llm_key = llm_key
         self.parent_session_id = parent_session_id
-        self.dbsession = dbsession
+        self.dbsession = dbsession or next(get_session())
 
     def get_prompt(self, input) -> ChatPromptTemplate:
         """

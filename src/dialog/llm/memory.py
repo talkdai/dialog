@@ -13,7 +13,7 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
 
     def __init__(self, *args, parent_session_id=None, dbsession=None, **kwargs):
         self.parent_session_id = parent_session_id
-        self.dbsession = dbsession
+        self.dbsession = dbsession or next(get_session())
         super().__init__(*args, **kwargs)
 
     def _create_table_if_not_exists(self) -> None:
@@ -52,6 +52,9 @@ def generate_memory_instance(session_id, parent_session_id=None, dbsession=None)
     """
     Generate a memory instance for a given session_id
     """
+    if not dbsession:
+        dbsession = next(get_session())
+
     return CustomPostgresChatMessageHistory(
         connection_string=Settings().DATABASE_URL,
         session_id=session_id,
@@ -69,6 +72,9 @@ def add_user_message_to_message_history(session_id, message, memory=None, dbsess
     if not memory:
         memory = generate_memory_instance(session_id)
 
+    if not dbsession:
+        dbsession = next(get_session())
+
     memory.add_user_message(message)
     return memory
 
@@ -77,5 +83,8 @@ def get_messages(session_id, dbsession=None):
     """
     Get all messages for a given session_id
     """
+    if not dbsession:
+        dbsession = next(get_session())
+
     memory = generate_memory_instance(session_id, dbsession=dbsession)
     return memory.messages

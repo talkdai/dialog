@@ -24,6 +24,9 @@ def generate_embedding(document: str):
 
 
 def get_most_relevant_contents_from_message(message, top=5, dataset=None, session=None):
+    if session is None:
+        session = next(get_session())
+
     message_embedding = generate_embedding(message)
     filters = [
         CompanyContent.embedding.cosine_distance(message_embedding) < Settings().COSINE_SIMILARITY_THRESHOLD,
