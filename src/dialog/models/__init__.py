@@ -22,7 +22,7 @@ class ChatMessages(Base):
 class Chat(Base):
     __tablename__ = "chats"
 
-    uuid = Column(UUID, nullable=False, default=str(uuid.uuid4()), primary_key=True)
+    session_id = Column(String, nullable=False, default=str(uuid.uuid4()), primary_key=True)
     tags = Column(String, nullable=True)
 
 class CompanyContent(Base):

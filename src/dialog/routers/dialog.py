@@ -34,7 +34,7 @@ async def post_message(chat_id: str, message: ChatModel, session: Session = Depe
 
     This endpoint will use the LLM to process the message and return the response.
     """
-    chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
+    chat_obj = session.query(ChatEntity).filter(ChatEntity.session_id == chat_id).first()
     if not chat_obj:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -69,7 +69,7 @@ async def get_chat_content(chat_id, session: Session = Depends(get_session)):
     """
     Endpoint to fetch all messages from a certain chat id.
     """
-    chat_obj = session.query(ChatEntity).filter(ChatEntity.uuid == chat_id).first()
+    chat_obj = session.query(ChatEntity).filter(ChatEntity.session_id == chat_id).first()
 
     if not chat_obj:
         raise HTTPException(
@@ -100,6 +100,6 @@ async def get_sessions(session: Session = Depends(get_session)) -> SessionsModel
     sessions = session.query(ChatEntity).all()
     return parse_obj_as(SessionsModel, {"sessions": [
         SessionModel.model_validate({
-            "chat_id": str(s.uuid) # TODO: Make model dump, instead of dict
+            "chat_id": str(s.session_id) # TODO: Make model dump, instead of dict
         }) for s in sessions
     ]})

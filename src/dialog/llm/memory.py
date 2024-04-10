@@ -32,7 +32,7 @@ class CustomPostgresChatMessageHistory(PostgresChatMessageHistory):
 
     def add_tags(self, tags: str) -> None:
         """Add tags for a given session_id/uuid on chats table"""
-        self.dbsession.query(Chat).where(Chat.uuid == self.session_id).update(
+        self.dbsession.query(Chat).where(Chat.session_id == self.session_id).update(
             {Chat.tags: tags}
         )
         self.dbsession.commit()

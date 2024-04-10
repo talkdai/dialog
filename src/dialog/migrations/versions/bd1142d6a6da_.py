@@ -23,10 +23,7 @@ def upgrade() -> None:
     op.alter_column(
         'chats',
         'uuid',
-        existing_type=sa.VARCHAR(),
-        type_=sa.UUID(),
-        existing_nullable=False,
-        postgresql_using="uuid::uuid"
+        new_column_name='session_id'
     )
     op.alter_column(
         'contents',
@@ -49,9 +46,7 @@ def downgrade() -> None:
     )
     op.alter_column(
         'chats',
-        'uuid',
-        existing_type=sa.UUID(),
-        type_=sa.VARCHAR(),
-        existing_nullable=False
+        'session_id',
+        new_column_name='uuid'
     )
     # ### end Alembic commands ###
