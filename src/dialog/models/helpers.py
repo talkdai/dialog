@@ -5,6 +5,9 @@ from dialog.models.db import get_session
 
 
 def create_session(identifier=None, dbsession=None):
+    if not dbsession:
+        dbsession = next(get_session())
+
     if identifier is None:
         identifier = uuid.uuid4().hex
 
