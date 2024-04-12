@@ -13,7 +13,7 @@ from langchain.prompts import (
 from langchain_openai.chat_models import ChatOpenAI
 
 from dialog.learn.idf import categorize_conversation_history
-from dialog.llm.abstract_llm import AbstractLLM
+from dialog_lib.agents.abstract import AbstractLLM
 from dialog.llm.embeddings import get_most_relevant_contents_from_message
 from dialog.llm.memory import generate_memory_instance, get_messages
 from dialog.settings import Settings
