@@ -4,7 +4,7 @@ import importlib
 from typing import Type
 
 from .default import DialogLLM
-from .abstract_llm import AbstractLLM
+from dialog_lib.agents.abstract import AbstractLLM
 from dialog.settings import Settings
 
 
