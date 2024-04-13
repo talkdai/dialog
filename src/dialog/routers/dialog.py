@@ -13,7 +13,7 @@ from dialog.settings import Settings
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, HTTPException, status, Depends
-from dialog.models.helpers import create_session as db_create_session
+from dialog_lib.db.utils import create_chat_session as db_create_session
 
 api_router = APIRouter()
 
@@ -82,7 +82,7 @@ async def get_chat_content(chat_id, session: Session = Depends(get_session)):
 
 
 @api_router.post("/session")
-async def create_session(session: SessionModel | None = None, dbsession: Session = Depends(get_session)):
+async def create_chat_session_view(session: SessionModel | None = None, dbsession: Session = Depends(get_session)):
     """
     Endpoint to create a new chat session.
     """

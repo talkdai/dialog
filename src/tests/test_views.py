@@ -7,7 +7,7 @@ def test_health(client):
     assert response.status_code == 200
     assert response.json() == {"message": "Dialogue API is healthy"}
 
-def test_create_session(client, mocker):
+def test_create_chat_session(client, mocker):
     response = client.post("/session")
     assert response.status_code == 200
     assert "chat_id" in response.json()
