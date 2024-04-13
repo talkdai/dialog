@@ -4,7 +4,7 @@ import logging
 from pydantic import parse_obj_as
 
 from dialog.llm import get_llm_class
-from dialog.llm.memory import get_messages
+from dialog_lib.db.memory import get_messages
 from dialog.models import Chat as ChatEntity
 from dialog.schemas import ChatModel, SessionModel, SessionsModel
 from dialog.models.db import engine, get_session
@@ -77,7 +77,7 @@ async def get_chat_content(chat_id, session: Session = Depends(get_session)):
             detail="Chat ID not found",
         )
 
-    messages = get_messages(chat_id, dbsession=session)
+    messages = get_messages(chat_id, dbsession=session, database_url=Settings().DATABASE_URL)
     return {"message": messages}
 
 

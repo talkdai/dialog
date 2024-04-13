@@ -14,8 +14,9 @@ from langchain_openai.chat_models import ChatOpenAI
 
 from dialog.learn.idf import categorize_conversation_history
 from dialog_lib.agents.abstract import AbstractLLM
-from dialog.llm.embeddings import get_most_relevant_contents_from_message
-from dialog.llm.memory import generate_memory_instance, get_messages
+from dialog_lib.embeddings.generate import get_most_relevant_contents_from_message
+from dialog_lib.db.memory import generate_memory_instance
+from dialog.llm.embeddings import EMBEDDINGS_LLM
 from dialog.settings import Settings
 
 from langchain_core.output_parsers import StrOutputParser
@@ -31,7 +32,8 @@ class DialogLcelLLM(AbstractLLM):
             return generate_memory_instance(
                 session_id=self.session_id,
                 parent_session_id=self.parent_session_id,
-                dbsession=self.dbsession
+                dbsession=self.dbsession,
+                database_url=Settings().DATABASE_URL
             )
         return None
 
@@ -40,7 +42,9 @@ class DialogLcelLLM(AbstractLLM):
             text,
             top=Settings().LLM_RELEVANT_CONTENTS,
             dataset=self.dataset,
-            session=self.dbsession
+            session=self.dbsession,
+            embeddings_llm=EMBEDDINGS_LLM,
+            cosine_similarity_threshold=Settings().COSINE_SIMILARITY_THRESHOLD
         )
         prompt_config = self.config.get("prompt")
         fallback = prompt_config.get("fallback") or self.config.get("fallback").get("prompt") # maintaining compatibility with the previous configuration
