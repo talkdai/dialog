@@ -467,13 +467,13 @@ files = [
 
 [[package]]
 name = "dialog-lib"
-version = "0.0.1.7"
+version = "0.0.1.8"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.11"
 files = [
-    {file = "dialog_lib-0.0.1.7-py3-none-any.whl", hash = "sha256:aab1427d6fdf7bd75cfb7b5fe5aecedf1edd31edc14248960fcc42970109dd2a"},
-    {file = "dialog_lib-0.0.1.7.tar.gz", hash = "sha256:aa873d0a1287ca5adbc4b0763c4197fc0565fa14e91d3db4654535cd290f4029"},
+    {file = "dialog_lib-0.0.1.8-py3-none-any.whl", hash = "sha256:bd5093f80020bb4198043dbb855d633fad93cd5e6de750773124b11a8192416e"},
+    {file = "dialog_lib-0.0.1.8.tar.gz", hash = "sha256:5e1590ef04a8cb429f9b02c5f51bbfd99090dd54cfb371d36a77f58db05b50de"},
 ]
 
 [package.dependencies]
@@ -3012,4 +3012,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "adce50c44fc2158021c3cee83dc98c2d9e85f317121e25308faed7330d27fc61"
+content-hash = "482456d9144ca2803b3e9a50ded4fee59ae69555a20256a0f31e815c8125e7c4"

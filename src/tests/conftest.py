@@ -6,7 +6,7 @@ from dialog.models.db import Base
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from dialog.models.helpers import create_session
+from dialog_lib.db.utils import create_chat_session
 from dialog.models.db import get_session
 
 SQLALCHEMY_DATABASE_URL = "postgresql://talkdai:talkdai@db/test_talkdai"
@@ -39,7 +39,7 @@ def session_id(client):
 
 @pytest.fixture
 def chat_session(dbsession):
-    return create_session(dbsession=dbsession)
+    return create_chat_session(dbsession=dbsession)
 
 @pytest.fixture
 def llm_mock(mocker):

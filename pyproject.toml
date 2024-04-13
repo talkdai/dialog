@@ -28,7 +28,7 @@ importlib-metadata = "^7.0.1"
 langchain-openai = "^0.0.6"
 pyarrow = "^15.0.0"
 iniconfig = "^2.0.0"
-dialog-lib = "^0.0.1.7"
+dialog-lib = "^0.0.1.8"
 
 
 [tool.poetry.group.dev.dependencies]

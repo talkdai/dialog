@@ -4,7 +4,7 @@ from dialog.models import Chat as ChatEntity
 from dialog.models.db import get_session
 
 
-def create_session(identifier=None, dbsession=None):
+def create_chat_session(identifier=None, dbsession=None):
     if not dbsession:
         dbsession = next(get_session())
 
