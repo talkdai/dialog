@@ -41,12 +41,12 @@ def get_application() -> FastAPI:
         try:
             plugin_module = plugin.load()
         except ImportError as e:
-            logging.warning(f"Failed to load plugin: {plugin.name}. Traceback: \n\n {e.format_exc()}", )
+            logging.warning(f"Failed to load plugin: {plugin.name}. Traceback: \n\n {e.__str__()}", )
         else:
             try:
                 plugin_module.register_plugin(app)
             except AttributeError:
-                logging.warning(f"Failed to register plugin: {plugin.name}\n\n{e.format_exc()}")
+                logging.warning(f"Failed to register plugin: {plugin.name}\n\n{e.__str__()}")
 
     return app
 
