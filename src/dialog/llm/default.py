@@ -15,7 +15,7 @@ from dialog_lib.embeddings.generate import get_most_relevant_contents_from_messa
 from dialog_lib.db.memory import generate_memory_instance
 from dialog.llm.embeddings import EMBEDDINGS_LLM
 from dialog.settings import Settings
-from dialog.models.db import get_session
+from dialog.db import get_session
 
 class DialogLLM(AbstractLLM):
     def __init__(self, *args, **kwargs):

@@ -1,6 +1,6 @@
 import pytest
 
-from dialog.models import ChatMessages, Chat
+from dialog_lib.db.models import ChatMessages, Chat
 
 def test_health(client):
     response = client.get("/health")
