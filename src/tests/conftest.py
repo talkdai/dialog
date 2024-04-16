@@ -2,12 +2,12 @@ import os
 import pytest
 
 from main import app
-from dialog.models.db import Base
+from dialog_lib.db.models import Base
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dialog_lib.db.utils import create_chat_session
-from dialog.models.db import get_session
+from dialog.db import get_session
 
 SQLALCHEMY_DATABASE_URL = "postgresql://talkdai:talkdai@db/test_talkdai"
 

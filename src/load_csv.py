@@ -6,8 +6,8 @@ from sqlalchemy import text
 
 from dialog_lib.embeddings.generate import generate_embeddings
 from dialog.llm.embeddings import EMBEDDINGS_LLM
-from dialog.models import CompanyContent
-from dialog.models.db import get_session
+from dialog_lib.db.models import CompanyContent
+from dialog.db import get_session
 
 session = next(get_session())
 

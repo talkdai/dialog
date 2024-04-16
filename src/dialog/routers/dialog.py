@@ -5,9 +5,9 @@ from pydantic import parse_obj_as
 
 from dialog.llm import get_llm_class
 from dialog_lib.db.memory import get_messages
-from dialog.models import Chat as ChatEntity
+from dialog_lib.db.models import Chat as ChatEntity
 from dialog.schemas import ChatModel, SessionModel, SessionsModel
-from dialog.models.db import engine, get_session
+from dialog.db import engine, get_session
 from dialog.settings import Settings
 
 from sqlalchemy import text
