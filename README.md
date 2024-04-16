@@ -1,8 +1,8 @@
 # talkd/dialog
 
-Humanized Conversation API (using LLM)
+Dialog is a framework for LLM Ops. This repository serves an API focused on letting you deploy any LLM you want, based on the structure provided py [dialog-lib](https://github.com/talkdai/dialog-lib).
 
-> conversations in a human way without exposing that it's a LLM answering
+We started as a way to humanize RAGs, but we are expanding for broader approaches on better RAG deployment and maintenance.
 
 For more information, check our [documentation](https://dialog.talkd.ai)!
 
