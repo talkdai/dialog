@@ -1,5 +1,7 @@
 # talkd/dialog
 
+[![](https://dcbadge.vercel.app/api/server/vyU4Hnfs)](https://discord.gg/vyU4Hnfs)
+
 For programmers, who are interested in AI who are deploying RAGs without knowledge on server maintenance, Dialog is an App to simplify LLM deploys, letting you spend less time coding and more time training your model.
 
 This repository serves an API focused on letting you deploy any LLM you want, based on the structure provided by [dialog-lib](https://github.com/talkdai/dialog-lib).
