@@ -92,3 +92,5 @@ We are thankful for all of the contributions we receive, mostly are reviewed by 
  - [vmesel](https://github.com/vmesel)
  - [walison17](https://github.com/walison17)
  - [lgabs](https://github.com/lgabs/)
+
+made with 💜 by [talkd.ai](https://talkd.ai)
