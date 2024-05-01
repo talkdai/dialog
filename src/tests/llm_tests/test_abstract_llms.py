@@ -32,9 +32,6 @@ def test_abstract_llm_with_valid_config():
     assert llm.preprocess("input") == "input"
     assert llm.generate_prompt("text") == "text"
 
-    with pytest.raises(NotImplementedError):
-        llm.get_prompt("input")
-
 def test_get_llm_class_get_default_class():
     llm_class = get_llm_class()
     assert llm_class == DialogLLM
