@@ -1,14 +1,16 @@
 # talkd/dialog
 
-Humanized Conversation API (using LLM)
+For programmers, who are interested in AI who are deploying RAGs without knowledge on server maintenance, Dialog is an App to simplify LLM deploys, letting you spend less time coding and more time training your model.
 
-> conversations in a human way without exposing that it's a LLM answering
+This repository serves an API focused on letting you deploy any LLM you want, based on the structure provided by [dialog-lib](https://github.com/talkdai/dialog-lib).
+
+We started as a way to humanize RAGs, but we are expanding for broader approaches on better RAG deployment and maintenance.
 
 For more information, check our [documentation](https://dialog.talkd.ai)!
 
-## Run the project
+## Running the project
 
-We assume you are familiar with [Docker](https://www.docker.com/). Follow the [Quick Start](##quick-start) for setup and then run
+We assume you are familiar with [Docker](https://www.docker.com/), if you are not, this [amazing tutorial](https://www.youtube.com/watch?v=pTFZFxd4hOI&ab_channel=ProgrammingwithMosh) will help you. Follow the [Quick Start](##quick-start) for setup and then run
 
 ```bash
 docker-compose up
@@ -90,3 +92,5 @@ We are thankful for all of the contributions we receive, mostly are reviewed by 
  - [vmesel](https://github.com/vmesel)
  - [walison17](https://github.com/walison17)
  - [lgabs](https://github.com/lgabs/)
+
+made with 💜 by [talkd.ai](https://talkd.ai)
