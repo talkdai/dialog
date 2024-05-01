@@ -10,14 +10,14 @@ from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
 from langchain_openai.chat_models import ChatOpenAI
 
 from dialog.learn.idf import categorize_conversation_history
-from dialog_lib.agents.abstract import AbstractLLM
+from dialog_lib.agents.abstract import AbstractRAG
 from dialog_lib.embeddings.generate import get_most_relevant_contents_from_message
 from dialog_lib.db.memory import generate_memory_instance
 from dialog.llm.embeddings import EMBEDDINGS_LLM
 from dialog.settings import Settings
 from dialog.db import get_session
 
-class DialogLLM(AbstractLLM):
+class DialogLLM(AbstractRAG):
     def __init__(self, *args, **kwargs):
         kwargs["dbsession"] = next(get_session())
         super().__init__(*args, **kwargs)
