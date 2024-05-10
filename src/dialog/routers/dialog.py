@@ -3,7 +3,7 @@ import datetime
 import logging
 from pydantic import parse_obj_as
 
-from dialog.llm import get_llm_class
+from dialog.llm import process_user_message
 from dialog_lib.db.memory import get_messages
 from dialog_lib.db.models import Chat as ChatEntity
 from dialog.schemas import ChatModel, SessionModel, SessionsModel
@@ -41,9 +41,7 @@ async def post_message(chat_id: str, message: ChatModel, session: Session = Depe
             detail="Chat ID not found",
         )
     start_time = datetime.datetime.now()
-    LLM = get_llm_class()
-    llm_instance = LLM(config=Settings().PROJECT_CONFIG, session_id=chat_id)
-    ai_message = llm_instance.process(message.message)
+    ai_message = process_user_message(message, chat_id)
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time for chat_id {chat_id}: {duration}")
     return {"message": ai_message["text"]}
@@ -56,9 +54,7 @@ async def ask_question_to_llm(message: ChatModel, session: Session = Depends(get
     using memory.
     """
     start_time = datetime.datetime.now()
-    LLM = get_llm_class()
-    llm_instance = LLM(config=Settings().PROJECT_CONFIG)
-    ai_message = llm_instance.process(message.message)
+    ai_message = process_user_message(message, chat_id=None)
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time: {duration}")
     return {"message": ai_message["text"]}
