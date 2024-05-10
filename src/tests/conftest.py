@@ -43,6 +43,6 @@ def chat_session(dbsession):
 
 @pytest.fixture
 def llm_mock(mocker):
-    llm_mock = mocker.patch('dialog.routers.dialog.get_llm_class')
+    llm_mock = mocker.patch('dialog.routers.dialog.process_user_message')
     llm_mock.process.return_value = {"text": "Hello"}
     return llm_mock

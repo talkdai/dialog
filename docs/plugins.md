@@ -51,4 +51,8 @@ PLUGINS=plugins.whats_audio_synth.main,
 
 ### Using Langchain's LCEL structure
 
-If you want to use Langchain's LCEL structure, you can use the `DialogLcelLLM` setting the variable to the 'dialog.llm.lcel_default.DialogLcelLLM'.
+If you want to use Langchain's LCEL structure, you can use the default LCEL implementation available in the file `dialog/llm/agents/lcel.py`. To use it, you need to add the following environment variable to your .env file:
+
+```bash
+LLM_CLASS=dialog.llm.agents.lcel.runnable
+```

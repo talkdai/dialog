@@ -3,7 +3,8 @@ import pytest
 
 from dialog.llm import get_llm_class
 from dialog_lib.agents.abstract import AbstractLLM
-from dialog.llm.default import DialogLLM
+from dialog.llm.agents.default import DialogLLM
+from dialog.llm import DialogLLM
 
 
 def test_abstract_llm_for_invalid_config():
@@ -38,10 +39,11 @@ def test_get_llm_class_get_default_class():
 
 def test_get_llm_class_get_custom_class():
     os.environ["LLM_CLASS"] = "dialog_lib.agents.abstract.AbstractLLM"
-    llm_class = get_llm_class()
-    assert llm_class == AbstractLLM
+    llm_class, llm_type = get_llm_class()
+    assert llm_class == DialogLLM
+    assert llm_type == "AbstractLLM"
 
 def test_get_llm_class_with_invalid_class():
-    os.environ["LLM_CLASS"] = "dialogl.llm.invalid_llm.InvalidLLM"
-    llm_class = get_llm_class()
-    assert llm_class == DialogLLM
+    os.environ["LLM_CLASS"] = "dialog.llm.invalid_llm.InvalidLLM"
+    with pytest.raises(ModuleNotFoundError):
+        llm_class, llm_type = get_llm_class()
