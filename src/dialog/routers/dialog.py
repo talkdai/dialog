@@ -3,15 +3,16 @@ import datetime
 import logging
 from pydantic import parse_obj_as
 
-from dialog.llm import process_user_message
-from dialog_lib.db.memory import get_messages
-from dialog_lib.db.models import Chat as ChatEntity
-from dialog.schemas import ChatModel, SessionModel, SessionsModel
 from dialog.db import engine, get_session
 from dialog.settings import Settings
+from dialog.schemas import ChatModel, SessionModel, SessionsModel
+from dialog.llm import process_user_message, add_langserve_routes
+from dialog_lib.db.memory import get_messages
+from dialog_lib.db.models import Chat as ChatEntity
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+
 from fastapi import APIRouter, HTTPException, status, Depends
 from dialog_lib.db.utils import create_chat_session as db_create_session
 
@@ -99,3 +100,5 @@ async def get_sessions(session: Session = Depends(get_session)) -> SessionsModel
             "chat_id": str(s.session_id) # TODO: Make model dump, instead of dict
         }) for s in sessions
     ]})
+
+add_langserve_routes(api_router)
