@@ -6,6 +6,7 @@ from typing import Type
 from dialog_lib.agents.abstract import AbstractLLM
 from dialog.settings import Settings
 
+from langserve import add_routes
 from langchain.schema.runnable import RunnablePassthrough
 from langchain_core.runnables.base import RunnableSequence
 
@@ -56,3 +57,9 @@ def process_user_message(message, chat_id=None):
         ai_message = {"text": ai_message.content}
 
     return ai_message
+
+def add_langserve_routes(app):
+    llm_instance, llm_type = get_llm_class()
+
+    if llm_type == "LCELRunnable":
+        add_routes(app, llm_instance)
