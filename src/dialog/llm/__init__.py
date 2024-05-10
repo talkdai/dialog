@@ -16,7 +16,7 @@ from .agents.lcel import *
 
 def get_llm_class():
     if Settings().LLM_CLASS is None:
-        return DialogLLM
+        return DialogLLM, "AbstractLLM"
 
     llm_class = None
 

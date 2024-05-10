@@ -34,8 +34,9 @@ def test_abstract_llm_with_valid_config():
     assert llm.generate_prompt("text") == "text"
 
 def test_get_llm_class_get_default_class():
-    llm_class = get_llm_class()
+    llm_class, llm_type = get_llm_class()
     assert llm_class == DialogLLM
+    assert llm_type == "AbstractLLM"
 
 def test_get_llm_class_get_custom_class():
     os.environ["LLM_CLASS"] = "dialog_lib.agents.abstract.AbstractLLM"
