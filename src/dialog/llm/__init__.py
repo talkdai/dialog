@@ -7,8 +7,7 @@ from dialog_lib.agents.abstract import AbstractLLM
 from dialog.settings import Settings
 
 from langserve import add_routes
-from langchain.schema.runnable import RunnablePassthrough
-from langchain_core.runnables.base import RunnableSequence
+from langchain_core.runnables.base import RunnableBindingBase
 
 from .agents.default import *
 from .agents.lcel import *
@@ -16,7 +15,7 @@ from .agents.lcel import *
 
 def get_llm_class():
     if Settings().LLM_CLASS is None:
-        return DialogLLM, "AbstractLLM"
+        return DialogLLM
 
     llm_class = None
 
@@ -28,25 +27,18 @@ def get_llm_class():
         logging.info(f"Failed to load LLM class {Settings().LLM_CLASS}. Using default LLM. Exception: {e}")
         raise
 
-    if isinstance(llm_class, AbstractLLM):
-        return llm_class, "AbstractLLM"
+    if llm_class:
+        return llm_class
 
-    elif 'langchain_core.runnables' in str(type(llm_class)):
-        return llm_class, "LCELRunnable"
-
-    logging.info(f"Type for LLM class is: {type(llm_class)}")
-
-    return DialogLLM, "AbstractLLM"
+    logging.info(f"Falling back on default Agent")
+    return DialogLLM
 
 
 def process_user_message(message, chat_id=None):
-    LLM, llm_type = get_llm_class()
-    if llm_type == "AbstractLLM":
-        llm_instance = LLM(config=Settings().PROJECT_CONFIG, session_id=chat_id)
-        ai_message = llm_instance.process(message.message)
+    llm_class = get_llm_class()
 
-    elif llm_type == "LCELRunnable":
-        ai_message = LLM.invoke(
+    if isinstance(llm_class, RunnableBindingBase):
+        ai_message = llm_class.invoke(
             {"input": message.message},
             {"configurable": {
                 "session_id": chat_id,
@@ -56,10 +48,14 @@ def process_user_message(message, chat_id=None):
         )
         ai_message = {"text": ai_message.content}
 
+    else:
+        llm_instance = llm_class(config=Settings().PROJECT_CONFIG, session_id=chat_id)
+        ai_message = llm_instance.process(message.message)
+
     return ai_message
 
 def add_langserve_routes(app):
-    llm_instance, llm_type = get_llm_class()
+    llm_instance = get_llm_class()
 
-    if llm_type == "LCELRunnable":
+    if isinstance(llm_instance, RunnableBindingBase):
         add_routes(app, llm_instance)
