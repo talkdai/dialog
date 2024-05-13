@@ -3,17 +3,18 @@ import datetime
 import logging
 from pydantic import parse_obj_as
 
-from dialog.llm import get_llm_class
-from dialog.llm.memory import get_messages
-from dialog.models import Chat as ChatEntity
-from dialog.schemas import ChatModel, SessionModel, SessionsModel
-from dialog.models.db import engine, get_session
+from dialog.db import engine, get_session
 from dialog.settings import Settings
+from dialog.schemas import ChatModel, SessionModel, SessionsModel
+from dialog.llm import process_user_message, add_langserve_routes
+from dialog_lib.db.memory import get_messages
+from dialog_lib.db.models import Chat as ChatEntity
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+
 from fastapi import APIRouter, HTTPException, status, Depends
-from dialog.models.helpers import create_session as db_create_session
+from dialog_lib.db.utils import create_chat_session as db_create_session
 
 api_router = APIRouter()
 
@@ -41,9 +42,7 @@ async def post_message(chat_id: str, message: ChatModel, session: Session = Depe
             detail="Chat ID not found",
         )
     start_time = datetime.datetime.now()
-    LLM = get_llm_class()
-    llm_instance = LLM(config=Settings().PROJECT_CONFIG, session_id=chat_id)
-    ai_message = llm_instance.process(message.message)
+    ai_message = process_user_message(message, chat_id)
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time for chat_id {chat_id}: {duration}")
     return {"message": ai_message["text"]}
@@ -56,9 +55,7 @@ async def ask_question_to_llm(message: ChatModel, session: Session = Depends(get
     using memory.
     """
     start_time = datetime.datetime.now()
-    LLM = get_llm_class()
-    llm_instance = LLM(config=Settings().PROJECT_CONFIG)
-    ai_message = llm_instance.process(message.message)
+    ai_message = process_user_message(message, chat_id=None)
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time: {duration}")
     return {"message": ai_message["text"]}
@@ -77,12 +74,12 @@ async def get_chat_content(chat_id, session: Session = Depends(get_session)):
             detail="Chat ID not found",
         )
 
-    messages = get_messages(chat_id, dbsession=session)
+    messages = get_messages(chat_id, dbsession=session, database_url=Settings().DATABASE_URL)
     return {"message": messages}
 
 
 @api_router.post("/session")
-async def create_session(session: SessionModel | None = None, dbsession: Session = Depends(get_session)):
+async def create_chat_session_view(session: SessionModel | None = None, dbsession: Session = Depends(get_session)):
     """
     Endpoint to create a new chat session.
     """
@@ -103,3 +100,5 @@ async def get_sessions(session: Session = Depends(get_session)) -> SessionsModel
             "chat_id": str(s.session_id) # TODO: Make model dump, instead of dict
         }) for s in sessions
     ]})
+
+add_langserve_routes(api_router)

@@ -2,8 +2,9 @@ import os
 import pytest
 
 from dialog.llm import get_llm_class
-from dialog.llm.abstract_llm import AbstractLLM
-from dialog.llm.default import DialogLLM
+from dialog_lib.agents.abstract import AbstractLLM
+from dialog.llm.agents.default import DialogLLM
+from dialog.llm import DialogLLM
 
 
 def test_abstract_llm_for_invalid_config():
@@ -21,7 +22,7 @@ def test_abstract_llm_with_valid_config():
     assert llm.session_id is None
     assert llm.relevant_contents is None
     assert llm.dataset is None
-    assert llm.llm_key is None
+    assert llm.llm_api_key is None
     assert llm.parent_session_id is None
     with pytest.raises(NotImplementedError):
         llm.memory
@@ -32,19 +33,16 @@ def test_abstract_llm_with_valid_config():
     assert llm.preprocess("input") == "input"
     assert llm.generate_prompt("text") == "text"
 
-    with pytest.raises(NotImplementedError):
-        llm.get_prompt("input")
-
 def test_get_llm_class_get_default_class():
     llm_class = get_llm_class()
     assert llm_class == DialogLLM
 
 def test_get_llm_class_get_custom_class():
-    os.environ["LLM_CLASS"] = "dialog.llm.abstract_llm.AbstractLLM"
+    os.environ["LLM_CLASS"] = "dialog_lib.agents.abstract.AbstractLLM"
     llm_class = get_llm_class()
     assert llm_class == AbstractLLM
 
 def test_get_llm_class_with_invalid_class():
-    os.environ["LLM_CLASS"] = "dialogl.llm.invalid_llm.InvalidLLM"
-    llm_class = get_llm_class()
-    assert llm_class == DialogLLM
+    os.environ["LLM_CLASS"] = "dialog.llm.invalid_llm.InvalidLLM"
+    with pytest.raises(ModuleNotFoundError):
+        llm_class = get_llm_class()
