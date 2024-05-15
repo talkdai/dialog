@@ -17,17 +17,45 @@ We assume you are familiar with [Docker](https://www.docker.com/), if you are no
 ```bash
 docker-compose up
 ```
-it will start two services: 
+it will start two services:
 - `db`: where the PostgresSQL database runs to support chat history and document retrieval for [RAG](https://en.wikipedia.org/wiki/Prompt_engineering#Retrieval-augmented_generation);
 - `dialog`: the service with the api.
 
 ## Quick Start
 
-To use this project, you need to have a `.csv` file with the knowledge base and a `.toml` file with your prompt configuration.
+If you are new to the project and want to get started quickly with some sample data and a simple prompt configuration, follow the steps below:
 
-We recommend that you create a folder inside this project called `data` and put CSVs and TOMLs files over there.
+1. Clone the repository:
 
-### `.csv` knowledge base
+```bash
+git clone https://github.com/talkdai/dialog.git
+```
+
+2. Create a `.env` file based on the `.env.sample` file:
+
+```bash
+cp .env.sample .env
+```
+
+3. Set the OPENAI_API_KEY value in the `.env` file:
+
+```
+OPENAI_API_KEY=your-openai-api-key
+```
+
+4. Build and start the services with docker:
+
+```bash
+docker-compose up --build
+```
+
+### Customizing prompts and data
+
+To customize this project, you need to have a `.csv` file with the knowledge base of your interest and a `.toml` file with your prompt configuration.
+
+We recommend that you create a folder inside this project called `data` to store your CSVs and TOMLs files over there. The `data` folder is already in the `.gitignore` file, so you can store your data without worrying about it being pushed to the repository.
+
+#### `.csv` knowledge base
 
 The knowledge base has needed columns:
 
@@ -43,12 +71,12 @@ category,subcategory,question,content
 faq,promotions,loyalty-program,"The company XYZ has a loyalty program when you refer new customers you get a discount on your next purchase, ..."
 ```
 
-When the `dialog` service starts, it loads the knowledge base into the database, so make sure the database is up and paths are correct (see [environment variables](##environment-variables) section). Alternatively, inside `src` folder, run `make load-data path="<path-to-your-knowledge-base>.csv"`. 
+When the `dialog` service starts, it loads the knowledge base into the database, so make sure the database is up and paths are correct (see [environment variables](##environment-variables) section). Alternatively, inside `src` folder, run `make load-data path="<path-to-your-knowledge-base>.csv"`.
 
-See [our documentation](https://dialog.talkd.ai/settings#csv-knowledge-base) for more options about the the knowledge base, including embedding more coluns together.
+See [our documentation](https://dialog.talkd.ai/settings#csv-knowledge-base) for more options about the the knowledge base, including embedding more columns together.
 
 
-### `.toml` prompt configuration
+#### `.toml` prompt configuration
 
 The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are mandatory fields used for processing the conversation and connecting to the LLM.
 
@@ -69,7 +97,7 @@ qualified service to high-end customers. Be brief in your answers, without being
 and objective in your responses. Never say that you are a model (AI), always answer as Avelino.
 Be polite and friendly!"""
 
-suggested = "Here is some possible content 
+suggested = "Here is some possible content
 that could help the user in a better way."
 
 fallback = "I'm sorry, I couldn't find a relevant answer for your question."

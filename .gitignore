@@ -165,3 +165,5 @@ requirements.txt
 *.toml
 !src/tests/fixtures/*.csv
 !src/tests/fixtures/*.toml
+!sample_data/*.csv
+!sample_data/*.toml
