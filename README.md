@@ -1,5 +1,5 @@
+![logo](logo.svg)
 # talkd/dialog
-
 [![](https://dcbadge.limes.pink/api/server/https://discord.gg/dPAcsn3Ch7)](https://discord.gg/dPAcsn3Ch7)
 
 For programmers, who are interested in AI who are deploying RAGs without knowledge on server maintenance, Dialog is an App to simplify LLM deploys, letting you spend less time coding and more time training your model.
