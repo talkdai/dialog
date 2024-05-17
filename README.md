@@ -1,4 +1,5 @@
-![logo](logo.svg)
+<img src="logo.svg" width="500"/>
+
 # talkd/dialog
 [![](https://dcbadge.limes.pink/api/server/https://discord.gg/dPAcsn3Ch7)](https://discord.gg/dPAcsn3Ch7)
 
