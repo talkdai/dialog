@@ -27,6 +27,7 @@ services:
       - ./:/app
       - ./.empty:/app/data/db
       - ./static:/app/static
+      - ./sample_data:/app/src/sample_data
     ports:
       - '8000:8000'
     depends_on:
