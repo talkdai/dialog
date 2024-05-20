@@ -7,7 +7,7 @@ from dialog.settings import Settings
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from dialog.routers import api_router
+from dialog.routers import api_router, open_ai_api_router
 
 logging.basicConfig(
     level=Settings().LOGGING_LEVEL,
@@ -31,9 +31,18 @@ def get_application() -> FastAPI:
         allow_headers=Settings().CORS_ALLOW_HEADERS,
     )
 
+    app.add_middleware(
+        CustomHeaderMiddleware
+    )
+
     app.include_router(
         api_router, prefix="",
     )
+
+    app.include_router(
+        open_ai_api_router, prefix="/openai"
+    )
+
     app.mount("/static", StaticFiles(directory=Settings().STATIC_FILE_LOCATION), name="static")
     plugins = entry_points(group="dialog")
     for plugin in plugins:

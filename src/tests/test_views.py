@@ -1,3 +1,4 @@
+import os
 import pytest
 
 from dialog_lib.db.models import ChatMessages, Chat
@@ -48,3 +49,20 @@ def test_invalid_database_connection(client, mocker):
         response = client.get("/health")
         assert response.status_code == 500
         assert response.json() == {"message": "Failed to execute simple SQL"}
+
+# test openai router
+
+def test_customized_openai_models_response(client):
+    response = client.get("/openai/models")
+    assert response.status_code == 200
+    for i in ["id", "object", "created", "owned_by"]:
+        assert i in response.json()[0]
+
+def test_customized_openai_chat_completion_response(client, llm_mock_openai_router):
+    os.environ["LLM_CLASS"] = "dialog.llm.agents.default.DialogLLM"
+    response = client.post("/openai/chat/completions", json={"message": "Hello"})
+    assert response.status_code == 200
+    for i in ["choices", "created", "id", "model", "object", "usage"]:
+        assert i in response.json()
+    assert llm_mock_openai_router.called
+    assert response.json()["choices"][0]["message"]["role"] == "assistant"
