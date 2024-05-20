@@ -31,10 +31,6 @@ def get_application() -> FastAPI:
         allow_headers=Settings().CORS_ALLOW_HEADERS,
     )
 
-    app.add_middleware(
-        CustomHeaderMiddleware
-    )
-
     app.include_router(
         api_router, prefix="",
     )
