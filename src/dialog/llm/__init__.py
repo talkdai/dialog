@@ -39,7 +39,7 @@ def process_user_message(message, chat_id=None):
 
     if isinstance(llm_class, RunnableBindingBase):
         ai_message = llm_class.invoke(
-            {"input": message.message},
+            {"input": message},
             {"configurable": {
                 "session_id": chat_id,
                 "model": Settings().PROJECT_CONFIG.get("model_name", "gpt-3.5-turbo"),
@@ -50,7 +50,7 @@ def process_user_message(message, chat_id=None):
 
     else:
         llm_instance = llm_class(config=Settings().PROJECT_CONFIG, session_id=chat_id)
-        ai_message = llm_instance.process(message.message)
+        ai_message = llm_instance.process(message)
 
     return ai_message
 

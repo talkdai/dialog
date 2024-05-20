@@ -60,7 +60,15 @@ def test_customized_openai_models_response(client):
 
 def test_customized_openai_chat_completion_response(client, llm_mock_openai_router):
     os.environ["LLM_CLASS"] = "dialog.llm.agents.default.DialogLLM"
-    response = client.post("/openai/chat/completions", json={"message": "Hello"})
+    response = client.post("/openai/chat/completions", json={
+        "model": "talkdai",
+        "messages": [
+            {
+                "role": "user",
+                "content": "Hello"
+            }
+        ]
+    })
     assert response.status_code == 200
     for i in ["choices", "created", "id", "model", "object", "usage"]:
         assert i in response.json()

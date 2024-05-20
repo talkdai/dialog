@@ -50,5 +50,5 @@ def llm_mock(mocker):
 @pytest.fixture
 def llm_mock_openai_router(mocker):
     llm_mock = mocker.patch('dialog.routers.openai.process_user_message')
-    llm_mock.process.return_value = {"text": "Hello"}
+    llm_mock.return_value = {"text": "Hello"}
     return llm_mock
