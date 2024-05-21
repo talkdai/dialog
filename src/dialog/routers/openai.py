@@ -5,12 +5,16 @@ import logging
 
 from dialog.db import engine, get_session
 from dialog_lib.db.models import Chat as ChatEntity, ChatMessages
-from dialog.schemas import OpenAIChat, OpenAIChatCompletion, OpenAIModel
+from dialog.schemas import (
+    OpenAIChat, OpenAIChatCompletion, OpenAIModel, OpenAIMessage,
+    OpenAIStreamChoice, OpenAIStreamSchema
+)
 from dialog.llm import process_user_message
 
 from sqlalchemy.orm import Session
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
 
 open_ai_api_router = APIRouter()
 
@@ -49,27 +53,48 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
 
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time: {duration}")
-    chat_completion = OpenAIChatCompletion(
-        choices=[
-            {
-                "finish_reason": "stop",
-                "index": 0,
-                "message": {
-                    "content": ai_message["text"],
-                    "role": "assistant"
-                },
-                "logprobs": None
+    generated_message = ai_message["text"]
+    if not message.stream:
+        chat_completion = OpenAIChatCompletion(
+            choices=[
+                {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "message": OpenAIMessage(**{
+                        "content": generated_message,
+                        "role": "assistant"
+                    }),
+                    "logprobs": None
+                }
+            ],
+            created=int(datetime.datetime.now().timestamp()),
+            id=f"talkdai-{str(uuid4())}",
+            model="talkd-ai",
+            object="chat.completion",
+            usage={
+                "completion_tokens": None,
+                "prompt_tokens": None,
+                "total_tokens": None
             }
-        ],
-        created=int(datetime.datetime.now().timestamp()),
-        id=f"talkdai-{str(uuid4())}",
-        model="talkd-ai",
-        object="chat.completion",
-        usage={
-            "completion_tokens": None,
-            "prompt_tokens": None,
-            "total_tokens": None
-        }
-    )
-    logging.info(f"Chat completion: {chat_completion}")
-    return chat_completion
+        )
+        logging.info(f"Chat completion: {chat_completion}")
+        return chat_completion
+
+    def gen():
+        for word in f"{generated_message} +END".split():
+            # Yield Streaming Response on each word
+            message_part = OpenAIStreamChoice(
+                index=0,
+                delta={
+                    "content": f"{word} "
+                } if word != "+END" else {}
+            )
+
+            message_stream = OpenAIStreamSchema(
+                id=f"talkdai-{str(uuid4())}",
+                choices=[message_part]
+            )
+            logging.info(f"data: {message_stream.model_dump_json()}")
+            yield f"data: {message_stream.model_dump_json()}\n\n"
+
+    return StreamingResponse(gen(), media_type='text/event-stream')
