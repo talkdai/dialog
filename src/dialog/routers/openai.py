@@ -31,15 +31,16 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
     """
     This posts a message to the LLM and returns the response in the OpenAI format.
     """
+    logging.info(f"Received message: {message}")
     start_time = datetime.datetime.now()
     new_chat = ChatEntity(
         session_id = f"openai-{str(uuid4())}",
     )
     session.add(new_chat)
-    for message in message.messages[:-1]:
+    for _message in message.messages[:-1]:
         new_message = ChatMessages(
             session_id=new_chat.session_id,
-            message=message.message,
+            message=_message.content,
         )
         session.add(new_message)
     session.flush()
@@ -62,7 +63,7 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
         ],
         created=int(datetime.datetime.now().timestamp()),
         id=f"talkdai-{str(uuid4())}",
-        model="talkdai",
+        model="talkd-ai",
         object="chat.completion",
         usage={
             "completion_tokens": None,
@@ -70,4 +71,5 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
             "total_tokens": None
         }
     )
+    logging.info(f"Chat completion: {chat_completion}")
     return chat_completion
