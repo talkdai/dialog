@@ -50,6 +50,43 @@ OPENAI_API_KEY=your-openai-api-key
 docker-compose up --build
 ```
 
+### Tutorials
+
+We've written some tutorials to help you get started with the project:
+
+ - [Deploy your own ChatGPT in 5 minutes](https://dev.to/vmesel/deploy-your-own-chatgpt-in-5-minutes-5d41)
+ - [GPT-4o: Learn how to Implement a RAG on the new model, step-by-step!](https://dev.to/vmesel/gpt-4o-learn-how-to-implement-a-rag-on-the-new-model-step-by-step-377d)
+
+### Using Open-WebUI as front-end
+
+In partnership with [Open-WebUI](https://github.com/open-webui), we made their chat interface our own as well, if you want to use it on your own application, follow the steps below:
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/talkdai/dialog.git
+```
+
+2. Create a `.env` file based on the `.env.sample` file:
+
+```bash
+cp .env.sample .env
+```
+
+3. Set the OPENAI_API_KEY value in the `.env` file:
+
+```
+OPENAI_API_KEY=your-openai-api-key
+```
+
+4. Build and start the services with docker:
+
+```bash
+docker-compose -f docker-compose-open-webui.yml up --build
+```
+
+5. Access `http://localhost:3000/` to sign up and see the chat interface locally.
+
 ### Customizing prompts and data
 
 To customize this project, you need to have a `.csv` file with the knowledge base of your interest and a `.toml` file with your prompt configuration.
