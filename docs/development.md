@@ -62,11 +62,10 @@ make run
 
 ## Running Tests
 
-Running tests on the project is simple, just use our tests docker-compose file.
+Running tests on the project is simple, just use our `test-build` available in Makefile.
 
 ```bash
-docker-compose -f docker-compose.test.yml up -d db # run the database
-docker-compose -f docker-compose.test.yml up -d dialog # run the api
+make test-build
 ```
 
 Right now our coverage is pretty limited, we would like to have more code covered as soon as possible.
