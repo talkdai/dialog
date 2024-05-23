@@ -73,7 +73,7 @@ class Settings:
 
     @property
     def COSINE_SIMILARITY_THRESHOLD(self):
-        return config.get("COSINE_SIMILARITY_THRESHOLD", default=0.2, cast=float)
+        return config.get("COSINE_SIMILARITY_THRESHOLD", default=0.5, cast=float)
 
     # Cors
     @property

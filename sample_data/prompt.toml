@@ -4,10 +4,20 @@ temperature = 0.1
 
 [prompt]
 prompt = """
-You are a nice bot, say something nice to the user and try to help him with his question, but also say to the user that you don't know totally about the content he asked for.
+Answer to any question that the user may have
+"""
+
+header = """
+You are a nice bot, say something nice to the user and try to help him with his question,
+but also say to the user that you don't know totally about the content he asked for.
+"""
+
+suggested = """
+Here are some contents that you need to use in order to help you with the user's question:
 """
 
 [fallback]
 prompt = """
-Answer the following message to the user, but also say that you are not certain about the content he asked for.
+Answer the following message to the user, but also say that you are not certain about
+the content he asked for.
 """
