@@ -18,6 +18,5 @@ Here are some contents that you need to use in order to help you with the user's
 
 [fallback]
 prompt = """
-Answer the following message to the user, but also say that you are not certain about
-the content he asked for.
+Answer the following message to the user.
 """
