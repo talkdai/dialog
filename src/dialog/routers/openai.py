@@ -41,7 +41,14 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
         session_id = f"openai-{str(uuid4())}",
     )
     session.add(new_chat)
-    for _message in message.messages[:-1]:
+
+    non_empty_messages = []
+
+    for msg in message.messages:
+        if not msg.content == "":
+            non_empty_messages.append(msg)
+
+    for _message in non_empty_messages:
         new_message = ChatMessages(
             session_id=new_chat.session_id,
             message=_message.content,
@@ -49,7 +56,7 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
         session.add(new_message)
     session.flush()
 
-    ai_message = process_user_message(message.messages[-1].content, chat_id=new_chat.session_id)
+    ai_message = process_user_message(non_empty_messages[-1].content, chat_id=new_chat.session_id)
 
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time: {duration}")

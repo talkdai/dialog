@@ -1,9 +1,11 @@
 import tomllib
+import logging
 from pathlib import Path
-
 from decouple import Csv, Config
 
 config = Config(".env")
+
+logger = logging.getLogger(__name__)
 
 class Settings:
 
@@ -43,7 +45,7 @@ class Settings:
 
     @property
     def PROJECT_PROMPT(self):
-        return self.CONFIG.get("prompt", {})
+        return self.PROJECT_CONFIG.get("prompt", {})
 
     @property
     def FALLBACK(self):
@@ -56,24 +58,45 @@ class Settings:
     # Langchain and LLM parameters and settings
 
     @property
+    def MODEL_SETTINGS(self):
+        return self.PROJECT_CONFIG.get("model", {})
+
+    def get_model_setting(self, key, default=None, cast=None, toml_key=None):
+        model_setting_value = self.MODEL_SETTINGS.get(key.lower() or toml_key)
+
+        if model_setting_value:
+            return model_setting_value
+
+        env_setting_value = config.get(key, default=default, cast=cast)
+        message = (
+            f"{key} is set in the environment variable setting. "
+            "We are deprecating this environment variable and adding it to the model toml file."
+        )
+        if toml_key:
+            message += f"Please add `{toml_key} = {env_setting_value}` to your `[model]` section in the toml."
+
+        logger.warning(message)
+        return env_setting_value
+
+    @property
     def LLM_CLASS(self):
         return config.get("LLM_CLASS", default=None)
 
     @property
     def LLM_TEMPERATURE(self):
-        return config.get("LLM_TEMPERATURE", default=0.2, cast=float)
+        return self.get_model_setting("LLM_TEMPERATURE", default=0.2, cast=float, toml_key="temperature")
 
     @property
     def LLM_RELEVANT_CONTENTS(self):
-        return config.get("LLM_RELEVANT_CONTENTS", default=1, cast=int)
+        return self.get_model_setting("LLM_RELEVANT_CONTENTS", default=1, cast=int, toml_key="relevant_contents")
 
     @property
     def LLM_MEMORY_SIZE(self):
-        return config.get("LLM_MEMORY_SIZE", default=5, cast=int)
+        return self.get_model_setting("LLM_MEMORY_SIZE", default=5, cast=int, toml_key="memory_size")
 
     @property
     def COSINE_SIMILARITY_THRESHOLD(self):
-        return config.get("COSINE_SIMILARITY_THRESHOLD", default=0.5, cast=float)
+        return self.get_model_setting("COSINE_SIMILARITY_THRESHOLD", default=0.5, cast=float)
 
     # Cors
     @property

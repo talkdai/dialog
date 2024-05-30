@@ -53,6 +53,12 @@ def get_application() -> FastAPI:
             except AttributeError:
                 logging.warning(f"Failed to register plugin: {plugin.name}\n\n{e.__str__()}")
 
+    logging.info("Dialog API started successfully with settings:")
+
+    for setting in dir(Settings):
+        if setting.isupper() and setting not in ["LOGGING_LEVEL", "DATABASE_URL", "OPENAI_API_KEY", "PROJECT_CONFIG"]:
+            logging.info(f"{setting}: {getattr(Settings(), setting)}")
+
     return app
 
 
