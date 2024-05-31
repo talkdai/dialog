@@ -1,5 +1,11 @@
 # Quick Start
 
+## Current Architecture
+
+The current architecture ilustraded below shows how dialog and dialog-lib serve as base abstractions that define how you deploy RAG LLM Apps with little effort. You can basically focus in maintaining and evolve your knowledge base and prompts, and if necessary you can implement your onw plugins to extend fuctionalities.
+
+![architecture](./dialog-architecture.jpg)
+
 ## Running the project
 
 We recommend you use the **docker `compose`** version to set up your environment, as this will simplify the process of setting up the environment and all its dependencies, you just need to **copy and paste** our docker `compose` available below:

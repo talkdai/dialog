@@ -11,9 +11,11 @@ For programmers, who are interested in AI who are deploying RAGs without knowled
 
 This repository serves an API focused on letting you deploy any LLM you want, based on the structure provided by [dialog-lib](https://github.com/talkdai/dialog-lib).
 
-We started as a way to humanize RAGs, but we are expanding for broader approaches on better RAG deployment and maintenance.
+We started as a way to humanize RAGs, but we are expanding for broader approaches on better RAG deployment and maintenance. Checkout out our current architecture below and, for more information, check our [documentation](https://dialog.talkd.ai)!
 
-For more information, check our [documentation](https://dialog.talkd.ai)!
+![architecture](./docs/dialog-architecture.jpg)
+
+
 
 ## Running the project
 
