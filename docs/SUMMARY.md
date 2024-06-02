@@ -3,5 +3,5 @@
 * [talkd/dialog](../README.md)
 * [Quick Start](quick-start.md)
 * [Setting up the config](settings.md)
-* [Plugins and Addons ‐ Extending talkd/dialog](plugins.md)
+* [Custom LLMs and Plugins](custom-llms-and-plugins.md)
 * [talkd/dialog API Development](development.md)
