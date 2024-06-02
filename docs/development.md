@@ -12,35 +12,11 @@ Our coding style try to follow as much as possible from PEP8 and we use `black` 
 
 We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) may help you and also reading our [current issues](https://github.com/talkdai/dialog/issues).
 
-> **notes:** we recommend using `docker-compose` to develop the project or please proceed with setting up the local environment at **your own risk**.
+> **notes:** we recommend using `docker-compose` or our `dev-container` to develop the project or please proceed with setting up the local environment at **your own risk**.
 
 ### Creating new/altering tables or columns
 
-We use alembic to manage migrations inside our application, so if you need to create new tables or columns, you will need to run the following command:
-
-```bash
-docker compose exec web alembic revision --autogenerate
-```
-
-Then, with the generated file already modified with the operations you would like to perform, run the following command:
-
-```bash
-docker compose exec web alembic upgrade head
-```
-
-In order to the newly created table become available in SQLAlchemy, you need to add the following lines to the file `src/models/__init__.py`:
-
-```python
-class TableNameInSingular(Base):
-    __table__ = Table(
-        "your_db_table_name",
-        Base.metadata,
-        psql_autoload=True,
-        autoload_with=engine,
-        extend_existing=True
-    )
-    __tablename__ = "your_db_table_name"
-```
+All of the current available database migrations and tables are handled by `alembic` inside the `dialog-lib` package, so if you need to create a new table or alter a column, you can create a new migration inside this project.
 
 ## VS Code Dev Container
 
