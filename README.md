@@ -1,8 +1,8 @@
 <p align="center">
  <img src="logo.svg" alt="talkd/dialog logo" width="500"/>
- 
+
  [![discord badge](https://dcbadge.limes.pink/api/server/https://discord.gg/dPAcsn3Ch7)](https://discord.gg/dPAcsn3Ch7)
- 
+
 </p>
 
 # talkd/dialog
@@ -13,8 +13,12 @@ This repository serves an API focused on letting you deploy any LLM you want, ba
 
 We started as a way to humanize RAGs, but we are expanding for broader approaches on better RAG deployment and maintenance. Checkout out our current architecture below and, for more information, check our [documentation](https://dialog.talkd.ai)!
 
-![architecture](./docs/dialog-architecture.jpg)
 
+<p align="center">
+    <a href="docs/dialog-architecture.png">
+        <img src="docs/dialog-architecture.png" width="500">
+    </a>
+</p>
 
 
 ## Running the project

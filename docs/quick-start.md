@@ -4,7 +4,11 @@
 
 The current architecture ilustraded below shows how dialog and dialog-lib serve as base abstractions that define how you deploy RAG LLM Apps with little effort. You can basically focus in maintaining and evolve your knowledge base and prompts, and if necessary you can implement your onw plugins to extend fuctionalities.
 
-![architecture](./dialog-architecture.jpg)
+<p align="center">
+    <a href="docs/dialog-architecture.png">
+        <img src="docs/dialog-architecture.png" width="500">
+    </a>
+</p>
 
 ## Running the project
 
