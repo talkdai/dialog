@@ -60,14 +60,12 @@ def documents_to_company_content(doc: Document, embedding: float) -> CompanyCont
     )
 
 
-def add_document_pk(doc: Document) -> Document:
-    pk = (
+def get_document_pk(doc: Document) -> str:
+    return (
         doc.metadata["category"]
         + doc.metadata["subcategory"]
         + doc.metadata["question"]
     )
-    doc.metadata["primary_key"] = hashlib.md5(pk.encode()).hexdigest()
-    return doc
 
 
 def load_csv_and_generate_embeddings(path, cleardb=False, embed_columns=("content",)):
@@ -84,21 +82,21 @@ def load_csv_and_generate_embeddings(path, cleardb=False, embed_columns=("conten
         if col not in metadata_columns + embed_columns:
             raise Exception(f"Column {col} not found in {path}")
 
-    docs: List[Document] = [add_document_pk(doc) for doc in docs]
-
     if cleardb:
         logging.info("Clearing vectorstore completely...")
         session.query(CompanyContent).delete()
         session.commit()
 
+    # Get existing docs
     docs_in_db: List[Document] = retrieve_docs_from_vectordb()
+    logging.info(f"Existing docs: {len(docs_in_db)}")
     existing_pks: List[str] = [
-        add_document_pk(doc).metadata["primary_key"] for doc in docs_in_db
+        get_document_pk(doc) for doc in docs_in_db
     ]
 
     # Keep only new keys
     docs_filtered: List[Document] = [
-        doc for doc in docs if doc.metadata["primary_key"] not in existing_pks
+        doc for doc in docs if get_document_pk(doc) not in existing_pks
     ]
     if len(docs_filtered) == 0:
         return
