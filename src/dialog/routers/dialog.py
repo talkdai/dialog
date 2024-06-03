@@ -23,7 +23,7 @@ async def health():
     with engine.connect() as con:
         try:
             con.execute(text("SELECT 1"))
-            return {"message": "Dialogue API is healthy"}
+            return {"message": "Dialog API is healthy"}
         except:
             return {"message": "Failed to execute simple SQL"}
 
