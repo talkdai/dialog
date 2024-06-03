@@ -1,74 +1,121 @@
 import argparse
+from typing import List
 import hashlib
-
-import pandas as pd
+import csv
 from sqlalchemy import text
+
+from langchain_community.document_loaders.csv_loader import CSVLoader
+from langchain_core.documents import Document
 
 from dialog_lib.embeddings.generate import generate_embeddings
 from dialog.llm.embeddings import EMBEDDINGS_LLM
 from dialog_lib.db.models import CompanyContent
 from dialog.db import get_session
+from dialog.settings import Settings
+
+import logging
+
+logging.basicConfig(
+    level=Settings().LOGGING_LEVEL,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+
+logger = logging.getLogger("make_embeddings")
 
 session = next(get_session())
+NECESSARY_COLS = ["category", "subcategory", "question", "content"]
 
-def load_csv_and_generate_embeddings(path, cleardb=False, embed_columns=("content",)):
-    df = pd.read_csv(path)
-    necessary_cols = ["category", "subcategory", "question", "content"]
-    for col in necessary_cols:
-        if col not in df.columns:
-            raise Exception(f"Column {col} not found in {path}")
 
-    if "dataset" in df.columns:
-        necessary_cols.append("dataset")
+def _get_csv_cols(path: str) -> List[str]:
+    """Gets the csv columns from a csv file"""
+    with open(path) as f:
+        reader = csv.DictReader(f)
+        return reader.fieldnames
 
-    df = df[necessary_cols]
+def retrieve_docs_from_vectordb() -> List[Document]:
+    """Retrieve all documents from the vector store."""
+    company_contents: List[CompanyContent] = session.query(CompanyContent).all()
+    return [
+        Document(
+            page_content=content.content,
+            metadata={
+                "category": content.category,
+                "subcategory": content.subcategory,
+                "question": content.question,
+            },
+        )
+        for content in company_contents
+    ]
 
-    # Create primary key column using category, subcategory, and question
-    df["primary_key"] = df["category"] + df["subcategory"] + df["question"]
-    df["primary_key"] = df["primary_key"].apply(
-        lambda row: hashlib.md5(row.encode()).hexdigest()
+def documents_to_company_content(doc: Document, embedding: float) -> CompanyContent:
+    """Transform each langchain's Document and its embedding to a CompanyContent object."""
+    return CompanyContent(
+        category=doc.metadata.get("category"),
+        subcategory=doc.metadata.get("subcategory"),
+        question=doc.metadata.get("question"),
+        content=doc.page_content,
+        embedding=embedding,
+        dataset=doc.metadata.get("dataset"),
+        link=doc.metadata.get("link"),
     )
 
+
+def add_document_pk(doc: Document) -> Document:
+    pk = (
+        doc.metadata["category"]
+        + doc.metadata["subcategory"]
+        + doc.metadata["question"]
+    )
+    doc.metadata["primary_key"] = hashlib.md5(pk.encode()).hexdigest()
+    return doc
+
+
+def load_csv_and_generate_embeddings(path, cleardb=False, embed_columns=("content",)):
+    metadata_columns = [col for col in _get_csv_cols(path) if col not in embed_columns]
+
+    loader = CSVLoader(path, metadata_columns=metadata_columns)
+    docs: List[Document] = loader.load()
+
+    logger.info("Metadata columns: %s", metadata_columns)
+    logger.info("Embedding columns: %s", embed_columns)
+    logger.info("Glimpse over the first doc: %s", docs[0].page_content[:100])
+
+    for col in NECESSARY_COLS:
+        if col not in metadata_columns + embed_columns:
+            raise Exception(f"Column {col} not found in {path}")
+
+    docs: List[Document] = [add_document_pk(doc) for doc in docs]
+
     if cleardb:
+        logging.info("Clearing vectorstore completely...")
         session.query(CompanyContent).delete()
         session.commit()
 
-    df_in_db = pd.read_sql(
-        text(
-            f"SELECT category, subcategory, question, content, dataset FROM {CompanyContent.__tablename__}"
-        ),
-        session.get_bind(),
-    )
+    docs_in_db: List[Document] = retrieve_docs_from_vectordb()
+    existing_pks: List[str] = [
+        add_document_pk(doc).metadata["primary_key"] for doc in docs_in_db
+    ]
 
-    # Create primary key column using category, subcategory, and question for df_in_db
-    new_keys = set(df["primary_key"])
-    if not df_in_db.empty:
-        df_in_db["primary_key"] = df_in_db["category"] + df_in_db["subcategory"] + df_in_db["question"]
-        df_in_db["primary_key"] = df_in_db["primary_key"].apply(
-            lambda row: hashlib.md5(row.encode()).hexdigest()
-        )
-        new_keys = set(df["primary_key"]) - set(df_in_db["primary_key"])
-
-    # Filter df for keys present in df and not present in df_in_db
-    df_filtered = df[df["primary_key"].isin(new_keys)].copy()
-
-    print("Generating embeddings for new questions...")
-    print("New questions:", len(df_filtered))
-    if len(df_filtered) == 0:
+    # Keep only new keys
+    docs_filtered: List[Document] = [
+        doc for doc in docs if doc.metadata["primary_key"] not in existing_pks
+    ]
+    if len(docs_filtered) == 0:
         return
 
-    print("embed_columns: ", embed_columns)
-    df_filtered.drop(columns=["primary_key"], inplace=True)
-    df_filtered["embedding"] = generate_embeddings(
-        list(df_filtered[embed_columns].agg('\n'.join, axis=1)),
-        embedding_llm_instance=EMBEDDINGS_LLM
+    logging.info("Generating embeddings for new questions...")
+    logging.info(f"New questions: {len(docs_filtered)}")
+    logging.info(f"embed_columns: {embed_columns}")
+
+    embedded_docs = generate_embeddings(
+        [doc.page_content for doc in docs_filtered],
+        embedding_llm_instance=EMBEDDINGS_LLM,
     )
-    df_filtered.to_sql(
-        CompanyContent.__tablename__,
-        session.get_bind(),
-        if_exists="append",
-        index=False,
-    )
+    company_contents: List[CompanyContent] = [
+        documents_to_company_content(doc, embedding)
+        for (doc, embedding) in zip(docs_filtered, embedded_docs)
+    ]
+    session.add_all(company_contents)
 
 
 if __name__ == "__main__":
@@ -79,4 +126,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     load_csv_and_generate_embeddings(
-        args.path, args.cleardb, args.embed_columns.split(','))
+        args.path, args.cleardb, args.embed_columns.split(",")
+    )
