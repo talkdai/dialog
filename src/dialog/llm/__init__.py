@@ -13,18 +13,20 @@ from .agents.default import *
 from .agents.lcel import *
 
 
-def get_llm_class():
-    if Settings().LLM_CLASS is None:
+def get_llm_class(model_class_path=None):
+    if Settings().LLM_CLASS is None and model_class_path is None:
         return DialogLLM
 
     llm_class = None
 
+    runnable_to_fetch = model_class_path or Settings().LLM_CLASS
+
     try:
-        module, class_name = Settings().LLM_CLASS.rsplit(".", 1)
+        module, class_name = runnable_to_fetch.rsplit(".", 1)
         llm_module = importlib.import_module(module)
         llm_class = getattr(llm_module, class_name)
     except Exception as e:
-        logging.info(f"Failed to load LLM class {Settings().LLM_CLASS}. Using default LLM. Exception: {e}")
+        logging.info(f"Failed to load LLM class {runnable_to_fetch}. Raising Exception: {e}")
         raise
 
     if llm_class:
@@ -34,8 +36,8 @@ def get_llm_class():
     return DialogLLM
 
 
-def process_user_message(message, chat_id=None):
-    llm_class = get_llm_class()
+def process_user_message(message, chat_id=None, model_class_path=None):
+    llm_class = get_llm_class(model_class_path=model_class_path)
 
     if isinstance(llm_class, RunnableBindingBase):
         ai_message = llm_class.invoke(
@@ -54,8 +56,8 @@ def process_user_message(message, chat_id=None):
 
     return ai_message
 
-def add_langserve_routes(app):
+def add_langserve_routes(app, path=None):
     llm_instance = get_llm_class()
 
     if isinstance(llm_instance, RunnableBindingBase):
-        add_routes(app, llm_instance)
+        add_routes(app, llm_instance, path=path)

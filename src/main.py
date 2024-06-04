@@ -7,7 +7,7 @@ from dialog.settings import Settings
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from dialog.routers import api_router, open_ai_api_router
+from dialog.routers import api_router, open_ai_api_router, add_model_router
 
 logging.basicConfig(
     level=Settings().LOGGING_LEVEL,
@@ -30,6 +30,17 @@ def get_application() -> FastAPI:
         allow_methods=Settings().CORS_ALLOW_METHODS,
         allow_headers=Settings().CORS_ALLOW_HEADERS,
     )
+    from dialog.db import engine, get_session
+    from sqlalchemy import text
+
+    @app.get("/health")
+    async def health():
+        with engine.connect() as con:
+            try:
+                con.execute(text("SELECT 1"))
+                return {"message": "Dialogue API is healthy"}
+            except:
+                return {"message": "Failed to execute simple SQL"}
 
     app.include_router(
         api_router, prefix="",
@@ -37,6 +48,20 @@ def get_application() -> FastAPI:
 
     app.include_router(
         open_ai_api_router, prefix="/openai"
+    )
+
+    for model in Settings().PROJECT_CONFIG.get("endpoint", []):
+    # Think on how to load the models on each of the routers
+        add_model_router(
+            app,
+            model["model_class_path"],
+            model.get("path")
+        )
+
+    add_model_router(
+        app,
+        Settings().LLM_CLASS,
+        ""
     )
 
     app.mount("/static", StaticFiles(directory=Settings().STATIC_FILE_LOCATION), name="static")

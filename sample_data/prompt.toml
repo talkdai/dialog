@@ -20,3 +20,14 @@ Here are some contents that you need to use in order to help you with the user's
 prompt = """
 Answer the following message to the user.
 """
+
+[multimodels]
+[[endpoint]]
+path = "/lerolero"
+model_name = "lerolero"
+model_class_path = "dialog.llm.agents.lcel.runnable"
+
+[[endpoint]]
+path = "/lerolero2"
+model_name = "lerolero2"
+model_class_path = "dialog.llm.agents.default.DialogLLM"
