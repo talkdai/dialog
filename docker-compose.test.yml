@@ -1,4 +1,3 @@
-version: '3.3'
 services:
   db:
     image: pgvector/pgvector:pg15
@@ -7,7 +6,6 @@ services:
       - '5432:5432'
     volumes:
        - ./etc/db-ext-vector-test.sql:/docker-entrypoint-initdb.d/init.sql
-       - postgres_data:/var/lib/postgresql/data/
     environment:
       POSTGRES_USER: talkdai
       POSTGRES_PASSWORD: talkdai
@@ -32,6 +30,3 @@ services:
       - ./src/tests/.env.testing
     volumes:
       - ./src/tests/:/app/src/tests/
-
-volumes:
-  postgres_data:

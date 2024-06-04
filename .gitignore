@@ -120,7 +120,8 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+.env*
+!.env.sample
 .venv
 env/
 venv/
@@ -167,3 +168,4 @@ requirements.txt
 !src/tests/fixtures/*.toml
 !sample_data/*.csv
 !sample_data/*.toml
+.vscode
