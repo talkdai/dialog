@@ -11,7 +11,7 @@ from dialog.db import get_session
 
 session = next(get_session())
 
-def load_csv_and_generate_embeddings(path: str, cleardb=False, embed_columns=None | list[str]) -> None:
+def load_csv_and_generate_embeddings(path: str, cleardb=False, embed_columns: None | list[str] = None) -> None:
     if not embed_columns:
         embed_columns = ["content"]
     df = pd.read_csv(path)
