@@ -100,5 +100,3 @@ async def get_sessions(session: Session = Depends(get_session)) -> SessionsModel
             "chat_id": str(s.session_id) # TODO: Make model dump, instead of dict
         }) for s in sessions
     ]})
-
-add_langserve_routes(api_router)
