@@ -9,7 +9,16 @@ from sqlalchemy.orm import sessionmaker
 from dialog_lib.db.utils import create_chat_session
 from dialog.db import get_session
 
+import dotenv
+
+dotenv.load_dotenv()
+
 SQLALCHEMY_DATABASE_URL = "postgresql://talkdai:talkdai@db/test_talkdai"
+
+TEST_DATABASE_URL = os.getenv('TEST_DATABASE_URL')
+if TEST_DATABASE_URL:
+    SQLALCHEMY_DATABASE_URL = TEST_DATABASE_URL
+
 
 @pytest.fixture
 def dbsession(mocker):
