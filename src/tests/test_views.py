@@ -6,7 +6,7 @@ from dialog_lib.db.models import ChatMessages, Chat
 def test_health(client):
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"message": "Dialogue API is healthy"}
+    assert response.json() == {"message": "Dialog API is healthy"}
 
 def test_create_chat_session(client, mocker):
     response = client.post("/session")
