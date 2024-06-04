@@ -1,4 +1,3 @@
-version: '3.3'
 services:
   db:
     image: pgvector/pgvector:pg15
@@ -10,8 +9,8 @@ services:
       POSTGRES_PASSWORD: talkdai
       POSTGRES_DB: talkdai
     volumes:
-       - ./data/db:/var/lib/postgresql/data
-       - ./psql/db-ext-vector.sql:/docker-entrypoint-initdb.d/db-ext-vector.sql
+       - db-data:/var/lib/postgresql/data
+       - ./ext/db-ext-vector.sql:/docker-entrypoint-initdb.d/db-ext-vector.sql
     healthcheck:
       test: ["CMD", "pg_isready", "-d", "talkdai", "-U", "talkdai"]
       interval: 10s
@@ -25,7 +24,6 @@ services:
     tty: true
     volumes:
       - ./:/app
-      - ./.empty:/app/data/db
       - ./static:/app/static
       - ./sample_data:/app/src/sample_data
     ports:
@@ -41,3 +39,4 @@ services:
 
 volumes:
   open-webui:
+  db-data:
