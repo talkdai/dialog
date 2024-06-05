@@ -69,8 +69,8 @@ def get_document_pk(doc: Document, pk_metadata_fields: Iterable[str]) -> str:
 
 def load_csv_with_metadata(
     path: str,
-    embed_columns: Optional[List[str]] = [],
-    metadata_columns: Optional[List[str]] = [],
+    embed_columns: list[str] = [],
+    metadata_columns: List[str] = [],
 ) -> List[Document]:
     """Load CSV twice, once with specific metadata columns and once with all NECESSARY_COLS"""
 
@@ -84,8 +84,10 @@ def load_csv_with_metadata(
 
     # Merge documents to ensure all necessary columns are included as metadata
     merged_docs = []
+    not_used_metadata_fields = ["row", "source"]
     for doc_meta, doc_necessary in zip(docs_metadata, docs_necessary):
         merged_metadata = {**doc_meta.metadata, **doc_necessary.metadata}
+        merged_metadata = {k: v for k, v in merged_metadata.items() if k not in not_used_metadata_fields}
         merged_doc = Document(
             page_content=doc_meta.page_content, metadata=merged_metadata
         )
