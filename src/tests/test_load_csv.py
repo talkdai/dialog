@@ -1,10 +1,14 @@
 import csv
 import pytest
 import tempfile
+import hashlib
+
+from langchain_core.documents import Document
 
 import load_csv
+from dialog_lib.db.models import CompanyContent
 
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 
 @pytest.fixture
@@ -105,3 +109,88 @@ def test_ensure_necessary_columns():
             ),
             cleardb=True,
         )  # missing content column
+
+def test_documents_to_company_content():
+    # Create a mock Document object
+    doc = Document(
+        page_content="This is a test content.",
+        metadata={
+            "category": "test_category",
+            "subcategory": "test_subcategory",
+            "question": "test_question",
+            "dataset": "test_dataset",
+            "link": "http://test_link"
+        }
+    )
+    
+    # Define a mock embedding
+    embedding = [0.1] * 1536  # Example embedding
+
+    # Call the function to test
+    company_content = load_csv.documents_to_company_content(doc, embedding)
+
+    # Check that the output is as expected
+    assert company_content.category == "test_category"
+    assert company_content.subcategory == "test_subcategory"
+    assert company_content.question == "test_question"
+    assert company_content.content == "This is a test content."
+    assert company_content.embedding == embedding
+    assert company_content.dataset == "test_dataset"
+    assert company_content.link == "http://test_link"
+
+def test_get_csv_cols(csv_file: str):
+    columns = load_csv._get_csv_cols(csv_file)
+    expected_columns = ["category", "subcategory", "question", "content", "dataset"]
+    assert columns == expected_columns
+
+def test_get_document_pk():
+    # Create a mock Document object
+    doc = Document(
+        page_content="This is a test content.",
+        metadata={
+            "category": "test_category",
+            "subcategory": "test_subcategory",
+            "question": "test_question",
+            "dataset": "test_dataset",
+            "link": "http://test_link"
+        }
+    )
+    
+    # Define the fields to be used for primary key generation
+    pk_metadata_fields = ["category", "subcategory", "question"]
+
+    # Call the function to test
+    pk = load_csv.get_document_pk(doc, pk_metadata_fields)
+
+    # Manually create the expected hash
+    concatened_fields = "test_categorytest_subcategorytest_question"
+    expected_pk = hashlib.md5(concatened_fields.encode()).hexdigest()
+
+    # Check that the output is as expected
+    assert pk == expected_pk
+
+def test_load_csv_with_metadata(csv_file: str):
+    metadata_columns = ["category", "subcategory", "question", "dataset"]
+    embed_columns = ["content"]
+    
+    # Call the function to test
+    docs = load_csv.load_csv_with_metadata(csv_file, embed_columns, metadata_columns)
+
+    # Check that the output is as expected
+    assert len(docs) == 2
+    assert docs[0].page_content == "content: content1"
+    assert docs[0].metadata == {
+        "category": "cat1",
+        "subcategory": "subcat1",
+        "question": "q1",
+        "dataset": "dataset1",
+        "content": "content1",
+    }
+    assert docs[1].page_content == "content: content2"
+    assert docs[1].metadata == {
+        "category": "cat2",
+        "subcategory": "subcat2",
+        "question": "q2",
+        "dataset": "dataset2",
+        "content": "content2",
+    }
