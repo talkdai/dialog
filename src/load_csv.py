@@ -1,5 +1,5 @@
 import argparse
-from typing import List, Optional
+from typing import Iterable, List, Optional
 import hashlib
 import csv
 
@@ -23,6 +23,7 @@ logger = logging.getLogger("make_embeddings")
 
 session = next(get_session())
 NECESSARY_COLS = ["category", "subcategory", "question", "content"]
+PK_METADATA_COLS = ["category", "subcategory", "question"]
 
 
 def _get_csv_cols(path: str) -> List[str]:
@@ -60,25 +61,49 @@ def documents_to_company_content(doc: Document, embedding: float) -> CompanyCont
         link=doc.metadata.get("link"),
     )
 
-
-def get_document_pk(doc: Document, pk_metadata_fields: List[str]) -> str:
+def get_document_pk(doc: Document, pk_metadata_fields: Iterable[str]) -> str:
     """Construct a primary key with defined metadata fields"""
     fields = [doc.metadata[field] for field in pk_metadata_fields]
     concatened_fields = "".join(fields)
     return hashlib.md5(concatened_fields.encode()).hexdigest()
 
+def load_csv_with_metadata(
+    path: str,
+    embed_columns: Optional[List[str]] = [],
+    metadata_columns: Optional[List[str]] = [],
+) -> List[Document]:
+    """Load CSV twice, once with specific metadata columns and once with all NECESSARY_COLS"""
 
-def load_csv_and_generate_embeddings(path, cleardb=False, embed_columns: Optional[list[str]]=None):
+    # Load the CSV once to get metadata columns
+    loader_metadata = CSVLoader(path, metadata_columns=metadata_columns)
+    docs_metadata: List[Document] = loader_metadata.load()
+
+    # Load the CSV again to get all NECESSARY_COLS as metadata
+    loader_necessary = CSVLoader(path, metadata_columns=NECESSARY_COLS)
+    docs_necessary: List[Document] = loader_necessary.load()
+
+    # Merge documents to ensure all necessary columns are included as metadata
+    merged_docs = []
+    for doc_meta, doc_necessary in zip(docs_metadata, docs_necessary):
+        merged_metadata = {**doc_meta.metadata, **doc_necessary.metadata}
+        merged_doc = Document(
+            page_content=doc_meta.page_content, metadata=merged_metadata
+        )
+        merged_docs.append(merged_doc)
+
+    return merged_docs
+
+
+def load_csv_and_generate_embeddings(
+    path, cleardb=False, embed_columns: Optional[list[str]] = None
+):
     """
     Load the knowledge base CSV, get their embeddings and store them into the vector store.
     """
     if not embed_columns:
         embed_columns = ["content"]
-
     metadata_columns = [col for col in _get_csv_cols(path) if col not in embed_columns]
-
-    loader = CSVLoader(path, metadata_columns=metadata_columns)
-    docs: List[Document] = loader.load()
+    docs: List[Document] = load_csv_with_metadata(path, embed_columns, metadata_columns)
 
     logger.info("Metadata columns: %s", metadata_columns)
     logger.info("Embedding columns: %s", embed_columns)
@@ -97,14 +122,14 @@ def load_csv_and_generate_embeddings(path, cleardb=False, embed_columns: Optiona
     docs_in_db: List[Document] = retrieve_docs_from_vectordb()
     logging.info(f"Existing docs: {len(docs_in_db)}")
     existing_pks: List[str] = [
-        get_document_pk(doc, metadata_columns) for doc in docs_in_db
+        get_document_pk(doc, PK_METADATA_COLS) for doc in docs_in_db
     ]
 
     # Keep only new keys
     docs_filtered: List[Document] = [
         doc
         for doc in docs
-        if get_document_pk(doc, metadata_columns) not in existing_pks
+        if get_document_pk(doc, PK_METADATA_COLS) not in existing_pks
     ]
     if len(docs_filtered) == 0:
         return

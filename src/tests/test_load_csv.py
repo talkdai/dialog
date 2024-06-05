@@ -61,7 +61,10 @@ def test_multiple_columns_embedding(mocker, dbsession, csv_file: str):
     )
 
     mock_generate_embeddings.assert_called_with(
-        ["cat1\nsubcat1\ncontent1", "cat2\nsubcat2\ncontent2"],
+        [
+            "category: cat1\nsubcategory: subcat1\ncontent: content1", 
+            "category: cat2\nsubcategory: subcat2\ncontent: content2"
+        ],
         embedding_llm_instance=load_csv.EMBEDDINGS_LLM,
     )
 
