@@ -61,7 +61,7 @@ def test_customized_openai_models_response(client):
 def test_customized_openai_chat_completion_response_stream_false(client, llm_mock_openai_router):
     os.environ["LLM_CLASS"] = "dialog.llm.agents.default.DialogLLM"
     response = client.post("/openai/chat/completions", json={
-        "model": "talkdai",
+        "model": "talkd-ai",
         "messages": [
             {
                 "role": "user",
@@ -83,18 +83,53 @@ def test_multiple_models_load_on_setting_override(client_with_settings_override)
     assert "/custom_model/chat/{chat_id}" in list(response.json().get("paths").keys())
     assert "/custom_model/ask" in list(response.json().get("paths").keys())
 
-def test_multiple_models_are_available_on_model_listing_for_webui(client_with_settings_override, mocker):
-    # client_with_settings_override doesn't override Settings calling, so we need to override here
-    mocker.patch("dialog.routers.openai.Settings.PROJECT_CONFIG", return_value={
-        "endpoint": [{
-            "model_class_path": "dialog.llm.agents.default.DialogLLM",
-            "model_name": "custom-model",
-            "path": "/custom_model"
-        }]
-    }, new_callable=mocker.PropertyMock)
-
+def test_multiple_models_are_available_on_model_listing_for_webui(client_with_settings_override):
     response = client_with_settings_override.get("/openai/models")
     assert response.status_code == 200
     assert len(response.json()) == 2
     assert response.json()[0]["id"] == "talkd-ai"
-    assert response.json()[1]["id"] == "custom-model"
+    assert response.json()[1]["id"] == "blob_model"
+
+def test_multiple_models_are_usable_on_chat_completion(client_with_settings_override, mocker):
+    process_user_message_mock = mocker.patch(
+        "dialog.routers.openai.process_user_message",
+        return_value={"text": "Hello"}
+    )
+    response = client_with_settings_override.post(
+            "/openai/chat/completions",
+            json={
+            "model": "blob_model",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Hello"
+                }
+            ],
+            "stream": False
+        }
+    )
+    assert process_user_message_mock.call_args[1]['message'] == "Hello"
+    assert process_user_message_mock.call_args[1]['model_class_path'] == "dialog.llm.agents.default.DialogLLM"
+    assert response.status_code == 200
+    assert response.json()["choices"][0]["message"]["role"] == "assistant"
+    assert response.json()["choices"][0]["message"]["content"] == "Hello"
+
+def test_unknown_model_return_error_on_chat_completion(client_with_settings_override, mocker):
+    process_user_message_mock = mocker.patch(
+        "dialog.routers.openai.process_user_message",
+        return_value={"text": "Hello"}
+    )
+    response = client_with_settings_override.post(
+            "/openai/chat/completions",
+            json={
+            "model": "unknown-model",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Hello"
+                }
+            ],
+            "stream": False
+        }
+    )
+    assert response.status_code == 404
