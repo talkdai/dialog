@@ -20,7 +20,7 @@ def add_model_router(app, model_class_path, model_path=None):
     model_router = APIRouter()
 
     @model_router.post("/chat/{chat_id}")
-    async def post_message(chat_id: str, message: ChatModel, session: Session = Depends(get_session)):
+    async def post_message_models(chat_id: str, message: ChatModel, session: Session = Depends(get_session)):
         """
         Endpoint to post a message to a certain chat id.
 
@@ -40,7 +40,7 @@ def add_model_router(app, model_class_path, model_path=None):
 
 
     @model_router.post("/ask")
-    async def ask_question_to_llm(message: ChatModel, session: Session = Depends(get_session)):
+    async def ask_question_to_llm_model(message: ChatModel, session: Session = Depends(get_session)):
         """
         This posts a single message to the LLM and returns the response without
         using memory.
