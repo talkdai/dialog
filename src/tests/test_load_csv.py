@@ -194,3 +194,50 @@ def test_load_csv_with_metadata(csv_file: str):
         "dataset": "dataset2",
         "content": "content2",
     }
+
+def test_retrieve_docs_from_vectordb(mocker):
+    # Create mock CompanyContent objects
+    mock_company_contents = [
+        CompanyContent(
+            id=1,
+            category="cat1",
+            subcategory="subcat1",
+            question="What is cat1?",
+            content="Content for cat1",
+            embedding="0.1 0.2 0.3",  # Mock embedding data
+            dataset="dataset1",
+            link="http://link1"
+        ),
+        CompanyContent(
+            id=2,
+            category="cat2",
+            subcategory="subcat2",
+            question="What is cat2?",
+            content="Content for cat2",
+            embedding="0.4 0.5 0.6",  # Mock embedding data
+            dataset="dataset2",
+            link="http://link2"
+        )
+    ]
+
+    # Mock the query and its all() method
+    mock_query: Mock = mocker.patch("load_csv.session")
+    load_csv.session.query.return_value.all.return_value = mock_company_contents
+
+    # Call the function to test
+    docs = load_csv.retrieve_docs_from_vectordb()
+
+    # Check that the output is as expected
+    assert len(docs) == 2
+    assert docs[0].page_content == "Content for cat1"
+    assert docs[0].metadata == {
+        "category": "cat1",
+        "subcategory": "subcat1",
+        "question": "What is cat1?"
+    }
+    assert docs[1].page_content == "Content for cat2"
+    assert docs[1].metadata == {
+        "category": "cat2",
+        "subcategory": "subcat2",
+        "question": "What is cat2?"
+    }
