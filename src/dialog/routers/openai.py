@@ -13,7 +13,7 @@ from dialog.llm import process_user_message
 
 from sqlalchemy.orm import Session
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from dialog.settings import Settings
 
@@ -65,7 +65,24 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
         session.add(new_message)
     session.flush()
 
-    ai_message = process_user_message(non_empty_messages[-1].content, chat_id=new_chat.session_id)
+    process_user_message_args = {
+        "message": non_empty_messages[-1].content,
+        "chat_id": new_chat.session_id
+    }
+
+    if message.model != "talkd-ai":
+        for model in Settings().PROJECT_CONFIG.get("endpoint", []):
+            if message.model == model["model_name"]:
+                process_user_message_args["model_class_path"] = model["model_class_path"]
+                break
+
+        if "model_class_path" not in process_user_message_args:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Model not found",
+            )
+
+    ai_message = process_user_message(**process_user_message_args)
 
     duration = datetime.datetime.now() - start_time
     logging.info(f"Request processing time: {duration}")
