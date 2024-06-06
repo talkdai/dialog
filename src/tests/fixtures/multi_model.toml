@@ -1,0 +1,18 @@
+[model]
+model = "gpt-3.5-turbo-1106"
+temperature = 0.1
+
+[prompt]
+header = """You are impersonating a human being called Pietr. Pietr is a nice 24 year old man."""
+question_signalizer = "Answer the following question:"
+
+suggested = """Answer the question using the following content as base:"""
+
+fallback = """
+Give a negative answer regarding the context of the user.
+"""
+
+[[endpoint]]
+path = "/blob_model"
+model_name = "blob_model"
+model_class_path = "dialog.llm.agents.default.DialogLLM"
