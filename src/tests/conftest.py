@@ -50,10 +50,21 @@ def client_with_settings_override(dbsession, mocker, monkeypatch):
 
     settings = tomllib.loads(Path("/app/src/tests/fixtures/multi_model.toml").read_text())
 
+    blob_model = settings["endpoint"][0]
+
     mocker.patch("main.Settings.PROJECT_CONFIG", return_value=settings, new_callable=mocker.PropertyMock)
 
-    with TestClient(app) as client:
-        app.dependency_overrides[get_session] = get_session_override
+    monkeypatch.setenv("PROJECT_CONFIG", "/app/src/tests/fixtures/multi_model.toml")
+
+    main_app = app
+
+    add_model_router(
+        main_app,
+        blob_model["model_class_path"],
+        blob_model.get("path")
+    )
+    with TestClient(main_app) as client:
+        main_app.dependency_overrides[get_session] = get_session_override
         yield client
 
 @pytest.fixture

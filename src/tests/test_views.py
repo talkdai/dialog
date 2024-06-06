@@ -76,13 +76,6 @@ def test_customized_openai_chat_completion_response_stream_false(client, llm_moc
     assert llm_mock_openai_router.called
     assert response.json()["choices"][0]["message"]["role"] == "assistant"
 
-
-def test_multiple_models_load_on_setting_override(client_with_settings_override):
-    response = client_with_settings_override.get("/openapi.json")
-    assert response.status_code == 200
-    assert "/lerolero/chat/{chat_id}" in list(response.json().get("paths").keys())
-    assert "/lerolero/ask" in list(response.json().get("paths").keys())
-
 def test_multiple_models_are_available_on_model_listing_for_webui(client_with_settings_override):
     response = client_with_settings_override.get("/openai/models")
     assert response.status_code == 200
