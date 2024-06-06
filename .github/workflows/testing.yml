@@ -1,7 +1,13 @@
 name: test
 run-name: test and coverage
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:
