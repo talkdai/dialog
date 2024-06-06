@@ -18,15 +18,6 @@ from dialog_lib.db.utils import create_chat_session as db_create_session
 
 api_router = APIRouter()
 
-@api_router.get("/health")
-async def health():
-    with engine.connect() as con:
-        try:
-            con.execute(text("SELECT 1"))
-            return {"message": "Dialog API is healthy"}
-        except:
-            return {"message": "Failed to execute simple SQL"}
-
 
 @api_router.post("/chat/{chat_id}")
 async def post_message(chat_id: str, message: ChatModel, session: Session = Depends(get_session)):
