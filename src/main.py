@@ -38,7 +38,7 @@ def get_application() -> FastAPI:
         with engine.connect() as con:
             try:
                 con.execute(text("SELECT 1"))
-                return {"message": "Dialogue API is healthy"}
+                return {"message": "Dialog API is healthy"}
             except:
                 return {"message": "Failed to execute simple SQL"}
 
@@ -49,7 +49,6 @@ def get_application() -> FastAPI:
     app.include_router(
         open_ai_api_router, prefix="/openai"
     )
-
     for model in Settings().PROJECT_CONFIG.get("endpoint", []):
     # Think on how to load the models on each of the routers
         add_model_router(

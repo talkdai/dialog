@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
+from dialog.settings import Settings
 
 open_ai_api_router = APIRouter()
 
@@ -23,12 +24,20 @@ async def get_models():
     """
     Returns the model that is available inside Dialog in the OpenAI format.
     """
+
     return [OpenAIModel(**{
         "id": "talkd-ai",
         "object": "model",
         "created": int(datetime.datetime.now().timestamp()),
         "owned_by": "system"
-    })]
+    })] + [
+        OpenAIModel(**{
+            "id": model["model_name"],
+            "object": "model",
+            "created": int(datetime.datetime.now().timestamp()),
+            "owned_by": "system"
+        }) for model in Settings().PROJECT_CONFIG.get("endpoint", [])
+    ]
 
 @open_ai_api_router.post("/chat/completions")
 async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(get_session)):

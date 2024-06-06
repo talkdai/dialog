@@ -21,7 +21,6 @@ prompt = """
 Answer the following message to the user.
 """
 
-[multimodels]
 [[endpoint]]
 path = "/lerolero"
 model_name = "lerolero"

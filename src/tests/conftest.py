@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dialog_lib.db.utils import create_chat_session
 from dialog.db import get_session
+from dialog.routers.models import add_model_router
 
 import dotenv
 
@@ -39,6 +40,22 @@ def client(dbsession):
 
     with TestClient(app) as client:
         app.dependency_overrides[get_session] = get_session_override
+        yield client
+
+@pytest.fixture
+def client_with_settings_override(dbsession, mocker, monkeypatch):
+    def get_session_override():
+        return dbsession
+
+    model_details = {
+        "model_class_path": "dialog.llm.agents.default.DialogLLM",
+        "model_name": "custom-model",
+        "path": "/custom_model"
+    }
+
+    with TestClient(app) as client:
+        app.dependency_overrides[get_session] = get_session_override
+        add_model_router(app, model_details["model_class_path"], model_details["path"])
         yield client
 
 @pytest.fixture
