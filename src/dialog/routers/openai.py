@@ -44,7 +44,6 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
     """
     This posts a message to the LLM and returns the response in the OpenAI format.
     """
-    logging.info(f"Received message: {message}")
     start_time = datetime.datetime.now()
     new_chat = ChatEntity(
         session_id = f"openai-{str(uuid4())}",
