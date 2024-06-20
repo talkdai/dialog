@@ -28,6 +28,27 @@ If your class doesn't implement the AbstractLLM or doesn't return a Runnable obj
 
 Dialog is pretty extensible, being a FastAPI based project allows you to be very creative.
 
+### Adding new models to the project through settings
+
+In the release v0.1.3, we enabled users to create multiple endpoints using different models with just a simple tweak in the prompt config config file (the prompt file).
+
+The default model is still configured in the same way as the previous versions: you need to define the environment variable 'LLM_CLASS' to use a model that implements `AbstractLLM` class (any of the models available in dialog-lib implements this class and are ready to use) of your choice and use it on the `/chats/{chat_id}` or `/ask` endpoints.
+
+To add a new model, you need to implement a new `[endpoint]` in the toml, just as shown below:
+
+```toml
+[model]
+model_name = "gpt-4o"
+temperature = 0.1
+
+... some other settings over here ...
+
+[[endpoint]]
+path = "/my-awesome-new-model"
+model_name = "newmodel"
+model_class_path = "the.importable.path.to.your.ModelClass"
+```
+
 ### Writing a new plugin without a PyPI Package.
 
 To add new endpoints or features, you need to create a package inside the `src/plugins` folder and, inside the new package folder, add the following file:
