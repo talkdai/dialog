@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from dialog_lib.db.models import ChatMessages, Chat
+from dialog_lib.db.models import ChatMessages, Chat, CompanyContent
 
 def test_health(client):
     response = client.get("/health")
@@ -126,3 +126,19 @@ def test_unknown_model_return_error_on_chat_completion(client_with_settings_over
         }
     )
     assert response.status_code == 404
+
+
+def test_get_all_contents(client, dbsession):
+    company_content = CompanyContent(
+        category="faq",
+        subcategory="faq",
+        question="Hello",
+        content="Hi",
+        embedding=[1] * 1536
+    )
+    dbsession.add(company_content)
+    dbsession.flush()
+
+    response = client.get("/contents")
+    assert response.status_code == 200
+    assert len(response.json()) == 1

@@ -9,13 +9,16 @@ from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate,
                                SystemMessagePromptTemplate)
 from langchain_openai.chat_models import ChatOpenAI
 
-from dialog.learn.idf import categorize_conversation_history
-from dialog_lib.agents.abstract import AbstractRAG
-from dialog_lib.embeddings.generate import get_most_relevant_contents_from_message
-from dialog_lib.db.memory import generate_memory_instance
-from dialog.llm.embeddings import EMBEDDINGS_LLM
-from dialog.settings import Settings
 from dialog.db import get_session
+from dialog.settings import Settings
+from dialog.llm.embeddings import EMBEDDINGS_LLM
+from dialog.learn.idf import categorize_conversation_history
+
+from dialog_lib.agents.abstract import AbstractRAG, AbstractLCELDialog
+from dialog_lib.embeddings.generate import get_most_relevant_contents_from_message
+from dialog_lib.embeddings.retrievers import DialogRetriever
+from dialog_lib.db.memory import generate_memory_instance, CustomPostgresChatMessageHistory
+
 
 class DialogLLM(AbstractRAG):
     def __init__(self, *args, **kwargs):
@@ -99,3 +102,49 @@ class DialogLLM(AbstractRAG):
         if self.memory:
             asyncio.create_task(categorize_conversation_history(self.memory))
         return output
+
+
+class DialogLCEL(AbstractLCELDialog):
+    def __init__(self, *args, **kwargs):
+        self.openai_api_key = Settings().OPENAI_API_KEY
+        kwargs["model_class"] = ChatOpenAI(
+            model=Settings().PROJECT_CONFIG.get("model_name", "gpt-3.5-turbo"),
+            temperature=Settings().LLM_TEMPERATURE,
+            openai_api_key=self.openai_api_key,
+        )
+        kwargs["dbsession"] = next(get_session())
+        kwargs["embedding_llm"] = EMBEDDINGS_LLM
+        super().__init__(*args, **kwargs)
+
+    @property
+    def retriever(self):
+        return DialogRetriever(
+            session=self.dbsession,
+            embedding_llm=self.embedding_llm,
+            threshold=Settings().COSINE_SIMILARITY_THRESHOLD,
+            top_k=Settings().LLM_RELEVANT_CONTENTS
+        )
+
+    def get_session_history(self, something):
+        return CustomPostgresChatMessageHistory(
+            connection_string=self.config.get("database_url") or Settings().DATABASE_URL,
+            session_id=self.session_id,
+            parent_session_id=self.parent_session_id,
+            table_name="chat_messages",
+            dbsession=self.dbsession,
+        )
+
+    def generate_prompt(self, input_text):
+        prompt_config = self.config.get("prompt")
+        suggested_pre_prompt = prompt_config.get("suggested")
+        self.prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", prompt_config.get("header")),
+                MessagesPlaceholder(variable_name="chat_history"),
+                ("system", suggested_pre_prompt + "\n\n{context}"),
+                ("human", "{input}")
+            ]
+        )
+
+    def postprocess(self, output):
+        return {"text": output.content}

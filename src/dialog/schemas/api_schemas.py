@@ -9,3 +9,8 @@ class SessionModel(BaseModel):
 
 class SessionsModel(BaseModel):
     sessions: list[SessionModel]
+
+
+class ContentModel(BaseModel):
+    question: str
+    content: str
