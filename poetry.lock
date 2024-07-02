@@ -552,13 +552,13 @@ files = [
 
 [[package]]
 name = "dialog-lib"
-version = "0.0.2.0a0"
+version = "0.0.2.0a1"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.11"
 files = [
-    {file = "dialog_lib-0.0.2.0a0-py3-none-any.whl", hash = "sha256:f5da8e700bac1e711513610d515815842df9139f9b16e41549562ceeedaf87fa"},
-    {file = "dialog_lib-0.0.2.0a0.tar.gz", hash = "sha256:41094ffb6cacb41b76b09fe2adf115a447d64ea9d48d74d6671cc127b4b5c38e"},
+    {file = "dialog_lib-0.0.2.0a1-py3-none-any.whl", hash = "sha256:385f9ff68d0726b18518e330b1326c290aed63584ad7fcd4b00af664daa548c6"},
+    {file = "dialog_lib-0.0.2.0a1.tar.gz", hash = "sha256:05404bc01f528def8b37f1a6b6e44200df842c67cf84794a29771bc175dade99"},
 ]
 
 [package.dependencies]
@@ -3750,4 +3750,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "0abc823932460c3c4260a96e551a7be213519e678a43bcf1d25b751251c996fd"
+content-hash = "2202cbf0f18c362fbe74a3adf0156b0da23d60c2bac4b9be8249e56d2636db76"

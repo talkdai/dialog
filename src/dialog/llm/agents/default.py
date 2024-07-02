@@ -14,7 +14,7 @@ from dialog.settings import Settings
 from dialog.llm.embeddings import EMBEDDINGS_LLM
 from dialog.learn.idf import categorize_conversation_history
 
-from dialog_lib.agents.abstract import AbstractRAG, AbstractLCELDialog
+from dialog_lib.agents.abstract import AbstractRAG, AbstractLCEL
 from dialog_lib.embeddings.generate import get_most_relevant_contents_from_message
 from dialog_lib.embeddings.retrievers import DialogRetriever
 from dialog_lib.db.memory import generate_memory_instance, CustomPostgresChatMessageHistory
@@ -104,7 +104,7 @@ class DialogLLM(AbstractRAG):
         return output
 
 
-class DialogLCEL(AbstractLCELDialog):
+class DialogLCEL(AbstractLCEL):
     def __init__(self, *args, **kwargs):
         self.openai_api_key = Settings().OPENAI_API_KEY
         kwargs["model_class"] = ChatOpenAI(
