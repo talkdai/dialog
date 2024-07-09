@@ -28,7 +28,7 @@ Here is a brief explanation of the environment variables:
  - `DIALOG_LOADCSV_CLEARDB`: if set to `true`, the script `load_csv.py` will delete all previously imported vectors and reimport everything again.
  - `COSINE_SIMILARITY_THRESHOLD`: the cosine similarity threshold used to filter the results from the database's similarity query. The default is `0.5`.
  - `PLUGINS`: the path to the plugins that will be loaded into the application comma-separated. An example is: `dialog-whatsapp,plugins.my-custom-plugin`.
-
+ - `OPENWEB_UI_SESSION`: the session ID used to connect to the OpenWeb UI API. By default, it is `dialog-openweb-ui` and it can be changed.
 
 ## CSV format
 
