@@ -98,7 +98,7 @@ See [our documentation](https://dialog.talkd.ai/settings#csv-knowledge-base) for
 
 #### `.toml` prompt configuration
 
-The `[prompt.header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are mandatory fields used for processing the conversation and connecting to the LLM.
+The `[prompt.header]`, `[prompt.history_header]`, `[prompt.suggested]`, and `[fallback.prompt]` fields are mandatory fields used for processing the conversation and connecting to the LLM.
 
 The `[prompt.fallback]` field is used when the LLM does not find a compatible embedding in the database; that is, the `[prompt.header]` **is ignored** and the `[prompt.fallback]` is used. Without it, there could be hallucinations about possible answers to questions outside the scope of the embeddings.
 
@@ -116,6 +116,8 @@ header = """You are a service operator called Avelino from XYZ, you are an exper
 qualified service to high-end customers. Be brief in your answers, without being long-winded
 and objective in your responses. Never say that you are a model (AI), always answer as Avelino.
 Be polite and friendly!"""
+
+history_header = """This is the history of the conversation with the user:"""
 
 suggested = "Here is some possible content
 that could help the user in a better way."
