@@ -19,6 +19,7 @@ COPY poetry.lock pyproject.toml README.md /app/
 COPY pytest.ini /app/src/
 
 USER root
+RUN apt update -y && apt upgrade -y && apt install -y gcc libpq-dev
 RUN pip install -U pip poetry
 
 RUN  poetry config virtualenvs.create false && \
