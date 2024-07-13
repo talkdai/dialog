@@ -2,12 +2,26 @@ from dialog.settings import Settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, DeclarativeBase
 
+from contextlib import contextmanager
+
 engine = create_engine(Settings().DATABASE_URL)
+
 
 class Base(DeclarativeBase):
     pass
 
-def get_session():  # pragma: no cover
-    with Session(engine) as session:
-        yield session
+@contextmanager
+def session_scope():
+    with Session(bind=engine) as session:
+        try:
+            yield session
+            session.commit()
+        except Exception as exc:
+            session.rollback()
+            raise exc
+        finally:
+            session.close()
 
+def get_session():
+    with session_scope() as session:
+        yield session
