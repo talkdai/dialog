@@ -60,8 +60,8 @@ We are thankful for all the support we receive from our sponsors, who help us ke
 
 ### Current Sponsors:
 
- - [![Github Accelerator](https://avatars.githubusercontent.com/u/9919?s=200&v=4)](https://accelerator.github.com) - GitHub Accelerator
- - [![Buser](https://avatars.githubusercontent.com/u/56571581?s=200&v=4)](https://buser.com.br) - Buser
+ - [![Github Accelerator](https://avatars.githubusercontent.com/u/9919?s=100&v=4)](https://accelerator.github.com)
+ - [![Buser](https://avatars.githubusercontent.com/u/56571581?s=100&v=4)](https://buser.com.br)
 
 
 ### Using Open-WebUI as front-end
