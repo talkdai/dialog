@@ -1,11 +1,14 @@
 import tomllib
 import logging
+from uuid import uuid4
 from pathlib import Path
 from decouple import Csv, Config
 
 config = Config(".env")
 
 logger = logging.getLogger(__name__)
+
+openweb_ui_session_id_fallback = uuid4()
 
 class Settings:
 
@@ -114,3 +117,7 @@ class Settings:
     @property
     def CORS_ALLOW_HEADERS(self):
         return config.get("CORS_ALLOW_HEADERS", cast=Csv(), default="*")
+
+    @property
+    def OPENWEB_UI_SESSION(self):
+        return config.get("OPENWEB_UI_SESSION", f"dialog-openweb-ui")

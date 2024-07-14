@@ -17,6 +17,7 @@ from dialog.llm.embeddings import EMBEDDINGS_LLM
 from dialog.settings import Settings
 from dialog.db import get_session
 
+
 class DialogLLM(AbstractRAG):
     def __init__(self, *args, **kwargs):
         kwargs["dbsession"] = next(get_session())
@@ -47,24 +48,35 @@ class DialogLLM(AbstractRAG):
             self.config.get("fallback").get("prompt") # maintaining compatibility with the previous configuration
         header = prompt_config.get("header")
         suggested = prompt_config.get("suggested")
+        history_header = prompt_config.get("history_header")
         messages = []
+
+        messages.append(SystemMessagePromptTemplate.from_template(header))
         if len(self.relevant_contents) > 0:
             context = "Context: \n".join(
                 [f"{c.question}\n{c.content}\n" for c in self.relevant_contents]
             )
-            messages.append(SystemMessagePromptTemplate.from_template(header))
-            messages.append(SystemMessagePromptTemplate.from_template(
-                f"{suggested}. {context}"))
             messages.append(
-                MessagesPlaceholder(
-                    variable_name="chat_history", optional=True))
-            messages.append(
-                HumanMessagePromptTemplate.from_template("{user_message}"))
+                SystemMessagePromptTemplate.from_template(f"{suggested}. {context}")
+            )
         else:
             messages.append(
-                SystemMessagePromptTemplate.from_template(fallback))
-            messages.append(
-                HumanMessagePromptTemplate.from_template("{user_message}"))
+                SystemMessagePromptTemplate.from_template(fallback)
+            )
+
+        messages.append(
+            SystemMessagePromptTemplate.from_template(history_header)
+        )
+
+        messages.append(
+            MessagesPlaceholder(
+                variable_name="chat_history"
+            )
+        )
+
+        messages.append(
+            HumanMessagePromptTemplate.from_template("{user_message}")
+        )
         self.prompt = ChatPromptTemplate.from_messages(messages)
 
         if Settings().VERBOSE_LLM:

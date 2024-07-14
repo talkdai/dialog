@@ -1,7 +1,8 @@
 # *-* coding: utf-8 *-*
-from uuid import uuid4
-import datetime
+import os
 import logging
+import datetime
+from uuid import uuid4
 
 from dialog.db import engine, get_session
 from dialog_lib.db.models import Chat as ChatEntity, ChatMessages
@@ -44,11 +45,20 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
     """
     This posts a message to the LLM and returns the response in the OpenAI format.
     """
+
     start_time = datetime.datetime.now()
-    new_chat = ChatEntity(
-        session_id = f"openai-{str(uuid4())}",
-    )
-    session.add(new_chat)
+    chat_entity = session.query(ChatEntity).filter(ChatEntity.session_id == Settings().OPENWEB_UI_SESSION).first()
+
+    if not chat_entity:
+        logging.info("Creating new chat entity")
+        new_chat = ChatEntity(
+            session_id = Settings().OPENWEB_UI_SESSION,
+        )
+        session.add(new_chat)
+        session.flush()
+    else:
+        logging.info("Using old chat entity")
+        new_chat = chat_entity
 
     non_empty_messages = []
 
