@@ -16,6 +16,10 @@ suggested = """
 Here are some contents that you need to use in order to help you with the user's question:
 """
 
+history_header = """
+This is the history of the conversation:
+"""
+
 [fallback]
 prompt = """
 Answer the following message to the user.
