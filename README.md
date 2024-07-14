@@ -45,14 +45,6 @@ it will start two services:
 
 - `dialog`: the service with the api.
 
-### Using Open-WebUI as front-end
-
-In partnership with [Open-WebUI](https://github.com/open-webui/open-webui/), we made their chat interface our own as well, if you want to use it on your own application, change the docker-compose file to use the `docker-compose-open-webui.yml` file:
-
-```bash
-docker-compose -f docker-compose-open-webui.yml up
-```
-
 ### Tutorials
 
 We've written some tutorials to help you get started with the project:
@@ -61,6 +53,24 @@ We've written some tutorials to help you get started with the project:
  - [GPT-4o: Learn how to Implement a RAG on the new model, step-by-step!](https://dev.to/vmesel/gpt-4o-learn-how-to-implement-a-rag-on-the-new-model-step-by-step-377d)
 
 Also, you can check our [documentation](https://dialog.talkd.ai) for more information.
+
+## Our Sponsors
+
+We are thankful for all the support we receive from our sponsors, who help us keep the project running and improving. If you want to become a sponsor, check out our [Sponsors Page](https://github.com/sponsors/talkdai).
+
+### Current Sponsors:
+
+ - [![Github Accelerator](https://avatars.githubusercontent.com/u/9919?s=200&v=4)](https://accelerator.github.com) - GitHub Accelerator
+ - [![Buser](https://avatars.githubusercontent.com/u/56571581?s=200&v=4)](https://buser.com.br) - Buser
+
+
+### Using Open-WebUI as front-end
+
+In partnership with [Open-WebUI](https://github.com/open-webui/open-webui/), we made their chat interface our own as well, if you want to use it on your own application, change the docker-compose file to use the `docker-compose-open-webui.yml` file:
+
+```bash
+docker-compose -f docker-compose-open-webui.yml up
+```
 
 ## Maintainers
 
