@@ -150,6 +150,7 @@ def load_csv_and_generate_embeddings(
     ]
     session.add_all(company_contents)
     session.commit()
+    return session.query(CompanyContent).all()
 
 
 if __name__ == "__main__":

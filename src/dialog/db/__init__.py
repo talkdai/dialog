@@ -15,12 +15,9 @@ def session_scope():
     with Session(bind=engine) as session:
         try:
             yield session
-            session.commit()
         except Exception as exc:
             session.rollback()
             raise exc
-        finally:
-            session.close()
 
 def get_session():
     with session_scope() as session:

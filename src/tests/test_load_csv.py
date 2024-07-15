@@ -47,9 +47,8 @@ def test_load_csv(mocker, dbsession, csv_file: str):
         [0.2] * 1536,
     ]  # 1536 is the expected dimension of the embeddings
 
-    load_csv.load_csv_and_generate_embeddings(csv_file, cleardb=True)
+    result = load_csv.load_csv_and_generate_embeddings(csv_file, cleardb=True)
 
-    result = dbsession.query(load_csv.CompanyContent).all()
     assert len(result) == 2
 
 
@@ -66,7 +65,7 @@ def test_multiple_columns_embedding(mocker, dbsession, csv_file: str):
 
     mock_generate_embeddings.assert_called_with(
         [
-            "category: cat1\nsubcategory: subcat1\ncontent: content1", 
+            "category: cat1\nsubcategory: subcat1\ncontent: content1",
             "category: cat2\nsubcategory: subcat2\ncontent: content2"
         ],
         embedding_llm_instance=load_csv.EMBEDDINGS_LLM,
@@ -80,11 +79,9 @@ def test_clear_db(mocker, dbsession, csv_file: str):
         [0.2] * 1536,
     ]  # 1536 is the expected dimension of the embeddings
 
-    load_csv.load_csv_and_generate_embeddings(csv_file, cleardb=True)
-    initial_run = dbsession.query(load_csv.CompanyContent).all()
+    initial_run = load_csv.load_csv_and_generate_embeddings(csv_file, cleardb=True)
 
-    load_csv.load_csv_and_generate_embeddings(csv_file, cleardb=True)
-    clear_db_run = dbsession.query(load_csv.CompanyContent).all()
+    clear_db_run = load_csv.load_csv_and_generate_embeddings(csv_file, cleardb=True)
 
     other_csv_file = _create_csv(
         data=[
@@ -92,8 +89,7 @@ def test_clear_db(mocker, dbsession, csv_file: str):
             ["cat4", "subcat4", "q4", "content4", "dataset4"],
         ]
     )
-    load_csv.load_csv_and_generate_embeddings(other_csv_file, cleardb=False)
-    dont_clear_db_run = dbsession.query(load_csv.CompanyContent).all()
+    dont_clear_db_run = load_csv.load_csv_and_generate_embeddings(other_csv_file, cleardb=False)
 
     assert len(initial_run) == 2
     assert len(clear_db_run) == 2
@@ -122,7 +118,7 @@ def test_documents_to_company_content():
             "link": "http://test_link"
         }
     )
-    
+
     # Define a mock embedding
     embedding = [0.1] * 1536  # Example embedding
 
@@ -155,7 +151,7 @@ def test_get_document_pk():
             "link": "http://test_link"
         }
     )
-    
+
     # Define the fields to be used for primary key generation
     pk_metadata_fields = ["category", "subcategory", "question"]
 
@@ -172,7 +168,7 @@ def test_get_document_pk():
 def test_load_csv_with_metadata(csv_file: str):
     metadata_columns = ["category", "subcategory", "question", "dataset"]
     embed_columns = ["content"]
-    
+
     # Call the function to test
     docs = load_csv.load_csv_with_metadata(csv_file, embed_columns, metadata_columns)
 
@@ -195,7 +191,7 @@ def test_load_csv_with_metadata(csv_file: str):
         "content": "content2",
     }
 
-def test_retrieve_docs_from_vectordb(mocker):
+def test_retrieve_docs_from_vectordb(mocker, dbsession):
     # Create mock CompanyContent objects
     mock_company_contents = [
         CompanyContent(

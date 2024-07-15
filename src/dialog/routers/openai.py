@@ -55,7 +55,7 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
             session_id = Settings().OPENWEB_UI_SESSION,
         )
         session.add(new_chat)
-        session.flush()
+        session.commit()
     else:
         logging.info("Using old chat entity")
         new_chat = chat_entity
@@ -72,7 +72,7 @@ async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(ge
             message=_message.content,
         )
         session.add(new_message)
-    session.flush()
+    session.commit()
 
     process_user_message_args = {
         "message": non_empty_messages[-1].content,
