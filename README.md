@@ -43,15 +43,7 @@ docker-compose up
 it will start two services:
 - `db`: where the PostgresSQL database runs to support chat history and document retrieval for [RAG](https://en.wikipedia.org/wiki/Prompt_engineering#Retrieval-augmented_generation);
 
-- `dialog`: the service with the api.
-
-### Using Open-WebUI as front-end
-
-In partnership with [Open-WebUI](https://github.com/open-webui/open-webui/), we made their chat interface our own as well, if you want to use it on your own application, change the docker-compose file to use the `docker-compose-open-webui.yml` file:
-
-```bash
-docker-compose -f docker-compose-open-webui.yml up
-```
+- `dialog`: the service with the API.
 
 ### Tutorials
 
@@ -61,6 +53,24 @@ We've written some tutorials to help you get started with the project:
  - [GPT-4o: Learn how to Implement a RAG on the new model, step-by-step!](https://dev.to/vmesel/gpt-4o-learn-how-to-implement-a-rag-on-the-new-model-step-by-step-377d)
 
 Also, you can check our [documentation](https://dialog.talkd.ai) for more information.
+
+## Our Sponsors
+
+We are thankful for all the support we receive from our sponsors, who help us keep the project running and improving. If you want to become a sponsor, check out our [Sponsors Page](https://github.com/sponsors/talkdai).
+
+### Current Sponsors:
+
+| Github Accelerator | Buser |
+| :-----------: | :-----:|
+| [![Github Accelerator](https://avatars.githubusercontent.com/u/9919?s=75&v=4)](https://accelerator.github.com) | [![Buser](https://avatars.githubusercontent.com/u/56571581?s=75&v=4)](https://buser.com.br) |
+
+### Using Open-WebUI as front-end
+
+In partnership with [Open-WebUI](https://github.com/open-webui/open-webui/), we made their chat interface our own as well, if you want to use it on your own application, change the docker-compose file to use the `docker-compose-open-webui.yml` file:
+
+```bash
+docker-compose -f docker-compose-open-webui.yml up
+```
 
 ## Maintainers
 
