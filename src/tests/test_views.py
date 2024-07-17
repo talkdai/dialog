@@ -31,7 +31,7 @@ def test_ask_question_no_session_id(client, mocker, llm_mock, dbsession):
 def test_get_chat_content(client, chat_session, dbsession):
     chat = ChatMessages(session_id=chat_session["chat_id"], message="Hello")
     dbsession.add(chat)
-    dbsession.commit()
+    dbsession.flush()
     response = client.get(f"/chat/{chat_session['chat_id']}")
     assert response.status_code == 200
     assert "message" in response.json()

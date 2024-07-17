@@ -25,14 +25,14 @@ class DialogLLM(AbstractRAG):
 
     @property
     def memory(self) -> BaseChatMemory:
-        if self.session_id:
-            return generate_memory_instance(
-                session_id=self.session_id,
+        # Returns the memory instance, if a session_id is not provided, a new session_id is generated
+        # and the memory instance is created.
+        return generate_memory_instance(
+                session_id=self.session_id if self.session_id else str(uuid4()),
                 parent_session_id=self.parent_session_id,
                 dbsession=self.dbsession,
                 database_url=Settings().DATABASE_URL
             )
-        return None
 
     def generate_prompt(self, text):
         self.relevant_contents = get_most_relevant_contents_from_message(

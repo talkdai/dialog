@@ -24,7 +24,7 @@ COPY poetry.lock pyproject.toml README.md /app/
 COPY pytest.ini /app/src/
 
 RUN  poetry config virtualenvs.create false && \
-    poetry install --only main
+    poetry install
 
 COPY /static /app/static
 COPY /etc /app/etc
