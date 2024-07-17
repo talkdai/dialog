@@ -3,9 +3,9 @@ services:
     image: pgvector/pgvector:pg15
     restart: always
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
-       - ./etc/db-ext-vector-test.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./etc/db-ext-vector-test.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_USER: talkdai
       POSTGRES_PASSWORD: talkdai
@@ -19,7 +19,7 @@ services:
   dialog:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.test
     entrypoint: /app/etc/run-tests.sh
     stdin_open: true
     tty: true
