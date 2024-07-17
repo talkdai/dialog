@@ -47,7 +47,7 @@ def test_load_csv(mocker, dbsession, csv_file: str):
         [0.2] * 1536,
     ]  # 1536 is the expected dimension of the embeddings
 
-    result = load_csv.load_csv_and_generate_embeddings(csv_file, cleardb=True)
+    result = load_csv.load_csv_and_generate_embeddings(csv_file, session=dbsession, cleardb=True)
 
     assert len(result) == 2
 
@@ -60,7 +60,7 @@ def test_multiple_columns_embedding(mocker, dbsession, csv_file: str):
     ]  # 1536 is the expected dimension of the embeddings
 
     load_csv.load_csv_and_generate_embeddings(
-        csv_file, cleardb=True, embed_columns=["category", "subcategory", "content"]
+        csv_file, dbsession, cleardb=True, embed_columns=["category", "subcategory", "content"]
     )
 
     mock_generate_embeddings.assert_called_with(
@@ -79,9 +79,9 @@ def test_clear_db(mocker, dbsession, csv_file: str):
         [0.2] * 1536,
     ]  # 1536 is the expected dimension of the embeddings
 
-    initial_run = load_csv.load_csv_and_generate_embeddings(csv_file, cleardb=True)
+    initial_run = load_csv.load_csv_and_generate_embeddings(csv_file, dbsession, cleardb=True)
 
-    clear_db_run = load_csv.load_csv_and_generate_embeddings(csv_file, cleardb=True)
+    clear_db_run = load_csv.load_csv_and_generate_embeddings(csv_file, dbsession, cleardb=True)
 
     other_csv_file = _create_csv(
         data=[
@@ -89,7 +89,7 @@ def test_clear_db(mocker, dbsession, csv_file: str):
             ["cat4", "subcat4", "q4", "content4", "dataset4"],
         ]
     )
-    dont_clear_db_run = load_csv.load_csv_and_generate_embeddings(other_csv_file, cleardb=False)
+    dont_clear_db_run = load_csv.load_csv_and_generate_embeddings(other_csv_file, dbsession, cleardb=False)
 
     assert len(initial_run) == 2
     assert len(clear_db_run) == 2
@@ -193,14 +193,14 @@ def test_load_csv_with_metadata(csv_file: str):
 
 def test_retrieve_docs_from_vectordb(mocker, dbsession):
     # Create mock CompanyContent objects
-    mock_company_contents = [
+    company_contents = [
         CompanyContent(
             id=1,
             category="cat1",
             subcategory="subcat1",
             question="What is cat1?",
             content="Content for cat1",
-            embedding="0.1 0.2 0.3",  # Mock embedding data
+            embedding=[0.1] * 1536,  # Mock embedding data
             dataset="dataset1",
             link="http://link1"
         ),
@@ -210,18 +210,17 @@ def test_retrieve_docs_from_vectordb(mocker, dbsession):
             subcategory="subcat2",
             question="What is cat2?",
             content="Content for cat2",
-            embedding="0.4 0.5 0.6",  # Mock embedding data
+            embedding=[0.2] * 1536,  # Mock embedding data
             dataset="dataset2",
             link="http://link2"
         )
     ]
 
-    # Mock the query and its all() method
-    mock_query: Mock = mocker.patch("load_csv.session")
-    load_csv.session.query.return_value.all.return_value = mock_company_contents
+    dbsession.add_all(company_contents)
+    dbsession.flush()
 
     # Call the function to test
-    docs = load_csv.retrieve_docs_from_vectordb()
+    docs = load_csv.retrieve_docs_from_vectordb(dbsession)
 
     # Check that the output is as expected
     assert len(docs) == 2

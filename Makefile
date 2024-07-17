@@ -1,9 +1,6 @@
 lint:
 	poetry run black .
 
-db-up:
-	docker compose up db
-
 run:
 	poetry run uvicorn --app-dir src main:app --reload --host 0.0.0.0 --port 8000 --lifespan on --env-file .env
 
@@ -16,3 +13,12 @@ test-build:
 
 test:
 	docker compose -f docker-compose.test.yml run --rm dialog
+
+run-build:
+	docker compose up --build
+
+run-db:
+	docker compose up db
+
+run-ui:
+	docker compose -f docker-compose-open-webui.yml up

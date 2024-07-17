@@ -30,8 +30,10 @@ def dbsession(mocker):
 
     with Session() as session:
         yield session
+        session.rollback()
 
     Base.metadata.drop_all(bind=engine)
+
 
 @pytest.fixture
 def client(dbsession):

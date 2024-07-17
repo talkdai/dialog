@@ -9,7 +9,7 @@ from langchain_core.documents import Document
 from dialog_lib.embeddings.generate import generate_embeddings
 from dialog.llm.embeddings import EMBEDDINGS_LLM
 from dialog_lib.db.models import CompanyContent
-from dialog.db import get_session
+from dialog.db import session_scope
 from dialog.settings import Settings
 
 import logging
@@ -21,7 +21,6 @@ logging.basicConfig(
 
 logger = logging.getLogger("make_embeddings")
 
-session = next(get_session())
 NECESSARY_COLS = ["category", "subcategory", "question", "content"]
 PK_METADATA_COLS = ["category", "subcategory", "question"]
 
@@ -33,7 +32,7 @@ def _get_csv_cols(path: str) -> List[str]:
         return reader.fieldnames
 
 
-def retrieve_docs_from_vectordb() -> List[Document]:
+def retrieve_docs_from_vectordb(session) -> List[Document]:
     """Retrieve all documents from the vector store."""
     company_contents: List[CompanyContent] = session.query(CompanyContent).all()
     return [
@@ -97,7 +96,7 @@ def load_csv_with_metadata(
 
 
 def load_csv_and_generate_embeddings(
-    path, cleardb=False, embed_columns: Optional[list[str]] = None
+    path, session, cleardb=False, embed_columns: Optional[list[str]] = None
 ):
     """
     Load the knowledge base CSV, get their embeddings and store them into the vector store.
@@ -121,7 +120,7 @@ def load_csv_and_generate_embeddings(
         session.commit()
 
     # Get existing docs
-    docs_in_db: List[Document] = retrieve_docs_from_vectordb()
+    docs_in_db: List[Document] = retrieve_docs_from_vectordb(session)
     logging.info(f"Existing docs: {len(docs_in_db)}")
     existing_pks: List[str] = [
         get_document_pk(doc, PK_METADATA_COLS) for doc in docs_in_db
@@ -160,6 +159,7 @@ if __name__ == "__main__":
     parser.add_argument("--embed-columns", default="content")
     args = parser.parse_args()
 
-    load_csv_and_generate_embeddings(
-        args.path, args.cleardb, args.embed_columns.split(",")
-    )
+    with session_scope() as session:
+        load_csv_and_generate_embeddings(
+            args.path, session, args.cleardb, args.embed_columns.split(",")
+        )
