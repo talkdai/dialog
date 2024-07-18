@@ -10,7 +10,7 @@ poetry run python load_csv.py --path ${DIALOG_DATA_PATH} ${CLEARDB_COMMAND} ${EM
 
 if  [ -n "${TEST}" ]; then
     python -m unittest
-    exit 0
+    exit $?
 fi
 
 if [ -n "${DEBUG}" ]; then
