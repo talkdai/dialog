@@ -155,13 +155,13 @@ files = [
 
 [[package]]
 name = "anthropic"
-version = "0.31.0"
+version = "0.31.2"
 description = "The official Python library for the anthropic API"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "anthropic-0.31.0-py3-none-any.whl", hash = "sha256:77f7a428e1723b79a571c2427ae885d9257c68f700726dff7ce684c3972d6598"},
-    {file = "anthropic-0.31.0.tar.gz", hash = "sha256:14f8f65231859a65ec9aacbbea070e412c8bd41a5d3f36793dac4292c3c78d3a"},
+    {file = "anthropic-0.31.2-py3-none-any.whl", hash = "sha256:28d176b98c72615bfae30f0a9eee6297cc33bf52535d38156fc2805556e2f09b"},
+    {file = "anthropic-0.31.2.tar.gz", hash = "sha256:0134b73df8d1f142fc68675fbadb75e920054e9e3437b99df63f10f0fc6ac26f"},
 ]
 
 [package.dependencies]
@@ -316,13 +316,13 @@ beautifulsoup4 = "*"
 
 [[package]]
 name = "cachetools"
-version = "5.3.3"
+version = "5.4.0"
 description = "Extensible memoizing collections and decorators"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "cachetools-5.3.3-py3-none-any.whl", hash = "sha256:0abad1021d3f8325b2fc1d2e9c8b9c9d57b04c3932657a72465447332c24d945"},
-    {file = "cachetools-5.3.3.tar.gz", hash = "sha256:ba29e2dfa0b8b556606f097407ed1aa62080ee108ab0dc5ec9d6a723a007d105"},
+    {file = "cachetools-5.4.0-py3-none-any.whl", hash = "sha256:3ae3b49a3d5e28a77a0be2b37dbcb89005058959cb2323858c2657c4a8cab474"},
+    {file = "cachetools-5.4.0.tar.gz", hash = "sha256:b8adc2e7c07f105ced7bc56dbb6dfbe7c4a00acce20e2227b3f355be89bc6827"},
 ]
 
 [[package]]
@@ -563,13 +563,13 @@ files = [
 
 [[package]]
 name = "dialog-lib"
-version = "0.0.2.4"
+version = "0.0.2.6"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.11"
 files = [
-    {file = "dialog_lib-0.0.2.4-py3-none-any.whl", hash = "sha256:594f4bdf8cb5afb43c52fd1a0a490e5038128cfeba05dad77f63b44f3c99d5a5"},
-    {file = "dialog_lib-0.0.2.4.tar.gz", hash = "sha256:9ab458dca70321ac68298955eba757f93ca47d01dc840860cbc358c739326f75"},
+    {file = "dialog_lib-0.0.2.6-py3-none-any.whl", hash = "sha256:c8c40c74dfcd004561f84fd330c25ddb03b27a3236a567212d2c95775ede9aac"},
+    {file = "dialog_lib-0.0.2.6.tar.gz", hash = "sha256:8790179e19c0327a81e68c0a6a1ca2c72a13c12c2894331de1864ba44eaa1187"},
 ]
 
 [package.dependencies]
@@ -577,7 +577,7 @@ aioresponses = ">=0.7.6,<0.8.0"
 bs4 = ">=0.0.2,<0.0.3"
 click = ">=8.1.7,<9.0.0"
 gspread = ">=6.1.2,<7.0.0"
-langchain = "<0.3.0"
+langchain = ">=0.2.8,<0.3.0"
 langchain-anthropic = ">=0.1.11,<0.2.0"
 langchain-community = ">=0.2.5,<0.3.0"
 langchain-openai = ">=0.1.8,<0.2.0"
@@ -1006,13 +1006,13 @@ socks = ["socksio (==1.*)"]
 
 [[package]]
 name = "huggingface-hub"
-version = "0.23.4"
+version = "0.24.0"
 description = "Client library to download and publish models, datasets and other repos on the huggingface.co hub"
 optional = false
 python-versions = ">=3.8.0"
 files = [
-    {file = "huggingface_hub-0.23.4-py3-none-any.whl", hash = "sha256:3a0b957aa87150addf0cc7bd71b4d954b78e749850e1e7fb29ebbd2db64ca037"},
-    {file = "huggingface_hub-0.23.4.tar.gz", hash = "sha256:35d99016433900e44ae7efe1c209164a5a81dbbcd53a52f99c281dcd7ce22431"},
+    {file = "huggingface_hub-0.24.0-py3-none-any.whl", hash = "sha256:7ad92edefb93d8145c061f6df8d99df2ff85f8379ba5fac8a95aca0642afa5d7"},
+    {file = "huggingface_hub-0.24.0.tar.gz", hash = "sha256:6c7092736b577d89d57b3cdfea026f1b0dc2234ae783fa0d59caf1bf7d52dfa7"},
 ]
 
 [package.dependencies]
@@ -1025,17 +1025,17 @@ tqdm = ">=4.42.1"
 typing-extensions = ">=3.7.4.3"
 
 [package.extras]
-all = ["InquirerPy (==0.3.4)", "Jinja2", "Pillow", "aiohttp", "fastapi", "gradio", "jedi", "minijinja (>=1.0)", "mypy (==1.5.1)", "numpy", "pytest", "pytest-asyncio", "pytest-cov", "pytest-env", "pytest-rerunfailures", "pytest-vcr", "pytest-xdist", "ruff (>=0.3.0)", "soundfile", "types-PyYAML", "types-requests", "types-simplejson", "types-toml", "types-tqdm", "types-urllib3", "typing-extensions (>=4.8.0)", "urllib3 (<2.0)"]
+all = ["InquirerPy (==0.3.4)", "Jinja2", "Pillow", "aiohttp", "fastapi", "gradio", "jedi", "minijinja (>=1.0)", "mypy (==1.5.1)", "numpy", "pytest (>=8.1.1,<8.2.2)", "pytest-asyncio", "pytest-cov", "pytest-env", "pytest-mock", "pytest-rerunfailures", "pytest-vcr", "pytest-xdist", "ruff (>=0.5.0)", "soundfile", "types-PyYAML", "types-requests", "types-simplejson", "types-toml", "types-tqdm", "types-urllib3", "typing-extensions (>=4.8.0)", "urllib3 (<2.0)"]
 cli = ["InquirerPy (==0.3.4)"]
-dev = ["InquirerPy (==0.3.4)", "Jinja2", "Pillow", "aiohttp", "fastapi", "gradio", "jedi", "minijinja (>=1.0)", "mypy (==1.5.1)", "numpy", "pytest", "pytest-asyncio", "pytest-cov", "pytest-env", "pytest-rerunfailures", "pytest-vcr", "pytest-xdist", "ruff (>=0.3.0)", "soundfile", "types-PyYAML", "types-requests", "types-simplejson", "types-toml", "types-tqdm", "types-urllib3", "typing-extensions (>=4.8.0)", "urllib3 (<2.0)"]
+dev = ["InquirerPy (==0.3.4)", "Jinja2", "Pillow", "aiohttp", "fastapi", "gradio", "jedi", "minijinja (>=1.0)", "mypy (==1.5.1)", "numpy", "pytest (>=8.1.1,<8.2.2)", "pytest-asyncio", "pytest-cov", "pytest-env", "pytest-mock", "pytest-rerunfailures", "pytest-vcr", "pytest-xdist", "ruff (>=0.5.0)", "soundfile", "types-PyYAML", "types-requests", "types-simplejson", "types-toml", "types-tqdm", "types-urllib3", "typing-extensions (>=4.8.0)", "urllib3 (<2.0)"]
 fastai = ["fastai (>=2.4)", "fastcore (>=1.3.27)", "toml"]
 hf-transfer = ["hf-transfer (>=0.1.4)"]
 inference = ["aiohttp", "minijinja (>=1.0)"]
-quality = ["mypy (==1.5.1)", "ruff (>=0.3.0)"]
+quality = ["mypy (==1.5.1)", "ruff (>=0.5.0)"]
 tensorflow = ["graphviz", "pydot", "tensorflow"]
 tensorflow-testing = ["keras (<3.0)", "tensorflow"]
-testing = ["InquirerPy (==0.3.4)", "Jinja2", "Pillow", "aiohttp", "fastapi", "gradio", "jedi", "minijinja (>=1.0)", "numpy", "pytest", "pytest-asyncio", "pytest-cov", "pytest-env", "pytest-rerunfailures", "pytest-vcr", "pytest-xdist", "soundfile", "urllib3 (<2.0)"]
-torch = ["safetensors", "torch"]
+testing = ["InquirerPy (==0.3.4)", "Jinja2", "Pillow", "aiohttp", "fastapi", "gradio", "jedi", "minijinja (>=1.0)", "numpy", "pytest (>=8.1.1,<8.2.2)", "pytest-asyncio", "pytest-cov", "pytest-env", "pytest-mock", "pytest-rerunfailures", "pytest-vcr", "pytest-xdist", "soundfile", "urllib3 (<2.0)"]
+torch = ["safetensors[torch]", "torch"]
 typing = ["types-PyYAML", "types-requests", "types-simplejson", "types-toml", "types-tqdm", "types-urllib3", "typing-extensions (>=4.8.0)"]
 
 [[package]]
@@ -1307,18 +1307,18 @@ referencing = ">=0.31.0"
 
 [[package]]
 name = "langchain"
-version = "0.2.7"
+version = "0.2.9"
 description = "Building applications with LLMs through composability"
 optional = false
 python-versions = "<4.0,>=3.8.1"
 files = [
-    {file = "langchain-0.2.7-py3-none-any.whl", hash = "sha256:98e79e0b9a60a9c740b44d5b0135c85f649219308f30d373cf5f10d0efe18b87"},
-    {file = "langchain-0.2.7.tar.gz", hash = "sha256:8742f363d2890854501e0075af04fcb470600f201dec251c9bd5841e1990e73d"},
+    {file = "langchain-0.2.9-py3-none-any.whl", hash = "sha256:be23fcb29adbd5059944f1fed08fa575f0739d420b1c4127531e0fbf5663fcca"},
+    {file = "langchain-0.2.9.tar.gz", hash = "sha256:cc326a7f6347787a19882928c324433b1a79df629bba45604b2d26495ee5d69c"},
 ]
 
 [package.dependencies]
 aiohttp = ">=3.8.3,<4.0.0"
-langchain-core = ">=0.2.12,<0.3.0"
+langchain-core = ">=0.2.20,<0.3.0"
 langchain-text-splitters = ">=0.2.0,<0.3.0"
 langsmith = ">=0.1.17,<0.2.0"
 numpy = [
@@ -1375,13 +1375,13 @@ tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<9.0.0"
 
 [[package]]
 name = "langchain-core"
-version = "0.2.18"
+version = "0.2.21"
 description = "Building applications with LLMs through composability"
 optional = false
 python-versions = "<4.0,>=3.8.1"
 files = [
-    {file = "langchain_core-0.2.18-py3-none-any.whl", hash = "sha256:c9dbb197508e76337ed810ec977d40ae0c896397d191b420ef126c3818a1be96"},
-    {file = "langchain_core-0.2.18.tar.gz", hash = "sha256:ca5c5f1a783449dae8686e366ff3c5b775f8b5cef0de4ef346b8820d3d1c46ff"},
+    {file = "langchain_core-0.2.21-py3-none-any.whl", hash = "sha256:805b1f53e0e2424b83e3673cba1c9354105c5a5e4a1d0d768b1e70d8ac0d604d"},
+    {file = "langchain_core-0.2.21.tar.gz", hash = "sha256:3d1e28179a5d496b900ebef45e1471eaae9fb63fc570f89ded78b026fd08ba84"},
 ]
 
 [package.dependencies]
@@ -1397,17 +1397,17 @@ tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<9.0.0"
 
 [[package]]
 name = "langchain-openai"
-version = "0.1.16"
+version = "0.1.17"
 description = "An integration package connecting OpenAI and LangChain"
 optional = false
 python-versions = "<4.0,>=3.8.1"
 files = [
-    {file = "langchain_openai-0.1.16-py3-none-any.whl", hash = "sha256:bff90e9d0be786495920a7851ae4d55247fb084d3a11d1b15bfe91904ce1cb0f"},
-    {file = "langchain_openai-0.1.16.tar.gz", hash = "sha256:3dedcc785a64a488ad6a313cc59b0dccea025d27413b55cec73a20dcf3ded4da"},
+    {file = "langchain_openai-0.1.17-py3-none-any.whl", hash = "sha256:30bef5574ecbbbb91b8025b2dc5a1bd81fd62157d3ad1a35d820141f31c5b443"},
+    {file = "langchain_openai-0.1.17.tar.gz", hash = "sha256:c5d70ddecdcb93e146f376bdbadbb6ec69de9ac0f402cd5b83de50b655ba85ee"},
 ]
 
 [package.dependencies]
-langchain-core = ">=0.2.17,<0.3.0"
+langchain-core = ">=0.2.20,<0.3.0"
 openai = ">=1.32.0,<2.0.0"
 tiktoken = ">=0.7,<1"
 
@@ -1469,13 +1469,13 @@ server = ["fastapi (>=0.90.1,<1)", "sse-starlette (>=1.3.0,<2.0.0)"]
 
 [[package]]
 name = "langsmith"
-version = "0.1.85"
+version = "0.1.92"
 description = "Client library to connect to the LangSmith LLM Tracing and Evaluation Platform."
 optional = false
 python-versions = "<4.0,>=3.8.1"
 files = [
-    {file = "langsmith-0.1.85-py3-none-any.whl", hash = "sha256:c1f94384f10cea96f7b4d33fd3db7ec180c03c7468877d50846f881d2017ff94"},
-    {file = "langsmith-0.1.85.tar.gz", hash = "sha256:acff31f9e53efa48586cf8e32f65625a335c74d7c4fa306d1655ac18452296f6"},
+    {file = "langsmith-0.1.92-py3-none-any.whl", hash = "sha256:8acb27844ff5263bde14b23425f83ee63996f4d5a8e9998cdeef07fd913137ff"},
+    {file = "langsmith-0.1.92.tar.gz", hash = "sha256:681a613a4dc8c8e57c8961c347a39ffcb64d6c697e8ddde1fd8458fcfaef6c13"},
 ]
 
 [package.dependencies]
@@ -1780,13 +1780,13 @@ signedtoken = ["cryptography (>=3.0.0)", "pyjwt (>=2.0.0,<3)"]
 
 [[package]]
 name = "openai"
-version = "1.35.13"
+version = "1.35.15"
 description = "The official Python library for the openai API"
 optional = false
 python-versions = ">=3.7.1"
 files = [
-    {file = "openai-1.35.13-py3-none-any.whl", hash = "sha256:36ec3e93e0d1f243f69be85c89b9221a471c3e450dfd9df16c9829e3cdf63e60"},
-    {file = "openai-1.35.13.tar.gz", hash = "sha256:c684f3945608baf7d2dcc0ef3ee6f3e27e4c66f21076df0b47be45d57e6ae6e4"},
+    {file = "openai-1.35.15-py3-none-any.whl", hash = "sha256:1b9a6ada4239b91f38f51c426c6ee2746a2069c92cbf25ed8694e5ec00ff4597"},
+    {file = "openai-1.35.15.tar.gz", hash = "sha256:307007e2036d57115612c1ecb50e9bc98fcc93537109a9f9efa1b4eedb2ea968"},
 ]
 
 [package.dependencies]
@@ -1880,6 +1880,7 @@ optional = false
 python-versions = ">=3.9"
 files = [
     {file = "pandas-2.2.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:90c6fca2acf139569e74e8781709dccb6fe25940488755716d1d354d6bc58bce"},
+    {file = "pandas-2.2.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:c7adfc142dac335d8c1e0dcbd37eb8617eac386596eb9e1a1b77791cf2498238"},
     {file = "pandas-2.2.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4abfe0be0d7221be4f12552995e58723c7422c80a659da13ca382697de830c08"},
     {file = "pandas-2.2.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8635c16bf3d99040fdf3ca3db669a7250ddf49c55dc4aa8fe0ae0fa8d6dcc1f0"},
     {file = "pandas-2.2.2-cp310-cp310-musllinux_1_1_aarch64.whl", hash = "sha256:40ae1dffb3967a52203105a077415a86044a2bea011b5f321c6aa64b379a3f51"},
@@ -1900,6 +1901,7 @@ files = [
     {file = "pandas-2.2.2-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:43498c0bdb43d55cb162cdc8c06fac328ccb5d2eabe3cadeb3529ae6f0517c32"},
     {file = "pandas-2.2.2-cp312-cp312-win_amd64.whl", hash = "sha256:d187d355ecec3629624fccb01d104da7d7f391db0311145817525281e2804d23"},
     {file = "pandas-2.2.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:0ca6377b8fca51815f382bd0b697a0814c8bda55115678cbc94c30aacbb6eff2"},
+    {file = "pandas-2.2.2-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:9057e6aa78a584bc93a13f0a9bf7e753a5e9770a30b4d758b8d5f2a62a9433cd"},
     {file = "pandas-2.2.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:001910ad31abc7bf06f49dcc903755d2f7f3a9186c0c040b827e522e9cef0863"},
     {file = "pandas-2.2.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:66b479b0bd07204e37583c191535505410daa8df638fd8e75ae1b383851fe921"},
     {file = "pandas-2.2.2-cp39-cp39-musllinux_1_1_aarch64.whl", hash = "sha256:a77e9d1c386196879aa5eb712e77461aaee433e54c68cf253053a73b7e49c33a"},
@@ -2386,13 +2388,13 @@ sqlalchemy = "*"
 
 [[package]]
 name = "pytest-asyncio"
-version = "0.23.7"
+version = "0.23.8"
 description = "Pytest support for asyncio"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pytest_asyncio-0.23.7-py3-none-any.whl", hash = "sha256:009b48127fbe44518a547bddd25611551b0e43ccdbf1e67d12479f569832c20b"},
-    {file = "pytest_asyncio-0.23.7.tar.gz", hash = "sha256:5f5c72948f4c49e7db4f29f2521d4031f1c27f86e57b046126654083d4770268"},
+    {file = "pytest_asyncio-0.23.8-py3-none-any.whl", hash = "sha256:50265d892689a5faefb84df80819d1ecef566eb3549cf915dfb33569359d1ce2"},
+    {file = "pytest_asyncio-0.23.8.tar.gz", hash = "sha256:759b10b33a6dc61cce40a8bd5205e302978bbbcc00e279a8b61d9a6a3c82e4d3"},
 ]
 
 [package.dependencies]
@@ -2933,18 +2935,19 @@ test = ["Cython", "array-api-strict", "asv", "gmpy2", "hypothesis (>=6.30)", "me
 
 [[package]]
 name = "setuptools"
-version = "70.3.0"
+version = "71.0.3"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "setuptools-70.3.0-py3-none-any.whl", hash = "sha256:fe384da74336c398e0d956d1cae0669bc02eed936cdb1d49b57de1990dc11ffc"},
-    {file = "setuptools-70.3.0.tar.gz", hash = "sha256:f171bab1dfbc86b132997f26a119f6056a57950d058587841a0082e8830f9dc5"},
+    {file = "setuptools-71.0.3-py3-none-any.whl", hash = "sha256:f501b6e6db709818dc76882582d9c516bf3b67b948864c5fa1d1624c09a49207"},
+    {file = "setuptools-71.0.3.tar.gz", hash = "sha256:3d8531791a27056f4a38cd3e54084d8b1c4228ff9cf3f2d7dd075ec99f9fd70d"},
 ]
 
 [package.extras]
-doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "pygments-github-lexers (==0.0.5)", "pyproject-hooks (!=1.1)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-favicon", "sphinx-inline-tabs", "sphinx-lint", "sphinx-notfound-page (>=1,<2)", "sphinx-reredirects", "sphinxcontrib-towncrier"]
-test = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "importlib-metadata", "ini2toml[lite] (>=0.14)", "jaraco.develop (>=7.21)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "jaraco.test", "mypy (==1.10.0)", "packaging (>=23.2)", "pip (>=19.1)", "pyproject-hooks (!=1.1)", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-home (>=0.5)", "pytest-mypy", "pytest-perf", "pytest-ruff (>=0.3.2)", "pytest-subprocess", "pytest-timeout", "pytest-xdist (>=3)", "tomli", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel"]
+core = ["importlib-metadata (>=6)", "importlib-resources (>=5.10.2)", "jaraco.text (>=3.7)", "more-itertools (>=8.8)", "ordered-set (>=3.1.1)", "packaging (>=24)", "platformdirs (>=2.6.2)", "tomli (>=2.0.1)", "wheel (>=0.43.0)"]
+doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "pygments-github-lexers (==0.0.5)", "pyproject-hooks (!=1.1)", "rst.linker (>=1.9)", "sphinx (<7.4)", "sphinx (>=3.5)", "sphinx-favicon", "sphinx-inline-tabs", "sphinx-lint", "sphinx-notfound-page (>=1,<2)", "sphinx-reredirects", "sphinxcontrib-towncrier"]
+test = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "importlib-metadata", "ini2toml[lite] (>=0.14)", "jaraco.develop (>=7.21)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "jaraco.test", "mypy (==1.10.0)", "packaging (>=23.2)", "pip (>=19.1)", "pyproject-hooks (!=1.1)", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-home (>=0.5)", "pytest-mypy", "pytest-perf", "pytest-ruff (<0.4)", "pytest-ruff (>=0.2.1)", "pytest-ruff (>=0.3.2)", "pytest-subprocess", "pytest-timeout", "pytest-xdist (>=3)", "tomli", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel"]
 
 [[package]]
 name = "six"
@@ -3799,4 +3802,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "94fd9da73a9ac0b8af1e982cb7f2052b3404de1edb8740eac82f44365fbb1b22"
+content-hash = "7564720a332f866d9b752900867a9e5ec46f4c3de8839912c86c045006d5b261"

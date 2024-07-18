@@ -2,7 +2,10 @@
 name = "dialog"
 version = "0.1.0"
 description = "Humanized Conversation API (using LLM)"
-authors = ["Avelino <hey@avelino.run>", "Vinicius Mesel <4984147+vmesel@users.noreply.github.com>"]
+authors = [
+    "Avelino <hey@avelino.run>",
+    "Vinicius Mesel <4984147+vmesel@users.noreply.github.com>",
+]
 readme = "README.md"
 homepage = "https://github.com/talkdai/dialog"
 
@@ -10,7 +13,7 @@ homepage = "https://github.com/talkdai/dialog"
 python = ">=3.11,<3.13"
 fastapi = "0.109.2"
 sqlalchemy = "^2.0.23"
-uvicorn = {extras = ["standard"], version = "^0.24.0.post1"}
+uvicorn = { extras = ["standard"], version = "^0.24.0.post1" }
 psycopg2 = "^2.9.9"
 pgvector = "^0.2.3"
 python-decouple = "^3.8"
@@ -24,7 +27,7 @@ alembic = "^1.12.1"
 importlib-metadata = "^7.0.1"
 pyarrow = "^15.0.0"
 iniconfig = "^2.0.0"
-dialog-lib = "^0.0.2.4"
+dialog-lib = "^0.0.2.6"
 langserve = "^0.2.0"
 sse-starlette = "^2.1.0"
 
