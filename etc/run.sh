@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 poetry run alembic upgrade head
 [[ -z "${DIALOG_LOADCSV_CLEARDB}" ]] || CLEARDB_COMMAND=--cleardb
