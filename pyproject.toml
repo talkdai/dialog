@@ -27,7 +27,7 @@ alembic = "^1.12.1"
 importlib-metadata = "^7.0.1"
 pyarrow = "^15.0.0"
 iniconfig = "^2.0.0"
-dialog-lib = "^0.0.2.6"
+dialog-lib = "0.0.2.7"
 langserve = "^0.2.0"
 sse-starlette = "^2.1.0"
 
