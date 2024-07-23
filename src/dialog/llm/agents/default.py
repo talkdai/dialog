@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from uuid import uuid4
 
 from langchain.chains.llm import LLMChain
 from langchain.memory import ConversationBufferWindowMemory
