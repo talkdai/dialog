@@ -27,6 +27,7 @@ iniconfig = "2.0.0"
 dialog-lib = "0.0.2.7"
 langserve = "0.2.0"
 sse-starlette = "2.1.0"
+gunicorn = "^23.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
