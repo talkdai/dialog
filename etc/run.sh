@@ -13,8 +13,10 @@ if  [ -n "${TEST}" ]; then
     exit $?
 fi
 
+WORKERS=${WORKERS:-1}
+
 if [ -n "${DEBUG}" ]; then
-    exec poetry run uvicorn main:app --host 0.0.0.0 --port ${PORT} --reload
+    exec poetry run gunicorn -k uvicorn.workers.UvicornWorker -b 0.0.0.0:${PORT} main:app --workers ${WORKERS} --reload
 else
-    exec poetry run uvicorn main:app --host 0.0.0.0 --port ${PORT}
+    exec poetry run gunicorn -k uvicorn.workers.UvicornWorker -b 0.0.0.0:${PORT} main:app --workers ${WORKERS}
 fi
