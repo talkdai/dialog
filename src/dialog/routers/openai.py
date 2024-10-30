@@ -26,19 +26,34 @@ async def get_models():
     Returns the model that is available inside Dialog in the OpenAI format.
     """
 
-    return [OpenAIModel(**{
-        "id": "talkd-ai",
-        "object": "model",
-        "created": int(datetime.datetime.now().timestamp()),
-        "owned_by": "system"
-    })] + [
-        OpenAIModel(**{
-            "id": model["model_name"],
-            "object": "model",
-            "created": int(datetime.datetime.now().timestamp()),
-            "owned_by": "system"
-        }) for model in Settings().PROJECT_CONFIG.get("endpoint", [])
-    ]
+    return {
+        "models": [
+            OpenAIModel(**{
+                "id": "talkd-ai",
+                "object": "model",
+                "created": int(datetime.datetime.now().timestamp()),
+                "owned_by": "system",
+                "digest": str(uuid4())
+            })
+        ] + [
+            OpenAIModel(**{
+                "id": model["model_name"],
+                "object": "model",
+                "created": int(datetime.datetime.now().timestamp()),
+                "owned_by": "system",
+                "digest": str(uuid4())
+            }) for model in Settings().PROJECT_CONFIG.get("endpoint", [])
+        ]
+    }
+
+@open_ai_api_router.get("/api/tags")
+async def get_tags():
+    """
+    Returns the tags that are available inside Dialog in the OpenAI format.
+    """
+
+    return await get_models()
+
 
 @open_ai_api_router.post("/chat/completions")
 async def ask_question_to_llm(message: OpenAIChat, session: Session = Depends(get_session)):
