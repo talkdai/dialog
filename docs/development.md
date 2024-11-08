@@ -10,7 +10,7 @@ Our coding style try to follow as much as possible from PEP8 and we use `black` 
 
 ## Local Development setup
 
-We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](Makefile) may help you and also reading our [current issues](https://github.com/talkdai/dialog/issues).
+We've used Python and bundled packages with `poetry`, now it's up to you - ⚠️ we're not yet at the point of explaining in depth how to develop and contribute, [`Makefile`](../Makefile) may help you and also reading our [current issues](https://github.com/talkdai/dialog/issues).
 
 > **notes:** we recommend using `docker-compose` or our `dev-container` to develop the project or please proceed with setting up the local environment at **your own risk**.
 
@@ -20,7 +20,7 @@ All of the current available database migrations and tables are handled by `alem
 
 ## VS Code Dev Container
 
-If you are using VSCode, you can use the [devcontainer](.devcontainer) to run the project.
+If you are using VSCode, you can use the [devcontainer](../.devcontainer) to run the project.
 
 When we upload the environment into devcontainer, we upload the following containers:
 
