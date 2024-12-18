@@ -66,33 +66,33 @@ def get_document_pk(doc: Document, pk_metadata_fields: Iterable[str]) -> str:
     concatened_fields = "".join(fields)
     return hashlib.md5(concatened_fields.encode()).hexdigest()
 
+#Single CSV Load: Instead of loading the CSV twice, the function now loads it once with all necessary metadata columns (NECESSARY_COLS + metadata_columns).
+#Efficient Merging: We directly filter out unnecessary metadata fields when creating the final list of documents. This eliminates the need for merging two separate sets of metadata.
+#Improved Clarity: The function is now easier to follow and avoids redundant operations.
+
 def load_csv_with_metadata(
     path: str,
     embed_columns: list[str] = [],
     metadata_columns: List[str] = [],
 ) -> List[Document]:
-    """Load CSV twice, once with specific metadata columns and once with all NECESSARY_COLS"""
+    """Load CSV once, combine metadata columns and content, and create Documents."""
 
-    # Load the CSV once to get metadata columns
-    loader_metadata = CSVLoader(path, metadata_columns=metadata_columns)
+    # Load the CSV with all necessary metadata columns
+    loader_metadata = CSVLoader(path, metadata_columns=NECESSARY_COLS + metadata_columns)
     docs_metadata: List[Document] = loader_metadata.load()
 
-    # Load the CSV again to get all NECESSARY_COLS as metadata
-    loader_necessary = CSVLoader(path, metadata_columns=NECESSARY_COLS)
-    docs_necessary: List[Document] = loader_necessary.load()
-
-    # Merge documents to ensure all necessary columns are included as metadata
+    # Only retain the necessary columns in the metadata, avoiding redundant fields
+    not_used_metadata_fields = {"row", "source"}
     merged_docs = []
-    not_used_metadata_fields = ["row", "source"]
-    for doc_meta, doc_necessary in zip(docs_metadata, docs_necessary):
-        merged_metadata = {**doc_meta.metadata, **doc_necessary.metadata}
-        merged_metadata = {k: v for k, v in merged_metadata.items() if k not in not_used_metadata_fields}
-        merged_doc = Document(
-            page_content=doc_meta.page_content, metadata=merged_metadata
-        )
+
+    for doc_meta in docs_metadata:
+        # Filtering out the unnecessary metadata fields directly when creating the merged document
+        merged_metadata = {k: v for k, v in doc_meta.metadata.items() if k not in not_used_metadata_fields}
+        merged_doc = Document(page_content=doc_meta.page_content, metadata=merged_metadata)
         merged_docs.append(merged_doc)
 
     return merged_docs
+
 
 
 def load_csv_and_generate_embeddings(
